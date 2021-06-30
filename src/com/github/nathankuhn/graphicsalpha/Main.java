@@ -1,17 +1,12 @@
 package com.github.nathankuhn.graphicsalpha;
 
+import com.github.nathankuhn.graphicsalpha.display.Draw;
+import com.github.nathankuhn.graphicsalpha.display.Window;
+import com.github.nathankuhn.graphicsalpha.utils.Color;
 import org.lwjgl.*;
-import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
 
-import java.nio.*;
-
-import static org.lwjgl.glfw.Callbacks.*;
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 public class Main {
 
@@ -41,18 +36,15 @@ public class Main {
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            glBegin(GL_QUADS);
+            Color white = new Color(0.9f, 0.9f, 0.9f);
+            Color red = new Color(1f, 0f, 0f);
 
-            glColor3f(0.0f, 0.0f, 1.0f);
-            glVertex3f(0.5f, 0.5f, 0.0f);
-            glColor3f(0.0f, 1.0f, 0.0f);
-            glVertex3f(0.5f, -0.5f, 0.0f);
-            glColor3f(1.0f, 0.0f, 0.0f);
-            glVertex3f(-0.5f, -0.5f, 0.0f);
-            glColor3f(1.0f, 1.0f, 0.0f);
-            glVertex3f(-0.5f, 0.5f, 0.0f);
+            Draw.Rectangle(red, -0.5f, -0.5f, 1.0f, 1.0f);
 
-            glEnd();
+            Draw.Line(white, 0.5f, 0.5f, -0.5f, 0.5f);
+            Draw.Line(white, -0.5f, 0.5f, -0.5f, -0.5f);
+            Draw.Line(white, -0.5f, -0.5f, 0.5f, -0.5f);
+            Draw.Line(white, 0.5f, -0.5f, 0.5f, 0.5f);
 
             window.update();
         }

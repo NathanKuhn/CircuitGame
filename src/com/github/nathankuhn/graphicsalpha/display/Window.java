@@ -1,4 +1,4 @@
-package com.github.nathankuhn.graphicsalpha;
+package com.github.nathankuhn.graphicsalpha.display;
 
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
