@@ -36,15 +36,7 @@ public class Main {
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            Color white = new Color(0.9f, 0.9f, 0.9f);
-            Color red = new Color(1f, 0f, 0f);
 
-            Draw.Rectangle(red, -0.5f, -0.5f, 1.0f, 1.0f);
-
-            Draw.Line(white, 0.5f, 0.5f, -0.5f, 0.5f);
-            Draw.Line(white, -0.5f, 0.5f, -0.5f, -0.5f);
-            Draw.Line(white, -0.5f, -0.5f, 0.5f, -0.5f);
-            Draw.Line(white, 0.5f, -0.5f, 0.5f, 0.5f);
 
             window.update();
         }
