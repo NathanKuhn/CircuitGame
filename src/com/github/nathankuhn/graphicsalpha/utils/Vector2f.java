@@ -1,15 +1,15 @@
 package com.github.nathankuhn.graphicsalpha.utils;
 
-public class Vector2 {
+public class Vector2f {
 
     public float x;
     public float y;
 
-    public Vector2(float x, float y) {
+    public Vector2f(float x, float y) {
         this.x = x;
         this.y = y;
     }
-    public Vector2(Vector3 vector) {
+    public Vector2f(Vector3f vector) {
         this.x = vector.x;
         this.y = vector.y;
     }

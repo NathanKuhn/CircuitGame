@@ -1,13 +1,13 @@
 package com.github.nathankuhn.graphicsalpha.display;
 
 import com.github.nathankuhn.graphicsalpha.utils.Color;
-import com.github.nathankuhn.graphicsalpha.utils.Vector2;
+import com.github.nathankuhn.graphicsalpha.utils.Vector2f;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class Draw {
 
-    public static void Rectangle(Color color, Vector2 position, Vector2 dimensions) {
+    public static void Rectangle(Color color, Vector2f position, Vector2f dimensions) {
 
         glBegin(GL_QUADS);
 
@@ -22,7 +22,7 @@ public class Draw {
 
     }
 
-    public static void Line(Color color, Vector2 start, Vector2 end) {
+    public static void Line(Color color, Vector2f start, Vector2f end) {
 
         glBegin(GL_LINES);
 

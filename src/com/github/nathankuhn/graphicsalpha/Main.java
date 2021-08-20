@@ -3,6 +3,7 @@ package com.github.nathankuhn.graphicsalpha;
 import com.github.nathankuhn.graphicsalpha.display.Draw;
 import com.github.nathankuhn.graphicsalpha.display.Window;
 import com.github.nathankuhn.graphicsalpha.utils.Color;
+import com.github.nathankuhn.graphicsalpha.utils.Vector2f;
 import org.lwjgl.*;
 import org.lwjgl.opengl.*;
 
@@ -36,7 +37,7 @@ public class Main {
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-
+            Draw.Rectangle(new Color(1.0f, 0.5f, 0.0f), new Vector2f(-0.5f, -0.5f), new Vector2f(1.0f, 1.0f));
 
             window.update();
         }
