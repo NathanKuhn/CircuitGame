@@ -2,8 +2,9 @@ package com.github.nathankuhn.graphicsalpha;
 
 import com.github.nathankuhn.graphicsalpha.display.Draw;
 import com.github.nathankuhn.graphicsalpha.display.Window;
-import com.github.nathankuhn.graphicsalpha.utils.Color;
-import com.github.nathankuhn.graphicsalpha.utils.Vector2f;
+import com.github.nathankuhn.graphicsalpha.engine.Mesh;
+import com.github.nathankuhn.graphicsalpha.engine.Renderer;
+import com.github.nathankuhn.graphicsalpha.utils.*;
 import org.lwjgl.*;
 import org.lwjgl.opengl.*;
 
@@ -22,12 +23,42 @@ public class Main {
 
         window.init();
 
+        Vector3f[] pos = {
+                new Vector3f(-0.5f,  0.5f, 0.0f),
+                new Vector3f(-0.5f,  -0.5f, 0.0f),
+                new Vector3f( 0.5f, -0.5f, 0.0f),
+                new Vector3f( 0.5f,  0.5f, 0.0f)
+        };
+
+        Vector3i[] ind = {
+                new Vector3i(0, 1, 3),
+                new Vector3i(3, 1, 2)
+        };
+
+        Vector3f[] norm = {
+                new Vector3f( 0.0f,  0.0f, -1.0f),
+                new Vector3f( 0.0f,  0.0f, -1.0f),
+                new Vector3f( 0.0f,  0.0f, -1.0f),
+                new Vector3f( 0.0f,  0.0f, -1.0f)
+        };
+
+        Vector2f[] uvs = {
+                new Vector2f( 1.0f,  1.0f),
+                new Vector2f(-1.0f,  1.0f),
+                new Vector2f(-1.0f,  1.0f),
+                new Vector2f( 1.0f, -1.0f),
+        };
+
+        Mesh mesh = new Mesh(pos, ind, norm, uvs);
+
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
         // LWJGL detects the context that is current in the current thread,
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+        Renderer renderer = new Renderer(window, mesh);
+        renderer.init();
 
         // Set the clear color
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -37,11 +68,12 @@ public class Main {
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            Draw.Rectangle(new Color(1.0f, 0.5f, 0.0f), new Vector2f(-0.5f, -0.5f), new Vector2f(1.0f, 1.0f));
+            renderer.render();
 
             window.update();
         }
 
+        renderer.cleanup();
         window.close();
 
     }

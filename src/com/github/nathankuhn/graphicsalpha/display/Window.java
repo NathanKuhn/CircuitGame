@@ -1,16 +1,13 @@
 package com.github.nathankuhn.graphicsalpha.display;
 
-import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -19,10 +16,12 @@ public class Window {
     private long window;
     private int width;
     private int height;
+    private boolean resized;
 
     public Window(int width, int height) {
         this.width = width;
         this.height = height;
+        resized = false;
     }
 
     public void init() {
@@ -48,6 +47,12 @@ public class Window {
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+        });
+
+        glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
+            Window.this.width = width;
+            Window.this.height = height;
+            Window.this.setResized(true);
         });
 
         // Get the thread stack and push a new frame
@@ -83,6 +88,22 @@ public class Window {
         glfwSwapBuffers(window); // swap the color buffers
         glfwPollEvents(); // Key callbacks are called here
 
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setResized(boolean resized) {
+        this.resized = resized;
+    }
+
+    public boolean isResized() {
+        return resized;
     }
 
     public boolean shouldClose() {

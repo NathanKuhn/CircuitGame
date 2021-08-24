@@ -28,18 +28,32 @@ public class Mesh {
         return vertUVs[vert];
     }
 
-    public int getVertNum() {
-        return vertPositions.length;
+    public int getVertexCount() {
+        return faceIndices.length * 3;
     }
 
-    protected float[] getFlatVertPositions() {
+    public float[] getFlatVertPositions() {
 
         float[] ret = new float[vertPositions.length * 3];
 
         for (int vert = 0; vert < vertPositions.length; vert++) {
-            ret[0] = vertPositions[vert].x;
-            ret[1] = vertPositions[vert].y;
-            ret[2] = vertPositions[vert].z;
+            ret[vert * 3] = vertPositions[vert].x;
+            ret[vert * 3 + 1] = vertPositions[vert].y;
+            ret[vert * 3 + 2] = vertPositions[vert].z;
+        }
+
+        return ret;
+
+    }
+
+    public int[] getFlatFaceIndices() {
+
+        int[] ret = new int[faceIndices.length * 3];
+
+        for (int vert = 0; vert < faceIndices.length; vert++) {
+            ret[vert * 3] = faceIndices[vert].x;
+            ret[vert * 3 + 1] = faceIndices[vert].y;
+            ret[vert * 3 + 2] = faceIndices[vert].z;
         }
 
         return ret;
