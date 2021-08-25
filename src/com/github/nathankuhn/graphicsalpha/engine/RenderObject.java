@@ -1,7 +1,7 @@
 package com.github.nathankuhn.graphicsalpha.engine;
 
 import com.github.nathankuhn.graphicsalpha.display.Window;
-import com.github.nathankuhn.graphicsalpha.utils.Matrix4;
+import com.github.nathankuhn.graphicsalpha.utils.*;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -14,6 +14,8 @@ import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class RenderObject {
 
+    public Transform transform;
+
     private Mesh mesh;
     private Material material;
     private ShaderProgram shaderProgram;
@@ -24,6 +26,7 @@ public class RenderObject {
     private int indexVboID;
 
     public RenderObject(Mesh mesh, Material material) {
+        this.transform = new Transform(new Vector3f(0.0f, 0.0f, 0.0f));
         this.mesh = mesh;
         this.material = material;
     }
@@ -33,6 +36,7 @@ public class RenderObject {
         shaderProgram = new ShaderProgram();
         shaderProgram.init();
         shaderProgram.createUniform("projectionMatrix");
+        shaderProgram.createUniform("transformMatrix");
 
         // Create Buffers to store data off-heap where it can be accessed by native code
 
@@ -73,7 +77,8 @@ public class RenderObject {
 
         shaderProgram.bind();
 
-        shaderProgram.setUniform("projectionMatrix", Matrix4.Perspective((float) Math.toRadians(90), 1, 0.001f, 50));
+        shaderProgram.setUniform("projectionMatrix", window.getProjectionMatrix());
+        shaderProgram.setUniform("transformMatrix", transform.getMatrix());
 
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);

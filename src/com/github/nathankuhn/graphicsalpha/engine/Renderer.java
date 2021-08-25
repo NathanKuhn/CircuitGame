@@ -9,8 +9,8 @@ public class Renderer {
     private RenderObject renderObject;
     private Window window;
 
-    public Renderer(Window window, Mesh mesh) {
-        renderObject = new RenderObject(mesh, null);
+    public Renderer(Window window, RenderObject renderObject) {
+        this.renderObject = renderObject;
         this.window = window;
     }
 

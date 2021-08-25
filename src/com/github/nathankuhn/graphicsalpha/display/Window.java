@@ -1,13 +1,17 @@
 package com.github.nathankuhn.graphicsalpha.display;
 
+import com.github.nathankuhn.graphicsalpha.utils.Matrix4;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -17,11 +21,20 @@ public class Window {
     private int width;
     private int height;
     private boolean resized;
+    private float fov;
+    private float nearPlane;
+    private float farPlane;
+    private Matrix4 projectionMatrix;
 
     public Window(int width, int height) {
         this.width = width;
         this.height = height;
         resized = false;
+
+        fov = (float) Math.toRadians(90);
+        nearPlane = 0.05f;
+        farPlane = 50.0f;
+        projectionMatrix = Matrix4.Perspective(fov, (float)width / (float) height, nearPlane, farPlane);
     }
 
     public void init() {
@@ -81,6 +94,16 @@ public class Window {
 
         // Make the window visible
         glfwShowWindow(window);
+
+        // This line is critical for LWJGL's interoperation with GLFW's
+        // OpenGL context, or any context that is managed externally.
+        // LWJGL detects the context that is current in the current thread,
+        // creates the GLCapabilities instance and makes the OpenGL
+        // bindings available for use.
+
+        GL.createCapabilities();
+
+        glEnable(GL_DEPTH_TEST);
     }
 
     public void update() {
@@ -99,6 +122,9 @@ public class Window {
     }
 
     public void setResized(boolean resized) {
+        if (resized) {
+            projectionMatrix = Matrix4.Perspective(fov, (float)width / (float)height, nearPlane, farPlane);
+        }
         this.resized = resized;
     }
 
@@ -108,6 +134,10 @@ public class Window {
 
     public boolean shouldClose() {
         return glfwWindowShouldClose(window);
+    }
+
+    public Matrix4 getProjectionMatrix() {
+        return projectionMatrix;
     }
 
     public void close() {

@@ -119,6 +119,10 @@ public class Matrix4 {
 
     }
 
+    public static Matrix4 Translation(Vector3f vector) {
+        return Translation(vector.x, vector.y, vector.z);
+    }
+
     public static Matrix4 Scale(float x, float y, float z) {
 
         Matrix4 out = new Matrix4();
@@ -128,7 +132,10 @@ public class Matrix4 {
         out.set(2, 2, z);
 
         return out;
+    }
 
+    public static Matrix4 Scale(Vector3f vector) {
+        return Scale(vector.x, vector.y, vector.z);
     }
 
     public static Matrix4 RotationX(float t) {
@@ -141,7 +148,6 @@ public class Matrix4 {
         out.set(2, 2, Math.cos(t));
 
         return out;
-
     }
 
     public static Matrix4 RotationY(float t) {
@@ -154,7 +160,6 @@ public class Matrix4 {
         out.set(2, 2, Math.cos(t));
 
         return out;
-
     }
 
     public static Matrix4 RotationZ(float t) {
@@ -167,7 +172,23 @@ public class Matrix4 {
         out.set(1, 1, Math.cos(t));
 
         return out;
+    }
 
+    public static Matrix4 RotationXYZ(float x, float y, float z) {
+        Matrix4 rx = RotationX(x);
+        Matrix4 ry = RotationY(y);
+        Matrix4 rz = RotationZ(z);
+
+        Matrix4 ret = new Matrix4();
+        ret = Multiply(ret, rx);
+        ret = Multiply(ret, ry);
+        ret = Multiply(ret, rz);
+
+        return ret;
+    }
+
+    public static Matrix4 RotationXYZ(Vector3f vector) {
+        return RotationXYZ(vector.x, vector.y, vector.z);
     }
 
 }
