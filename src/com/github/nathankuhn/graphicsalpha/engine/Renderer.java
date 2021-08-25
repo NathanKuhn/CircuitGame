@@ -18,6 +18,7 @@ public class Renderer {
         try {
             renderObject.init();
         } catch (Exception e) {
+            System.out.println("Error in render init");
             System.out.println(e.getStackTrace());
         }
     }

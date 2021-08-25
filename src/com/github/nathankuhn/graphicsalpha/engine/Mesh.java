@@ -46,6 +46,20 @@ public class Mesh {
 
     }
 
+    public float[] getFlatNormals() {
+
+        float[] ret = new float[vertNormals.length * 3];
+
+        for (int vert = 0; vert < vertNormals.length; vert++) {
+            ret[vert * 3] = vertNormals[vert].x;
+            ret[vert * 3 + 1] = vertNormals[vert].y;
+            ret[vert * 3 + 2] = vertNormals[vert].z;
+        }
+
+        return ret;
+
+    }
+
     public int[] getFlatFaceIndices() {
 
         int[] ret = new int[faceIndices.length * 3];

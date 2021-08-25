@@ -24,10 +24,10 @@ public class Main {
         window.init();
 
         Vector3f[] pos = {
-                new Vector3f(-0.5f,  0.5f, 0.0f),
-                new Vector3f(-0.5f,  -0.5f, 0.0f),
-                new Vector3f( 0.5f, -0.5f, 0.0f),
-                new Vector3f( 0.5f,  0.5f, 0.0f)
+                new Vector3f(-0.5f,  0.5f, -1.05f),
+                new Vector3f(-0.5f,  -0.5f, -1.05f),
+                new Vector3f( 0.5f, -0.5f, -1.05f),
+                new Vector3f( 0.5f,  0.5f, -1.05f)
         };
 
         Vector3i[] ind = {
@@ -36,10 +36,10 @@ public class Main {
         };
 
         Vector3f[] norm = {
-                new Vector3f( 0.0f,  0.0f, -1.0f),
-                new Vector3f( 0.0f,  0.0f, -1.0f),
-                new Vector3f( 0.0f,  0.0f, -1.0f),
-                new Vector3f( 0.0f,  0.0f, -1.0f)
+                new Vector3f( 1.0f,  0.0f, 0.0f),
+                new Vector3f( 0.0f,  1.0f, 0.0f),
+                new Vector3f( 0.0f,  0.0f, 1.0f),
+                new Vector3f( 1.0f,  1.0f, 0.0f)
         };
 
         Vector2f[] uvs = {
