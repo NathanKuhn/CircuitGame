@@ -56,12 +56,6 @@ public class Window {
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-        });
-
         glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
             Window.this.width = width;
             Window.this.height = height;
@@ -89,7 +83,7 @@ public class Window {
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
-        // Enable v-sync
+        // 1 is vsync on, 0 is vsync off
         glfwSwapInterval(1);
 
         // Make the window visible
@@ -119,6 +113,10 @@ public class Window {
 
     public int getWidth() {
         return width;
+    }
+
+    public long getHandle() {
+        return window;
     }
 
     public void setResized(boolean resized) {

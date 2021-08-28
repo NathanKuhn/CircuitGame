@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class Utils {
+public class ShaderResource {
 
     public static String LoadResource(String path) {
 
-        InputStream stream = Utils.class.getResourceAsStream(path);
+        InputStream stream = ShaderResource.class.getResourceAsStream(path);
         String content = "";
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));

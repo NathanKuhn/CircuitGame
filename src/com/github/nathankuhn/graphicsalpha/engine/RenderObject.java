@@ -29,14 +29,20 @@ public class RenderObject {
         this.transform = new Transform(new Vector3f(0.0f, 0.0f, 0.0f));
         this.mesh = mesh;
         this.material = material;
+        shaderProgram = new ShaderProgram();
     }
 
     public void init() throws Exception {
 
-        shaderProgram = new ShaderProgram();
         shaderProgram.init();
         shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("transformMatrix");
+        shaderProgram.createUniform("rotationMatrix");
+        shaderProgram.createUniform("lightDirection");
+        shaderProgram.createUniform("lightColor");
+        shaderProgram.createUniform("lightIntensity");
+        shaderProgram.createUniform("ambientColor");
+        shaderProgram.createUniform("ambientIntensity");
 
         // Create Buffers to store data off-heap where it can be accessed by native code
 
@@ -73,12 +79,18 @@ public class RenderObject {
 
     }
 
-    public void render(Window window) {
+    public void render(Window window, EnvironmentLight light) {
 
         shaderProgram.bind();
 
         shaderProgram.setUniform("projectionMatrix", window.getProjectionMatrix());
         shaderProgram.setUniform("transformMatrix", transform.getMatrix());
+        shaderProgram.setUniform("rotationMatrix", transform.getRotationMatrix());
+        shaderProgram.setUniform("lightDirection", light.getSunDirection());
+        shaderProgram.setUniform("lightColor", new Vector3f(light.getSunColor()));
+        shaderProgram.setUniform("lightIntensity", light.getSunIntensity());
+        shaderProgram.setUniform("ambientColor", new Vector3f(light.getAmbientColor()));
+        shaderProgram.setUniform("ambientIntensity", light.getAmbientIntensity());
 
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);

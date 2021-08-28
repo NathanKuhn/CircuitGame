@@ -1,6 +1,7 @@
 package com.github.nathankuhn.graphicsalpha.engine;
 
 import com.github.nathankuhn.graphicsalpha.utils.Matrix4;
+import com.github.nathankuhn.graphicsalpha.utils.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -14,17 +15,12 @@ public class ShaderProgram {
     protected static final String DEFAULT_VERTEX_PATH = "shaders/defaultVertex.shader";
     protected static final String DEFAULT_FRAGMENT_PATH = "shaders/defaultFragment.shader";
 
-    private final int programId;
+    private int programId;
     private int vertexShaderId;
     private int fragmentShaderId;
     private final Map<String, Integer> uniforms;
 
-    public ShaderProgram() throws Exception {
-
-        programId = glCreateProgram();
-        if (programId == 0) {
-            throw new Exception("Could not create shader");
-        }
+    public ShaderProgram() {
         uniforms = new HashMap<>();
     }
 
@@ -84,8 +80,14 @@ public class ShaderProgram {
     }
 
     public void init(String vertexShaderPath, String fragmentShaderPath) throws Exception {
-        createVertexShader(Utils.LoadResource(vertexShaderPath));
-        createFragmentShader(Utils.LoadResource(fragmentShaderPath));
+        programId = glCreateProgram();
+        if (programId == 0) {
+            System.out.println("Could not create shader");
+            throw new Exception("Could not create shader");
+        }
+
+        createVertexShader(ShaderResource.LoadResource(vertexShaderPath));
+        createFragmentShader(ShaderResource.LoadResource(fragmentShaderPath));
         link();
     }
 
@@ -111,14 +113,30 @@ public class ShaderProgram {
     }
 
     public void setUniform(String uniformName, Matrix4 value) {
-
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer fb = stack.mallocFloat(16);
             fb.put(value.getArray());
             fb.flip();
             glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
         }
+    }
 
+    public void setUniform(String uniformName, Vector3f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer fb = stack.mallocFloat(3);
+            fb.put(value.getArray());
+            fb.flip();
+            glUniform3fv(uniforms.get(uniformName), fb);
+        }
+    }
+
+    public void setUniform(String uniformName, float value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer fb = stack.mallocFloat(1);
+            fb.put(value);
+            fb.flip();
+            glUniform1fv(uniforms.get(uniformName), fb);
+        }
     }
 
 }

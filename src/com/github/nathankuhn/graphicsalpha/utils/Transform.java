@@ -40,24 +40,47 @@ public class Transform {
         return rotationVector;
     }
 
+    private void updateTranslation() {
+        translation = Matrix4.Translation(positionVector);
+    }
+    private void updateScale() {
+        scale = Matrix4.Scale(scaleVector);
+    }
+    private void updateRotation() {
+        rotation = Matrix4.RotationXYZ(rotationVector);
+    }
+
     public void setPosition(Vector3f positionVector) {
         this.positionVector = positionVector;
-        translation = Matrix4.Translation(positionVector);
+        updateTranslation();
     }
     public void setScale(Vector3f scaleVector) {
         this.scaleVector = scaleVector;
-        scale = Matrix4.Scale(scaleVector);
+        updateScale();
     }
     public void setRotation(Vector3f rotationVector) {
         this.rotationVector = rotationVector;
-        rotation = Matrix4.RotationXYZ(rotationVector);
+        updateRotation();
+    }
+
+    public void translate(Vector3f a) {
+        this.positionVector.addSet(a);
+        updateTranslation();
+    }
+    public void scale(Vector3f a) {
+        this.scaleVector.productSet(a);
+        updateScale();
+    }
+    public void rotate(Vector3f a) {
+        this.rotationVector.addSet(a);
+        updateRotation();
     }
 
     public Matrix4 getMatrix() {
         Matrix4 ret = new Matrix4();
         ret = Matrix4.Multiply(ret, translation);
-        ret = Matrix4.Multiply(ret, scale);
         ret = Matrix4.Multiply(ret, rotation);
+        ret = Matrix4.Multiply(ret, scale);
 
         return ret;
     }

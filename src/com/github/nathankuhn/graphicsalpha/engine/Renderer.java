@@ -8,10 +8,12 @@ public class Renderer {
 
     private RenderObject renderObject;
     private Window window;
+    private EnvironmentLight light;
 
-    public Renderer(Window window, RenderObject renderObject) {
+    public Renderer(Window window, RenderObject renderObject, EnvironmentLight environmentLight) {
         this.renderObject = renderObject;
         this.window = window;
+        light = environmentLight;
     }
 
     public void init(){
@@ -29,7 +31,7 @@ public class Renderer {
             window.setResized(false);
         }
 
-        renderObject.render(window);
+        renderObject.render(window, light);
     }
 
     public void cleanup() {
