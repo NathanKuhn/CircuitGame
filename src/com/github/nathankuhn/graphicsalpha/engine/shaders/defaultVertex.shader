@@ -20,7 +20,9 @@ void main()
     gl_Position = projectionMatrix * transformMatrix * vec4(position, 1.0);
     vec3 worldNormal = (rotationMatrix * vec4(normal, 1.0)).xyz;
     vec3 color = vec3(1.0, 1.0, 1.0);
-    color.x *= lightColor.x / lightColor.x;
+    color.x *= lightColor.x;
+    color.y *= lightColor.y;
+    color.z *= lightColor.z;
     float lightMultiplier = max(dot(worldNormal, -lightDirection), 0) * lightIntensity;
     outColor = lightMultiplier * color + ambientColor * ambientIntensity;
 }

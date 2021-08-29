@@ -23,6 +23,7 @@ public class MeshImporter {
             String line;
             List<String> vertLines = new ArrayList<>();
             List<String> normLines = new ArrayList<>();
+            List<String> uvLines = new ArrayList<>();
             List<String> faceLines = new ArrayList<>();
 
             while (fileReader.hasNextLine()) {
@@ -35,37 +36,48 @@ public class MeshImporter {
                 else if (line.startsWith("vn"))
                     normLines.add(line);
 
+                else if (line.startsWith("vt"))
+                    uvLines.add(line);
+
                 else if (line.startsWith("f"))
                     faceLines.add(line);
             }
 
             int verts = vertLines.size();
             int norms = normLines.size();
+            int uvNum = uvLines.size();
             int faces = faceLines.size();
 
             float[] positions = new float[verts * 3];
             float[] normals = new float[norms * 3];
+            float[] uvs = new float[uvNum * 2];
             int[] positionIndices = new int[faces * 3];
-
-            String vertLine;
 
             for (int vert = 0; vert < verts; vert++) {
 
-                vertLine = vertLines.get(vert);
+                String vertLine = vertLines.get(vert);
                 vertLine = vertLine.replace("v ", "");
                 String[] v = vertLine.split(" ");
 
                 for (int i = 0; i < 3; i++) {
                     positions[vert * 3 + i] = Float.parseFloat(v[i]);
-
                 }
             }
 
-            String normLine;
+            for (int uv = 0; uv < uvNum; uv++) {
+
+                String uvLine = uvLines.get(uv);
+                uvLine = uvLine.replace("vt ", "");
+                String[] vt = uvLine.split(" ");
+
+                uvs[uv * 2] = Float.parseFloat(vt[0]);
+                uvs[uv * 2 + 1] = Float.parseFloat(vt[1]);
+
+            }
 
             for (int norm = 0; norm < norms; norm++) {
 
-                normLine = normLines.get(norm);
+                String normLine = normLines.get(norm);
                 normLine = normLine.replace("vn ", "");
                 String[] vn = normLine.split(" ");
 
@@ -74,14 +86,13 @@ public class MeshImporter {
                 }
             }
 
-            String faceLine;
             float[] arrangedNormals = new float[verts * 3];
             int normalIndice;
             int positionIndice;
 
             for (int face = 0; face < faces; face++) {
 
-                faceLine = faceLines.get(face);
+                String faceLine = faceLines.get(face);
                 faceLine = faceLine.replace("f ", "");
                 String [] f = faceLine.split(" ");
 
@@ -99,7 +110,7 @@ public class MeshImporter {
             }
 
             fileReader.close();
-            return new Mesh(positions, arrangedNormals, new float[verts * 2], positionIndices);
+            return new Mesh(positions, arrangedNormals, uvs, positionIndices);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

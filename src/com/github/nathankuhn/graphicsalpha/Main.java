@@ -1,6 +1,5 @@
 package com.github.nathankuhn.graphicsalpha;
 
-import com.github.nathankuhn.graphicsalpha.display.Draw;
 import com.github.nathankuhn.graphicsalpha.display.Window;
 import com.github.nathankuhn.graphicsalpha.engine.EnvironmentLight;
 import com.github.nathankuhn.graphicsalpha.engine.Mesh;
@@ -8,18 +7,15 @@ import com.github.nathankuhn.graphicsalpha.engine.RenderObject;
 import com.github.nathankuhn.graphicsalpha.engine.Renderer;
 import com.github.nathankuhn.graphicsalpha.utils.*;
 import org.lwjgl.*;
-import org.lwjgl.opengl.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11C.glEnable;
 
 public class Main {
 
-    private Window window;
-    private Timer timer;
+    private final Window window;
+    private final Timer timer;
 
     public Main() {
         window = new Window(500, 500);
@@ -32,7 +28,7 @@ public class Main {
 
         Mesh obj = MeshImporter.LoadFromOBJ("cube.obj");
         RenderObject renderObject = new RenderObject(obj, null);
-        renderObject.transform.setPosition(new Vector3f(0.0f, 0.0f, -5.0f));
+        renderObject.transform.setPosition(new Vector3f(0.0f, 0.0f, -3.0f));
 
         Vector3f sunDirection = VectorMath.Normalize(new Vector3f(0.5f, -1.0f, -0.5f));
         Color sunColor = new Color(1.0f, 1.0f, 1.0f);
@@ -63,7 +59,6 @@ public class Main {
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
 
-        float t = 0.0f;
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
