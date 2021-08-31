@@ -1,28 +1,28 @@
 package com.github.nathankuhn.graphicsalpha.engine;
 
 import com.github.nathankuhn.graphicsalpha.utils.Color;
+import com.github.nathankuhn.graphicsalpha.utils.Texture;
+
+import java.nio.ByteBuffer;
 
 public class Material {
 
-    private Color[][] albedo;
-    private Color[][] normal;
-    private float[][] specular;
+    private Texture albedo;
 
-    public Material(Color[][] albedo, Color[][] normal, float[][] specular) {
+    public Material(Texture albedo) {
         this.albedo = albedo;
-        this.normal = normal;
-        this.specular = specular;
     }
 
-    public Color[][] getAlbedo() {
+    public Texture getAlbedo() {
         return albedo;
     }
-
-    public Color[][] getNormal() {
-        return normal;
+    public int getTextureWidth() {
+        return albedo.getWidth();
     }
-
-    public float[][] getSpecular() {
-        return specular;
+    public int getTextureHeight() {
+        return albedo.getHeight();
+    }
+    public ByteBuffer getTextureBuffer() {
+        return albedo.getBuffer();
     }
 }

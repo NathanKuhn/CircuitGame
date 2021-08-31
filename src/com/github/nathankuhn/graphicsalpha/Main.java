@@ -1,12 +1,11 @@
 package com.github.nathankuhn.graphicsalpha;
 
 import com.github.nathankuhn.graphicsalpha.display.Window;
-import com.github.nathankuhn.graphicsalpha.engine.EnvironmentLight;
-import com.github.nathankuhn.graphicsalpha.engine.Mesh;
-import com.github.nathankuhn.graphicsalpha.engine.RenderObject;
-import com.github.nathankuhn.graphicsalpha.engine.Renderer;
+import com.github.nathankuhn.graphicsalpha.engine.*;
 import com.github.nathankuhn.graphicsalpha.utils.*;
 import org.lwjgl.*;
+
+import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -27,7 +26,10 @@ public class Main {
         System.out.println("Press enter to print ups");
 
         Mesh obj = MeshImporter.LoadFromOBJ("cube.obj");
-        RenderObject renderObject = new RenderObject(obj, null);
+        Texture tex = Texture.LoadPNG("cube_1mx1m.png");
+        Material mat = new Material(tex);
+
+        RenderObject renderObject = new RenderObject(obj, mat);
         renderObject.transform.setPosition(new Vector3f(0.0f, 0.0f, -3.0f));
 
         Vector3f sunDirection = VectorMath.Normalize(new Vector3f(0.5f, -1.0f, -0.5f));
@@ -62,7 +64,7 @@ public class Main {
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            Vector3f rotationVector = new Vector3f(1.0f, 0.0f, 0.7f);
+            Vector3f rotationVector = new Vector3f(0.0f, 0.4f, 0.0f);
             rotationVector.scaleSet(timer.deltaTime());
             renderObject.transform.rotate(rotationVector);
 

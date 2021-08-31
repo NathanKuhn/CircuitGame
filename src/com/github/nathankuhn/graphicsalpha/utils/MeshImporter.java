@@ -87,8 +87,10 @@ public class MeshImporter {
             }
 
             float[] arrangedNormals = new float[verts * 3];
-            int normalIndice;
-            int positionIndice;
+            float[] arrangedUvs = new float[verts * 2];
+            int normalIndex;
+            int positionIndex;
+            int uvIndex;
 
             for (int face = 0; face < faces; face++) {
 
@@ -97,20 +99,24 @@ public class MeshImporter {
                 String [] f = faceLine.split(" ");
 
                 for (int i = 0; i < 3; i++) {
-                    positionIndice = Integer.parseInt(f[i].split("/")[0]) - 1;
-                    normalIndice = Integer.parseInt(f[i].split("/")[2]) - 1;
+                    positionIndex = Integer.parseInt(f[i].split("/")[0]) - 1;
+                    normalIndex = Integer.parseInt(f[i].split("/")[2]) - 1;
+                    uvIndex = Integer.parseInt(f[i].split("/")[1]) - 1;
 
-                    positionIndices[face * 3 + i] = positionIndice;
+                    positionIndices[face * 3 + i] = positionIndex;
 
                     for (int j = 0; j < 3; j++) {
-                        arrangedNormals[positionIndice * 3 + j] = normals[normalIndice * 3 + j];
+                        arrangedNormals[positionIndex * 3 + j] = normals[normalIndex * 3 + j];
+                    }
+                    for (int j = 0; j < 2; j++) {
+                        arrangedUvs[positionIndex * 2 + j] = uvs[uvIndex * 2 + j];
                     }
                 }
 
             }
 
             fileReader.close();
-            return new Mesh(positions, arrangedNormals, uvs, positionIndices);
+            return new Mesh(positions, arrangedNormals, arrangedUvs, positionIndices);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

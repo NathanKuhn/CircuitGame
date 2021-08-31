@@ -111,7 +111,6 @@ public class ShaderProgram {
         uniforms.put(uniformName, uniformLocation);
 
     }
-
     public void setUniform(String uniformName, Matrix4 value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer fb = stack.mallocFloat(16);
@@ -120,7 +119,6 @@ public class ShaderProgram {
             glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
         }
     }
-
     public void setUniform(String uniformName, Vector3f value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer fb = stack.mallocFloat(3);
@@ -129,7 +127,6 @@ public class ShaderProgram {
             glUniform3fv(uniforms.get(uniformName), fb);
         }
     }
-
     public void setUniform(String uniformName, float value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer fb = stack.mallocFloat(1);
@@ -137,6 +134,9 @@ public class ShaderProgram {
             fb.flip();
             glUniform1fv(uniforms.get(uniformName), fb);
         }
+    }
+    public void setUniform(String uniformName, int value) {
+        glUniform1i(uniforms.get(uniformName), value);
     }
 
 }

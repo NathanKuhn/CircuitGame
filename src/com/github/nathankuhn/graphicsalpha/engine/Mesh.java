@@ -77,7 +77,6 @@ public class Mesh {
         }
 
         return ret;
-
     }
 
     public float[] getFlatNormals() {
@@ -91,7 +90,6 @@ public class Mesh {
         }
 
         return ret;
-
     }
 
     public int[] getFlatFaceIndices() {
@@ -105,6 +103,17 @@ public class Mesh {
         }
 
         return ret;
+    }
 
+    public float[] getFlatUVs() {
+
+        float[] ret = new float[vertUVs.length * 2];
+
+        for (int vert = 0; vert < vertUVs.length; vert++) {
+            ret[vert * 2] = vertUVs[vert].x;
+            ret[vert * 2 + 1] = 1.0f - vertUVs[vert].y; // for some reason in openGL, the v coordinate is flipped
+        }
+
+        return ret;
     }
 }
