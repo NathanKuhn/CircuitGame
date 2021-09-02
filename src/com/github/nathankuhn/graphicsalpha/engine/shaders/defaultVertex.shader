@@ -10,6 +10,7 @@ out vec2 texCoord;
 uniform mat4 projectionMatrix;
 uniform mat4 transformMatrix;
 uniform mat4 rotationMatrix;
+uniform mat4 viewMatrix;
 
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
@@ -19,7 +20,7 @@ uniform float ambientIntensity;
 
 void main()
 {
-    gl_Position = projectionMatrix * transformMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * viewMatrix * transformMatrix * vec4(position, 1.0);
     vec3 worldNormal = (rotationMatrix * vec4(normal, 1.0)).xyz;
     float lightMultiplier = max(dot(worldNormal, -lightDirection), 0) * lightIntensity;
     outColor = lightMultiplier * lightColor + ambientColor * ambientIntensity;

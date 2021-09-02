@@ -40,6 +40,7 @@ public class RenderObject {
         shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("transformMatrix");
         shaderProgram.createUniform("rotationMatrix");
+        shaderProgram.createUniform("viewMatrix");
         shaderProgram.createUniform("texture_sampler");
         shaderProgram.createUniform("lightDirection");
         shaderProgram.createUniform("lightColor");
@@ -98,13 +99,14 @@ public class RenderObject {
         glGenerateMipmap(GL_TEXTURE_2D);
     }
 
-    public void render(Window window, EnvironmentLight light) {
+    public void render(Window window, Camera camera, EnvironmentLight light) {
 
         shaderProgram.bind();
 
         shaderProgram.setUniform("projectionMatrix", window.getProjectionMatrix());
         shaderProgram.setUniform("transformMatrix", transform.getMatrix());
         shaderProgram.setUniform("rotationMatrix", transform.getRotationMatrix());
+        shaderProgram.setUniform("viewMatrix", camera.getViewMatrix());
         shaderProgram.setUniform("texture_sampler", 0);
         shaderProgram.setUniform("lightDirection", light.getSunDirection());
         shaderProgram.setUniform("lightColor", new Vector3f(light.getSunColor()));

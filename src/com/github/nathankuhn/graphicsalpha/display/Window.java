@@ -135,6 +135,10 @@ public class Window {
         return glfwWindowShouldClose(window);
     }
 
+    public boolean isKeyPressed(int keyCode) {
+        return glfwGetKey(window, keyCode) == GLFW_PRESS;
+    }
+
     public Matrix4 getProjectionMatrix() {
         return projectionMatrix;
     }

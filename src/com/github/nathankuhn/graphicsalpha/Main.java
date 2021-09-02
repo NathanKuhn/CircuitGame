@@ -2,16 +2,18 @@ package com.github.nathankuhn.graphicsalpha;
 
 import com.github.nathankuhn.graphicsalpha.display.Window;
 import com.github.nathankuhn.graphicsalpha.engine.*;
+import com.github.nathankuhn.graphicsalpha.input.MouseInput;
 import com.github.nathankuhn.graphicsalpha.utils.*;
 import org.lwjgl.*;
-
-import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
+
+    public static final float MOVE_SPEED = 2.0f;
+    public static final float MOUSE_SENSITIVITY = 10.0f;
 
     private final Window window;
     private final Timer timer;
@@ -32,6 +34,8 @@ public class Main {
         RenderObject renderObject = new RenderObject(obj, mat);
         renderObject.transform.setPosition(new Vector3f(0.0f, 0.0f, -3.0f));
 
+        Camera camera = new Camera(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
+
         Vector3f sunDirection = VectorMath.Normalize(new Vector3f(0.5f, -1.0f, -0.5f));
         Color sunColor = new Color(1.0f, 1.0f, 1.0f);
         float sunIntensity = 1.0f;
@@ -41,10 +45,13 @@ public class Main {
 
         EnvironmentLight sun = new EnvironmentLight(sunDirection, sunColor, sunIntensity, ambientColor, ambientIntensity);
 
-        Renderer renderer = new Renderer(window, renderObject, sun);
+        Renderer renderer = new Renderer(window, renderObject, camera, sun);
+
+        MouseInput input = new MouseInput();
 
         window.init();
         renderer.init();
+        input.init(window);
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window.getHandle(), (window, key, scancode, action, mods) -> {
@@ -61,15 +68,44 @@ public class Main {
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
 
+        Vector3f cameraMovement = new Vector3f(0.0f, 0.0f, 0.0f);
+
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            Vector3f rotationVector = new Vector3f(0.0f, 0.4f, 0.0f);
-            rotationVector.scaleSet(timer.deltaTime());
-            renderObject.transform.rotate(rotationVector);
+//            Vector3f rotationVector = new Vector3f(0.0f, 0.0f, 0.0f);
+//            rotationVector.scaleSet(timer.deltaTime());
+//            renderObject.transform.rotate(rotationVector);
+
+            cameraMovement.set(0,0,0);
+
+            if (window.isKeyPressed(GLFW_KEY_W)) {
+                cameraMovement.z = -1.0f;
+            } else if (window.isKeyPressed(GLFW_KEY_S)) {
+                cameraMovement.z = 1.0f;
+            }
+            if (window.isKeyPressed(GLFW_KEY_A)) {
+                cameraMovement.x = -1.0f;
+            } else if (window.isKeyPressed(GLFW_KEY_D)) {
+                cameraMovement.x = 1.0f;
+            }
+            if (window.isKeyPressed(GLFW_KEY_Z)) {
+                cameraMovement.y = -1.0f;
+            } else if (window.isKeyPressed(GLFW_KEY_X)) {
+                cameraMovement.y = 1.0f;
+            }
+            cameraMovement.scaleSet(MOVE_SPEED * timer.deltaTime());
+            camera.move(cameraMovement);
+
+            if (input.isRightButtonPressed()) {
+                Vector2f rotVec = input.getDisplaceVec();
+                rotVec.scaleSet(timer.deltaTime());
+                camera.rotate(-rotVec.x * MOUSE_SENSITIVITY, -rotVec.y * MOUSE_SENSITIVITY, 0.0f);
+            }
 
             renderer.render();
             window.update();
+            input.input(window);
             timer.update();
         }
 

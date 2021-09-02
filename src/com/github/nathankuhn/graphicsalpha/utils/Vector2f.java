@@ -14,4 +14,9 @@ public class Vector2f {
         this.y = vector.y;
     }
 
+    public void scaleSet(float t) {
+        x *= t;
+        y *= t;
+    }
+
 }

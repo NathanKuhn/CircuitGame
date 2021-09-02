@@ -9,5 +9,5 @@ uniform sampler2D texture_sampler;
 
 void main()
 {
-    fragColor = texture(texture_sampler, texCoord);
+    fragColor = texture(texture_sampler, texCoord) * (outColor.x + outColor.y + outColor.z) / 3;
 }

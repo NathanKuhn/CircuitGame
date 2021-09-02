@@ -54,6 +54,7 @@ public class ShaderProgram {
     private void link() throws Exception {
         glLinkProgram(programId);
         if (glGetProgrami(programId, GL_LINK_STATUS) == 0) {
+            System.out.println("Error linking shader code: " + glGetProgramInfoLog(programId, 1024));
             throw new Exception("Error linking shader code: " + glGetProgramInfoLog(programId, 1024));
         }
 

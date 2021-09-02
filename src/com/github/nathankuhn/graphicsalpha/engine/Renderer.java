@@ -1,18 +1,21 @@
 package com.github.nathankuhn.graphicsalpha.engine;
 
 import com.github.nathankuhn.graphicsalpha.display.Window;
+import com.github.nathankuhn.graphicsalpha.utils.Vector3f;
 
 import static org.lwjgl.opengl.GL11.glViewport;
 
 public class Renderer {
 
+    private Camera camera;
     private RenderObject renderObject;
     private Window window;
     private EnvironmentLight light;
 
-    public Renderer(Window window, RenderObject renderObject, EnvironmentLight environmentLight) {
+    public Renderer(Window window, RenderObject renderObject, Camera camera, EnvironmentLight environmentLight) {
         this.renderObject = renderObject;
         this.window = window;
+        this.camera = camera;
         light = environmentLight;
     }
 
@@ -31,7 +34,7 @@ public class Renderer {
             window.setResized(false);
         }
 
-        renderObject.render(window, light);
+        renderObject.render(window, camera, light);
     }
 
     public void cleanup() {
