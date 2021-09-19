@@ -1,6 +1,7 @@
 package com.github.nathankuhn.graphicsalpha.display;
 
 import com.github.nathankuhn.graphicsalpha.utils.Matrix4;
+import com.github.nathankuhn.graphicsalpha.utils.Vector2f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;

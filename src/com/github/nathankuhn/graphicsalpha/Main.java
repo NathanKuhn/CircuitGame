@@ -4,7 +4,10 @@ import com.github.nathankuhn.graphicsalpha.display.Window;
 import com.github.nathankuhn.graphicsalpha.engine.*;
 import com.github.nathankuhn.graphicsalpha.input.MouseInput;
 import com.github.nathankuhn.graphicsalpha.utils.*;
+import com.github.nathankuhn.graphicsalpha.utils.Color;
 import org.lwjgl.*;
+
+import java.awt.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
@@ -13,7 +16,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Main {
 
     public static final float MOVE_SPEED = 2.0f;
-    public static final float MOUSE_SENSITIVITY = 10.0f;
+    public static final float MOUSE_SENSITIVITY = 50.0f;
 
     private final Window window;
     private final Timer timer;
@@ -29,29 +32,43 @@ public class Main {
 
         Mesh obj = MeshImporter.LoadFromOBJ("cube.obj");
         Texture tex = Texture.LoadPNG("cube_1mx1m.png");
-        Material mat = new Material(tex);
+        Material mat = new Material(
+                new Color(0.0f, 0.0f, 0.0f),
+                new Color(1.0f, 1.0f, 1.0f),
+                new Color(1.0f, 1.0f, 1.0f),
+                true,
+                0.3f
+        );
 
-        RenderObject renderObject = new RenderObject(obj, mat);
-        renderObject.transform.setPosition(new Vector3f(0.0f, 0.0f, -3.0f));
+        RenderObject cube01 = new RenderObject(obj, tex, mat);
+        cube01.transform.setPosition(new Vector3f(0.0f, 0.0f, 0.0f));
 
-        Camera camera = new Camera(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
+        RenderObject cube02 = new RenderObject(obj, tex, mat);
+        cube02.transform.setPosition(new Vector3f(2.0f, 0.0f, 0.0f));
 
-        Vector3f sunDirection = VectorMath.Normalize(new Vector3f(0.5f, -1.0f, -0.5f));
-        Color sunColor = new Color(1.0f, 1.0f, 1.0f);
-        float sunIntensity = 1.0f;
+        Scene scene = new Scene();
+        scene.addRenderObject(cube01);
+        scene.addRenderObject(cube02);
 
-        Color ambientColor = new Color(0.8f, 0.8f, 1.0f);
-        float ambientIntensity = 0.3f;
+        Color lightColor = new Color(1.0f, 1.0f, 1.0f);
+        Vector3f lightPosition = new Vector3f(0.0f, 0.0f, 2.0f);
+        float lightIntensity = 0.6f;
+        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
 
-        EnvironmentLight sun = new EnvironmentLight(sunDirection, sunColor, sunIntensity, ambientColor, ambientIntensity);
+        PointLight light = new PointLight(lightColor, lightPosition, lightIntensity, att);
 
-        Renderer renderer = new Renderer(window, renderObject, camera, sun);
+        Renderer renderer = new Renderer(window, scene, light);
 
-        MouseInput input = new MouseInput();
+        MouseInput input = new MouseInput(window);
 
         window.init();
-        renderer.init();
-        input.init(window);
+        try {
+            renderer.init();
+        } catch (Exception e) {
+            System.out.println("Error in render init");
+            e.printStackTrace();
+        }
+        input.init();
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window.getHandle(), (window, key, scancode, action, mods) -> {
@@ -69,13 +86,12 @@ public class Main {
         // the window or has pressed the ESCAPE key.
 
         Vector3f cameraMovement = new Vector3f(0.0f, 0.0f, 0.0f);
+        Vector3f lightMovement = new Vector3f(0.0f, 0.0f, 0.0f);
+
+        Camera camera = scene.getMainCamera();
 
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-//            Vector3f rotationVector = new Vector3f(0.0f, 0.0f, 0.0f);
-//            rotationVector.scaleSet(timer.deltaTime());
-//            renderObject.transform.rotate(rotationVector);
 
             cameraMovement.set(0,0,0);
 
@@ -97,15 +113,44 @@ public class Main {
             cameraMovement.scaleSet(MOVE_SPEED * timer.deltaTime());
             camera.move(cameraMovement);
 
-            if (input.isRightButtonPressed()) {
-                Vector2f rotVec = input.getDisplaceVec();
-                rotVec.scaleSet(timer.deltaTime());
-                camera.rotate(-rotVec.x * MOUSE_SENSITIVITY, -rotVec.y * MOUSE_SENSITIVITY, 0.0f);
+            Vector2f rotVec = input.getDisplaceVec();
+            rotVec.scaleSet(timer.deltaTime());
+            camera.rotate(-rotVec.x * MOUSE_SENSITIVITY, -rotVec.y * MOUSE_SENSITIVITY, 0.0f);
+
+            Vector3f rot = camera.getRotation();
+
+            if (rot.x > 90) {
+                rot.x = 90;
+            } else if (rot.x < -90) {
+                rot.x = -90;
             }
+
+            lightMovement.set(0,0,0);
+
+            if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
+                lightMovement.x = 0.7f;
+            }
+            if (window.isKeyPressed(GLFW_KEY_LEFT)) {
+                lightMovement.x = -0.7f;
+            }
+            if (window.isKeyPressed(GLFW_KEY_UP)) {
+                lightMovement.y = 0.7f;
+            }
+            if (window.isKeyPressed(GLFW_KEY_DOWN)) {
+                lightMovement.y = -0.7f;
+            }
+            if (window.isKeyPressed(GLFW_KEY_PERIOD)) {
+                lightMovement.z = 0.7f;
+            }
+            if (window.isKeyPressed(GLFW_KEY_COMMA)) {
+                lightMovement.z = -0.7f;
+            }
+
+            light.getPosition().addSet(VectorMath.Scale(lightMovement, timer.deltaTime()));
 
             renderer.render();
             window.update();
-            input.input(window);
+            input.update();
             timer.update();
         }
 

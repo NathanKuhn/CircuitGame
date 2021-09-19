@@ -26,4 +26,11 @@ public class Vector4f {
         this.w = w;
     }
 
+    public float[] getArray() {
+        return new float[] {x, y, z, w};
+    }
+
+    public Vector3f toVector3f() {
+        return new Vector3f(x, y, z);
+    }
 }

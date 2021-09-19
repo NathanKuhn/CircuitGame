@@ -39,12 +39,12 @@ public class Camera {
     }
     public void move(float x, float y, float z) {
         if (z != 0) {
-            position.x += (float)Math.sin(rotation.y) * z;
-            position.z += (float)Math.cos(rotation.y) * z;
+            position.x += (float)Math.sin(Math.toRadians(rotation.y)) * z;
+            position.z += (float)Math.cos(Math.toRadians(rotation.y)) * z;
         }
         if (x != 0) {
-            position.x += (float)Math.sin(rotation.y + Math.toRadians(90)) * x;
-            position.z += (float)Math.cos(rotation.y + Math.toRadians(90)) * x;
+            position.x += (float)Math.sin(Math.toRadians(rotation.y + 90)) * x;
+            position.z += (float)Math.cos(Math.toRadians(rotation.y + 90)) * x;
         }
         position.y += y;
     }

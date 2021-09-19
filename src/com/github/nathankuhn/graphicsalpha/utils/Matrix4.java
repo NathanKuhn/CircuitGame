@@ -89,6 +89,15 @@ public class Matrix4 {
         return out;
     }
 
+    public static Vector4f Multiply(Matrix4 matrix, Vector4f vector) {
+        Vector4f ret = new Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
+        ret.x = vector.x * matrix.get(0, 0) + vector.y * matrix.get(0, 1) + vector.z * matrix.get(0, 2) + vector.w * matrix.get(0, 3);
+        ret.y = vector.x * matrix.get(1, 0) + vector.y * matrix.get(1, 1) + vector.z * matrix.get(1, 2) + vector.w * matrix.get(1, 3);
+        ret.z = vector.x * matrix.get(2, 0) + vector.y * matrix.get(2, 1) + vector.z * matrix.get(2, 2) + vector.w * matrix.get(2, 3);
+        ret.w = vector.x * matrix.get(3, 0) + vector.y * matrix.get(3, 1) + vector.z * matrix.get(3, 2) + vector.w * matrix.get(3, 3);
+        return ret;
+    }
+
     public static Matrix4 Perspective(float FOV, float aspectRatio, float Z_NEAR, float Z_FAR) {
 
         Matrix4 out = new Matrix4();
@@ -140,6 +149,8 @@ public class Matrix4 {
 
     public static Matrix4 RotationX(float t) {
 
+        t = (float) Math.toRadians(t);
+
         Matrix4 out = new Matrix4();
 
         out.set(1, 1, Math.cos(t));
@@ -152,6 +163,8 @@ public class Matrix4 {
 
     public static Matrix4 RotationY(float t) {
 
+        t = (float) Math.toRadians(t);
+
         Matrix4 out = new Matrix4();
 
         out.set(0, 0, Math.cos(t));
@@ -163,6 +176,8 @@ public class Matrix4 {
     }
 
     public static Matrix4 RotationZ(float t) {
+
+        t = (float) Math.toRadians(t);
 
         Matrix4 out = new Matrix4();
 

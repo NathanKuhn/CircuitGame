@@ -7,22 +7,53 @@ import java.nio.ByteBuffer;
 
 public class Material {
 
-    private Texture albedo;
+    private Color ambient;
+    private Color diffuse;
+    private Color specular;
+    private boolean textured;
+    private float reflectance;
 
-    public Material(Texture albedo) {
-        this.albedo = albedo;
+    public Material(Color ambient, Color diffuse, Color specular, boolean textured, float reflectance) {
+        this.ambient = ambient;
+        this.diffuse = diffuse;
+        this.specular = specular;
+        this.textured = textured;
+        this.reflectance = reflectance;
     }
 
-    public Texture getAlbedo() {
-        return albedo;
+    public Color getAmbient() {
+        return ambient;
     }
-    public int getTextureWidth() {
-        return albedo.getWidth();
+
+    public void setAmbient(Color ambient) {
+        this.ambient = ambient;
     }
-    public int getTextureHeight() {
-        return albedo.getHeight();
+
+    public Color getDiffuse() {
+        return diffuse;
     }
-    public ByteBuffer getTextureBuffer() {
-        return albedo.getBuffer();
+
+    public void setDiffuse(Color diffuse) {
+        this.diffuse = diffuse;
+    }
+
+    public Color getSpecular() {
+        return specular;
+    }
+
+    public void setSpecular(Color specular) {
+        this.specular = specular;
+    }
+
+    public boolean isTextured() {
+        return textured;
+    }
+
+    public float getReflectance() {
+        return reflectance;
+    }
+
+    public void setReflectance(float reflectance) {
+        this.reflectance = reflectance;
     }
 }
