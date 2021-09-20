@@ -33,7 +33,7 @@ public class Main {
         Mesh obj = MeshImporter.LoadFromOBJ("cube.obj");
         Texture tex = Texture.LoadPNG("cube_1mx1m.png");
         Material mat = new Material(
-                new Color(0.0f, 0.0f, 0.0f),
+                new Color(1.0f, 1.0f, 1.0f),
                 new Color(1.0f, 1.0f, 1.0f),
                 new Color(1.0f, 1.0f, 1.0f),
                 true,
@@ -42,9 +42,11 @@ public class Main {
 
         RenderObject cube01 = new RenderObject(obj, tex, mat);
         cube01.transform.setPosition(new Vector3f(0.0f, 0.0f, 0.0f));
+        cube01.transform.setScale(new Vector3f(0.5f, 0.5f, 0.5f));
 
         RenderObject cube02 = new RenderObject(obj, tex, mat);
-        cube02.transform.setPosition(new Vector3f(2.0f, 0.0f, 0.0f));
+        cube02.transform.setPosition(new Vector3f(1.0f, 0.0f, 0.0f));
+        cube02.transform.setScale(new Vector3f(0.5f, 0.5f, 0.5f));
 
         Scene scene = new Scene();
         scene.addRenderObject(cube01);
