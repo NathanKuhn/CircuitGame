@@ -1,3 +1,2 @@
-# GraphicsAlpha
-A graphics engine using lwjgl.
+# CircuitGame
 Developed using https://lwjglgamedev.gitbooks.io/3d-game-development-with-lwjgl/content/
