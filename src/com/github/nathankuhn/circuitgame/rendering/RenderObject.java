@@ -1,4 +1,4 @@
-package com.github.nathankuhn.circuitgame.engine;
+package com.github.nathankuhn.circuitgame.rendering;
 
 import com.github.nathankuhn.circuitgame.utils.*;
 import org.lwjgl.system.MemoryUtil;
@@ -16,7 +16,6 @@ public class RenderObject {
 
     private Mesh mesh;
     private Texture texture;
-    private Material material;
 
     private int vaoID;
     private int positionVboID;
@@ -25,15 +24,10 @@ public class RenderObject {
     private int uvsVboID;
     private int textureID;
 
-    public RenderObject(Mesh mesh, Texture texture, Material material) {
+    public RenderObject(Mesh mesh, Texture texture) {
         this.transform = new Transform(new Vector3f(0.0f, 0.0f, 0.0f));
         this.mesh = mesh;
         this.texture = texture;
-        this.material = material;
-    }
-
-    public Material getMaterial() {
-        return material;
     }
 
     protected int getVaoID() {

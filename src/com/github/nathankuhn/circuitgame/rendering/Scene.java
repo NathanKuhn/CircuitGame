@@ -1,4 +1,4 @@
-package com.github.nathankuhn.circuitgame.engine;
+package com.github.nathankuhn.circuitgame.rendering;
 
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
 

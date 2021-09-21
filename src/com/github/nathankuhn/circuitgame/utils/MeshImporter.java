@@ -1,6 +1,6 @@
 package com.github.nathankuhn.circuitgame.utils;
 
-import com.github.nathankuhn.circuitgame.engine.Mesh;
+import com.github.nathankuhn.circuitgame.rendering.Mesh;
 
 import java.io.File;
 import java.io.FileNotFoundException;

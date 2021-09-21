@@ -1,4 +1,4 @@
-package com.github.nathankuhn.circuitgame.engine;
+package com.github.nathankuhn.circuitgame.rendering;
 
 import com.github.nathankuhn.circuitgame.utils.Color;
 import com.github.nathankuhn.circuitgame.utils.Matrix4;
@@ -167,23 +167,6 @@ public class ShaderProgram {
     }
     public void setUniform(String uniformName, Color value) {
         setUniform(uniformName, value.toVector());
-    }
-    public void setUniform(String uniformName, PointLight pointLight) {
-
-        setUniform(uniformName + ".color", pointLight.getColor());
-        setUniform(uniformName + ".position", pointLight.getPosition());
-        setUniform(uniformName + ".intensity", pointLight.getIntensity());
-        PointLight.Attenuation att = pointLight.getAtt();
-        setUniform(uniformName + ".att.constant", att.getConstant());
-        setUniform(uniformName + ".att.linear", att.getLinear());
-        setUniform(uniformName + ".att.exponent", att.getExponent());
-    }
-    public void setUniform(String uniformName, Material material) {
-        setUniform(uniformName + ".ambient", material.getAmbient());
-        setUniform(uniformName + ".diffuse", material.getDiffuse());
-        setUniform(uniformName + ".specular", material.getSpecular());
-        setUniform(uniformName + ".hasTexture", material.isTextured() ? 1 : 0);
-        setUniform(uniformName + ".reflectance", material.getReflectance());
     }
 
 }

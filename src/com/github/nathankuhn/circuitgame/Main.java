@@ -1,10 +1,9 @@
 package com.github.nathankuhn.circuitgame;
 
 import com.github.nathankuhn.circuitgame.display.Window;
-import com.github.nathankuhn.circuitgame.engine.*;
+import com.github.nathankuhn.circuitgame.rendering.*;
 import com.github.nathankuhn.circuitgame.input.MouseInput;
 import com.github.nathankuhn.circuitgame.utils.*;
-import com.github.nathankuhn.circuitgame.utils.Color;
 import org.lwjgl.*;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -30,19 +29,12 @@ public class Main {
 
         Mesh obj = MeshImporter.LoadFromOBJ("cube.obj");
         Texture tex = Texture.LoadPNG("cube_1mx1m.png");
-        Material mat = new Material(
-                new Color(1.0f, 1.0f, 1.0f),
-                new Color(1.0f, 1.0f, 1.0f),
-                new Color(1.0f, 1.0f, 1.0f),
-                true,
-                0.3f
-        );
 
-        RenderObject cube01 = new RenderObject(obj, tex, mat);
+        RenderObject cube01 = new RenderObject(obj, tex);
         cube01.transform.setPosition(new Vector3f(0.0f, 0.0f, 0.0f));
         cube01.transform.setScale(new Vector3f(0.5f, 0.5f, 0.5f));
 
-        RenderObject cube02 = new RenderObject(obj, tex, mat);
+        RenderObject cube02 = new RenderObject(obj, tex);
         cube02.transform.setPosition(new Vector3f(1.0f, 0.0f, 0.0f));
         cube02.transform.setScale(new Vector3f(0.5f, 0.5f, 0.5f));
 
@@ -50,14 +42,7 @@ public class Main {
         scene.addRenderObject(cube01);
         scene.addRenderObject(cube02);
 
-        Color lightColor = new Color(1.0f, 1.0f, 1.0f);
-        Vector3f lightPosition = new Vector3f(0.0f, 0.0f, 2.0f);
-        float lightIntensity = 0.6f;
-        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
-
-        PointLight light = new PointLight(lightColor, lightPosition, lightIntensity, att);
-
-        Renderer renderer = new Renderer(window, scene, light);
+        Renderer renderer = new Renderer(window, scene);
 
         MouseInput input = new MouseInput(window);
 
@@ -86,7 +71,6 @@ public class Main {
         // the window or has pressed the ESCAPE key.
 
         Vector3f cameraMovement = new Vector3f(0.0f, 0.0f, 0.0f);
-        Vector3f lightMovement = new Vector3f(0.0f, 0.0f, 0.0f);
 
         Camera camera = scene.getMainCamera();
 
@@ -124,29 +108,6 @@ public class Main {
             } else if (rot.x < -90) {
                 rot.x = -90;
             }
-
-            lightMovement.set(0,0,0);
-
-            if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
-                lightMovement.x = 0.7f;
-            }
-            if (window.isKeyPressed(GLFW_KEY_LEFT)) {
-                lightMovement.x = -0.7f;
-            }
-            if (window.isKeyPressed(GLFW_KEY_UP)) {
-                lightMovement.y = 0.7f;
-            }
-            if (window.isKeyPressed(GLFW_KEY_DOWN)) {
-                lightMovement.y = -0.7f;
-            }
-            if (window.isKeyPressed(GLFW_KEY_PERIOD)) {
-                lightMovement.z = 0.7f;
-            }
-            if (window.isKeyPressed(GLFW_KEY_COMMA)) {
-                lightMovement.z = -0.7f;
-            }
-
-            light.getPosition().addSet(VectorMath.Scale(lightMovement, timer.deltaTime()));
 
             renderer.render();
             window.update();
