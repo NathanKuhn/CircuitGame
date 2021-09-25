@@ -9,6 +9,8 @@ import org.lwjgl.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11C.glEnable;
 
 public class Main {
 
@@ -17,30 +19,33 @@ public class Main {
 
     private final Window window;
     private final Timer timer;
+    private boolean polygon;
 
     public Main() {
         window = new Window(500, 500);
         timer = new Timer();
+        polygon = true;
     }
 
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
         System.out.println("Press enter to print ups");
 
-        Mesh obj = MeshImporter.LoadFromOBJ("cube.obj");
+        //Mesh obj = MeshImporter.LoadFromOBJ("cube.obj");
+        boolean[] map = new boolean[4096];
+        map[0] = true;
+        map[1] = true;
+        map[2] = true;
+
+        Chunk chunk = new Chunk(map);
+        chunk.update();
+        Mesh obj = chunk.getMesh();
+
         Texture tex = Texture.LoadPNG("cube_1mx1m.png");
 
-        RenderObject cube01 = new RenderObject(obj, tex);
-        cube01.transform.setPosition(new Vector3f(0.0f, 0.0f, 0.0f));
-        cube01.transform.setScale(new Vector3f(0.5f, 0.5f, 0.5f));
-
-        RenderObject cube02 = new RenderObject(obj, tex);
-        cube02.transform.setPosition(new Vector3f(1.0f, 0.0f, 0.0f));
-        cube02.transform.setScale(new Vector3f(0.5f, 0.5f, 0.5f));
-
+        RenderObject chunk01 = new RenderObject(obj, tex);
         Scene scene = new Scene();
-        scene.addRenderObject(cube01);
-        scene.addRenderObject(cube02);
+        scene.addRenderObject(chunk01);
 
         Renderer renderer = new Renderer(window, scene);
 
@@ -59,9 +64,10 @@ public class Main {
         glfwSetKeyCallback(window.getHandle(), (window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-            if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
+            if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
                 printFrameRate();
-            }
+            if (key == GLFW_KEY_M && action == GLFW_PRESS)
+                swapRenderModes();
         });
 
         // Set the clear color
@@ -122,6 +128,17 @@ public class Main {
 
     public void printFrameRate() {
         System.out.println(1.0f / timer.deltaTime());
+    }
+    public void swapRenderModes() {
+        if (polygon) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glDisable(GL_CULL_FACE);
+            polygon = false;
+        } else {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glEnable(GL_CULL_FACE);
+            polygon = true;
+        }
     }
 
     public static void main(String[] args) {

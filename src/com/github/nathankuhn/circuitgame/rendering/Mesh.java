@@ -2,7 +2,40 @@ package com.github.nathankuhn.circuitgame.rendering;
 
 import com.github.nathankuhn.circuitgame.utils.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Mesh {
+
+    public static Mesh CombineMesh(Mesh[] meshes) {
+
+        List<Vector3f> positions = new ArrayList<>();
+        List<Vector3f> normals = new ArrayList<>(); // TODO refactor to simple normal identifier
+        List<Vector2f> uvs = new ArrayList<>();
+        List<Vector3i> faces = new ArrayList<>();
+
+        int prevVerts = 0;
+
+        for (int mesh = 0; mesh < meshes.length; mesh++) {
+
+            positions.addAll(Arrays.asList(meshes[mesh].vertPositions));
+            normals.addAll(Arrays.asList(meshes[mesh].vertNormals));
+            uvs.addAll(Arrays.asList(meshes[mesh].vertUVs));
+            for (int i = 0; i < meshes[mesh].faceIndices.length; i++) {
+                faces.add(VectorMath.Add(meshes[mesh].faceIndices[i], new Vector3i(prevVerts, prevVerts, prevVerts)));
+            }
+            prevVerts += meshes[mesh].vertPositions.length;
+        }
+
+        return new Mesh(
+                positions.toArray(new Vector3f[0]),
+                normals.toArray(new Vector3f[0]),
+                uvs.toArray(new Vector2f[0]),
+                faces.toArray(new Vector3i[0])
+        );
+
+    }
 
     protected Vector3f[] vertPositions;
     protected Vector3f[] vertNormals;
