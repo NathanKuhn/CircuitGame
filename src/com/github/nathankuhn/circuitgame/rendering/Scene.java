@@ -11,8 +11,8 @@ public class Scene {
     private List<RenderObject> renderObjects;
     // TODO lights
 
-    public Scene() {
-        mainCamera = new Camera(new Vector3f(0.0f, 0.0f, 2.0f), new Vector3f(0.0f, 0.0f, 0.0f));
+    public Scene(Camera camera) {
+        mainCamera = camera;
         renderObjects = new ArrayList<>();
     }
 

@@ -1,6 +1,7 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
 import com.github.nathankuhn.circuitgame.utils.Vector3i;
+import com.github.nathankuhn.circuitgame.utils.VectorMath;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +20,11 @@ public class Chunk {
 
     private boolean[] blocks;
     private Mesh mesh;
+    private Vector3i location;
 
-    public Chunk(boolean[] blocks) {
+    public Chunk(boolean[] blocks, Vector3i location) {
         this.blocks = blocks;
+        this.location = location;
     }
 
     public void update() {
@@ -29,8 +32,7 @@ public class Chunk {
 
         for (int b = 0; b < 4096; b++) {
             if (blocks[b]) {
-                System.out.println(GetLocation(b).x);
-                Cube cube = new Cube(getData(GetLocation(b)), GetLocation(b));
+                Cube cube = new Cube(getData(GetLocation(b)), VectorMath.Add(GetLocation(b), location));
                 meshes.add(cube.getMesh());
             }
         }

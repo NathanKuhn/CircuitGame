@@ -6,6 +6,8 @@ import com.github.nathankuhn.circuitgame.input.MouseInput;
 import com.github.nathankuhn.circuitgame.utils.*;
 import org.lwjgl.*;
 
+import java.util.Arrays;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
@@ -34,17 +36,25 @@ public class Main {
         //Mesh obj = MeshImporter.LoadFromOBJ("cube.obj");
         boolean[] map = new boolean[4096];
         map[0] = true;
-        map[1] = true;
-        map[2] = true;
+        Chunk chunk = new Chunk(map, new Vector3i(0,0,0));
 
-        Chunk chunk = new Chunk(map);
+        // Basic terrain generation
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 3; y++) {
+                for (int z = 0; z < 16; z++) {
+                    chunk.placeBlock(x, y, z);
+                }
+            }
+        }
+
         chunk.update();
         Mesh obj = chunk.getMesh();
 
-        Texture tex = Texture.LoadPNG("cube_1mx1m.png");
+        Texture tex = Texture.LoadPNG("MissingTexture.png");
 
         RenderObject chunk01 = new RenderObject(obj, tex);
-        Scene scene = new Scene();
+        Camera camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
+        Scene scene = new Scene(camera);
         scene.addRenderObject(chunk01);
 
         Renderer renderer = new Renderer(window, scene);
@@ -77,8 +87,6 @@ public class Main {
         // the window or has pressed the ESCAPE key.
 
         Vector3f cameraMovement = new Vector3f(0.0f, 0.0f, 0.0f);
-
-        Camera camera = scene.getMainCamera();
 
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
