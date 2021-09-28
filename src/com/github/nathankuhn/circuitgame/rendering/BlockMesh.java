@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Cube{
+public class BlockMesh {
 
     private static final Vector3f[] NORTH_FACE = new Vector3f[] {
             new Vector3f(1,0,0),
@@ -103,13 +103,17 @@ public class Cube{
         return ret;
     }
 
-    private Mesh mesh;
-    private Vector3i location;
     private CubeSideData sides;
+    private Vector3i location;
+    private Block block;
+    private Mesh mesh;
+    private TextureAtlas textureAtlas;
 
-    public Cube(CubeSideData sides, Vector3i location) {
+    public BlockMesh(CubeSideData sides, Vector3i location, Block block, TextureAtlas textureAtlas) {
         this.sides = sides;
         this.location = location;
+        this.block = block;
+        this.textureAtlas = textureAtlas;
         mesh = new Mesh(new Vector3f[0], new Vector3f[0], new Vector2f[0], new Vector3i[0]);
         updateMesh();
     }
@@ -125,42 +129,42 @@ public class Cube{
         if (sides.north()) {
             positions.addAll(factorVerts(NORTH_FACE));
             normals.addAll(Arrays.asList(NORTH_NORMALS));
-            uvs.addAll(Arrays.asList(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS));
             faces.addAll(Arrays.asList(FACE_INDICES));
             prevVerts += 4;
         }
         if (sides.south()) {
             positions.addAll(factorVerts(SOUTH_FACE));
             normals.addAll(Arrays.asList(SOUTH_NORMALS));
-            uvs.addAll(Arrays.asList(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS));
             faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, prevVerts)));
             prevVerts += 4;
         }
         if (sides.east()) {
             positions.addAll(factorVerts(EAST_FACE));
             normals.addAll(Arrays.asList(EAST_NORMALS));
-            uvs.addAll(Arrays.asList(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS));
             faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, prevVerts)));
             prevVerts += 4;
         }
         if (sides.west()) {
             positions.addAll(factorVerts(WEST_FACE));
             normals.addAll(Arrays.asList(WEST_NORMALS));
-            uvs.addAll(Arrays.asList(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS));
             faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, prevVerts)));
             prevVerts += 4;
         }
         if (sides.up()) {
             positions.addAll(factorVerts(UP_FACE));
             normals.addAll(Arrays.asList(UP_NORMALS));
-            uvs.addAll(Arrays.asList(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS));
             faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, prevVerts)));
             prevVerts += 4;
         }
         if (sides.down()) {
             positions.addAll(factorVerts(DOWN_FACE));
             normals.addAll(Arrays.asList(DOWN_NORMALS));
-            uvs.addAll(Arrays.asList(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS));
             faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, prevVerts)));
             prevVerts += 4;
         }
@@ -180,6 +184,14 @@ public class Cube{
         List<Vector3f> ret = new ArrayList<>();
         for (int vert = 0; vert < verts.length; vert++) {
             ret.add(VectorMath.Add(verts[vert], location));
+        }
+        return ret;
+    }
+
+    private List<Vector2f> factorUVs(Vector2f[] uvs) {
+        List<Vector2f> ret = new ArrayList<>();
+        for (int uv = 0; uv < uvs.length; uv++) {
+            ret.add(textureAtlas.factorUV(uvs[uv], block.getTextureID()));
         }
         return ret;
     }

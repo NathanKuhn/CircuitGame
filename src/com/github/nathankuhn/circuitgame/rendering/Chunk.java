@@ -18,28 +18,31 @@ public class Chunk {
         return (x >= 0 && x < 16 && y >= 0 && y < 16 && z >= 0 && z < 16);
     }
 
-    private boolean[] blocks;
+    private int[] blockIDs;
     private Mesh mesh;
     private Vector3i location;
+    private TextureAtlas textureAtlas;
 
-    public Chunk(boolean[] blocks, Vector3i location) {
-        this.blocks = blocks;
+    public Chunk(int[] blocks, Vector3i location, TextureAtlas textureAtlas) {
+        this.blockIDs = blocks;
         this.location = location;
+        this.textureAtlas = textureAtlas;
     }
 
     public void update() {
         List<Mesh> meshes = new ArrayList<>();
 
         for (int b = 0; b < 4096; b++) {
-            if (blocks[b]) {
-                Cube cube = new Cube(getData(GetLocation(b)), VectorMath.Add(GetLocation(b), location));
+            if (blockIDs[b] != 0) {
+                Block block = new Block("Stone", "stone", blockIDs[b]);
+                BlockMesh cube = new BlockMesh(getData(GetLocation(b)), VectorMath.Add(GetLocation(b), location), block, textureAtlas);
                 meshes.add(cube.getMesh());
             }
         }
 
         mesh = Mesh.CombineMesh(meshes.toArray(new Mesh[0]));
     }
-    private Cube.CubeSideData getData(Vector3i p) {
+    private BlockMesh.CubeSideData getData(Vector3i p) {
 
         boolean north = hasBlock(p.x, p.y, p.z - 1);
         boolean south = hasBlock(p.x, p.y, p.z + 1);
@@ -48,23 +51,23 @@ public class Chunk {
         boolean up = hasBlock(p.x, p.y + 1, p.z);
         boolean down = hasBlock(p.x, p.y - 1, p.z);
 
-        return new Cube.CubeSideData(!north, !south, !east, !west, !up, !down);
+        return new BlockMesh.CubeSideData(!north, !south, !east, !west, !up, !down);
     }
     public Mesh getMesh() {
         return mesh;
     }
     public boolean hasBlock(int x, int y, int z) {
         if (InBounds(x, y, z)) {
-            return blocks[GetIndex(x, y, z)];
+            return blockIDs[GetIndex(x, y, z)] != 0;
         } else {
             return false;
         }
     }
-    public void placeBlock(int x, int y, int z) {
-        blocks[GetIndex(x, y, z)] = true;
+    public void placeBlock(int x, int y, int z, int blockID) {
+        blockIDs[GetIndex(x, y, z)] = blockID;
     }
     public void breakBlock(int x, int y, int z) {
-        blocks[GetIndex(x, y, z)] = false;
+        blockIDs[GetIndex(x, y, z)] = 0;
     }
 
 }

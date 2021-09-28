@@ -6,8 +6,6 @@ import com.github.nathankuhn.circuitgame.input.MouseInput;
 import com.github.nathankuhn.circuitgame.utils.*;
 import org.lwjgl.*;
 
-import java.util.Arrays;
-
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
@@ -33,16 +31,21 @@ public class Main {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
         System.out.println("Press enter to print ups");
 
-        //Mesh obj = MeshImporter.LoadFromOBJ("cube.obj");
-        boolean[] map = new boolean[4096];
-        map[0] = true;
-        Chunk chunk = new Chunk(map, new Vector3i(0,0,0));
+        Texture tex = Texture.LoadPNG("TextureAtlas.png");
+        TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
+
+        int[] map = new int[4096];
+        Chunk chunk = new Chunk(map, new Vector3i(0,0,0), textureAtlas);
 
         // Basic terrain generation
         for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 3; y++) {
+            for (int y = 0; y < 4; y++) {
                 for (int z = 0; z < 16; z++) {
-                    chunk.placeBlock(x, y, z);
+                    if (y >= 3) {
+                        chunk.placeBlock(x, y, z, 4);
+                    } else {
+                        chunk.placeBlock(x, y, z, 1);
+                    }
                 }
             }
         }
@@ -50,10 +53,8 @@ public class Main {
         chunk.update();
         Mesh obj = chunk.getMesh();
 
-        Texture tex = Texture.LoadPNG("MissingTexture.png");
-
         RenderObject chunk01 = new RenderObject(obj, tex);
-        Camera camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
+        Camera camera = new Camera(new Vector3f(0.0f, 5.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
         Scene scene = new Scene(camera);
         scene.addRenderObject(chunk01);
 
@@ -81,7 +82,7 @@ public class Main {
         });
 
         // Set the clear color
-        glClearColor(0.1f, 0.1f, 0.15f, 0.0f);
+        glClearColor(0.7f, 0.9f, 1.0f, 0.0f);
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.

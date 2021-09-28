@@ -15,7 +15,7 @@ public class RenderObject {
     public Transform transform;
 
     private Mesh mesh;
-    private Texture texture;
+    private Texture image;
 
     private int vaoID;
     private int positionVboID;
@@ -24,10 +24,10 @@ public class RenderObject {
     private int uvsVboID;
     private int textureID;
 
-    public RenderObject(Mesh mesh, Texture texture) {
+    public RenderObject(Mesh mesh, Texture image) {
         this.transform = new Transform(new Vector3f(0.0f, 0.0f, 0.0f));
         this.mesh = mesh;
-        this.texture = texture;
+        this.image = image;
     }
 
     protected int getVaoID() {
@@ -87,7 +87,7 @@ public class RenderObject {
         textureID = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, textureID);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.getWidth(), texture.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.getBuffer());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getWidth(), image.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getBuffer());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glGenerateMipmap(GL_TEXTURE_2D);
