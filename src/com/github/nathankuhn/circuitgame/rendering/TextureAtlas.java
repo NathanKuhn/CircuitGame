@@ -37,4 +37,8 @@ public class TextureAtlas {
         return atlasTextureWidth;
     }
 
+    public Texture getTexture() {
+        return texture;
+    }
+
 }

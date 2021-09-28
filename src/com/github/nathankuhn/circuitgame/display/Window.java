@@ -32,7 +32,7 @@ public class Window {
 
         fov = (float) Math.toRadians(90);
         nearPlane = 0.05f;
-        farPlane = 50.0f;
+        farPlane = 500.0f;
         projectionMatrix = Matrix4.Perspective(fov, (float)width / (float) height, nearPlane, farPlane);
     }
 

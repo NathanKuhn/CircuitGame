@@ -14,7 +14,7 @@ import static org.lwjgl.opengl.GL11C.glEnable;
 
 public class Main {
 
-    public static final float MOVE_SPEED = 2.0f;
+    public static final float MOVE_SPEED = 4.0f;
     public static final float MOUSE_SENSITIVITY = 50.0f;
 
     private final Window window;
@@ -31,38 +31,24 @@ public class Main {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
         System.out.println("Press enter to print ups");
 
+        window.init();
+
+        //Mesh testMesh = MeshImporter.LoadFromOBJ("cube.obj");
+        //Texture testTexture = Texture.LoadPNG("Cube_1mx1m.png");
+
         Texture tex = Texture.LoadPNG("TextureAtlas.png");
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
-        int[] map = new int[4096];
-        Chunk chunk = new Chunk(map, new Vector3i(0,0,0), textureAtlas);
+        World world = new World(textureAtlas, 5, 1, 5);
+        world.generateAll();
 
-        // Basic terrain generation
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 4; y++) {
-                for (int z = 0; z < 16; z++) {
-                    if (y >= 3) {
-                        chunk.placeBlock(x, y, z, 4);
-                    } else {
-                        chunk.placeBlock(x, y, z, 1);
-                    }
-                }
-            }
-        }
-
-        chunk.update();
-        Mesh obj = chunk.getMesh();
-
-        RenderObject chunk01 = new RenderObject(obj, tex);
         Camera camera = new Camera(new Vector3f(0.0f, 5.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
-        Scene scene = new Scene(camera);
-        scene.addRenderObject(chunk01);
+        Scene scene = new Scene(camera, world);
+        //scene.addRenderObject(new RenderObject(testMesh, testTexture));
 
         Renderer renderer = new Renderer(window, scene);
-
         MouseInput input = new MouseInput(window);
 
-        window.init();
         try {
             renderer.init();
         } catch (Exception e) {
@@ -104,10 +90,13 @@ public class Main {
             } else if (window.isKeyPressed(GLFW_KEY_D)) {
                 cameraMovement.x = 1.0f;
             }
-            if (window.isKeyPressed(GLFW_KEY_Z)) {
-                cameraMovement.y = -1.0f;
-            } else if (window.isKeyPressed(GLFW_KEY_X)) {
+            if (window.isKeyPressed(GLFW_KEY_SPACE)) {
                 cameraMovement.y = 1.0f;
+            } else if (window.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
+                cameraMovement.y = -1.0f;
+            }
+            if (window.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+                cameraMovement.scaleSet(2.0f);
             }
             cameraMovement.scaleSet(MOVE_SPEED * timer.deltaTime());
             camera.move(cameraMovement);

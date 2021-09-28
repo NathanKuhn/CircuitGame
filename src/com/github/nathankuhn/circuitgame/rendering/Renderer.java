@@ -30,8 +30,8 @@ public class Renderer {
         shaderProgram.createUniform("viewMatrix");
         shaderProgram.createUniform("texture_sampler");
 
-        for (int i = 0; i < scene.numRenderObjects();  i++) {
-            scene.getRenderObject(i).init();
+        for (int i = 0; i < scene.getRenderObjects().size();  i++) {
+            scene.getRenderObjects().get(i).init();
         }
 
     }
@@ -48,9 +48,9 @@ public class Renderer {
         shaderProgram.setUniform("viewMatrix", scene.getMainCamera().getViewMatrix());
         shaderProgram.setUniform("texture_sampler", 0);
 
-        for (int i = 0; i < scene.numRenderObjects(); i++) {
+        for (int i = 0; i < scene.getRenderObjects().size(); i++) {
 
-            RenderObject renderObject = scene.getRenderObject(i);
+            RenderObject renderObject = scene.getRenderObjects().get(i);
             shaderProgram.setUniform("transformMatrix", renderObject.transform.getMatrix());
 
 
@@ -75,8 +75,8 @@ public class Renderer {
 
     public void cleanup() {
         shaderProgram.cleanup();
-        for (int i = 0; i < scene.numRenderObjects(); i++) {
-            scene.getRenderObject(i).cleanup();
+        for (int i = 0; i < scene.getRenderObjects().size(); i++) {
+            scene.getRenderObjects().get(i).cleanup();
         }
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);

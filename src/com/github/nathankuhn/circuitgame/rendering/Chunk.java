@@ -8,10 +8,10 @@ import java.util.List;
 
 public class Chunk {
 
-    private static int GetIndex(int x, int y, int z) {
+    protected static int GetIndex(int x, int y, int z) {
         return x + y * 16 + z * 256;
     }
-    private static Vector3i GetLocation(int index) {
+    protected static Vector3i GetLocation(int index) {
         return new Vector3i(index % 16, (index / 16) % 16 , (index / 256));
     }
     private static boolean InBounds(int x, int y, int z) {
@@ -20,6 +20,7 @@ public class Chunk {
 
     private int[] blockIDs;
     private Mesh mesh;
+    private RenderObject renderObject;
     private Vector3i location;
     private TextureAtlas textureAtlas;
 
@@ -27,6 +28,12 @@ public class Chunk {
         this.blockIDs = blocks;
         this.location = location;
         this.textureAtlas = textureAtlas;
+    }
+
+    public void init() throws Exception{
+        update();
+        renderObject = new RenderObject(mesh, textureAtlas.getTexture());
+        renderObject.init();
     }
 
     public void update() {
@@ -55,6 +62,9 @@ public class Chunk {
     }
     public Mesh getMesh() {
         return mesh;
+    }
+    public RenderObject getRenderObject() {
+        return renderObject;
     }
     public boolean hasBlock(int x, int y, int z) {
         if (InBounds(x, y, z)) {
