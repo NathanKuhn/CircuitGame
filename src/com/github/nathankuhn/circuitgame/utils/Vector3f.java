@@ -13,6 +13,11 @@ public class Vector3f {
     public float y;
     public float z;
 
+    public Vector3f() {
+        x = 0;
+        y = 0;
+        z = 0;
+    }
     public Vector3f(float x, float y, float z) {
         this.x = x;
         this.y = y;
@@ -51,6 +56,11 @@ public class Vector3f {
         this.y = y;
         this.z = z;
     }
+    public void set(Vector3f other) {
+        this.x = other.x;
+        this.y = other.y;
+        this.z = other.z;
+    }
     public void addSet(Vector3f other) {
         this.x += other.x;
         this.y += other.y;
@@ -70,6 +80,10 @@ public class Vector3f {
         this.x *= other.x;
         this.y *= other.y;
         this.z *= other.z;
+    }
+
+    public String toString() {
+        return "(" + x + ", " + y + ", " + z + ")";
     }
 
 }

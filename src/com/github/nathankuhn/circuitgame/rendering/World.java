@@ -77,4 +77,21 @@ public class World {
     public int getChunks() {
         return xChunks * yChunks * zChunks;
     }
+
+    public int getBlock(int x, int y, int z) {
+        int xChunk = x / 16;
+        int yChunk = y / 16;
+        int zChunk = z / 16;
+        if (xChunk < 0 || xChunk >= xChunks || yChunk < 0 || yChunk >= yChunks || zChunk < 0 || zChunk >= zChunks) {
+            return 0;
+        }
+        try {
+            return chunks[xChunk][yChunk][zChunk].getBlock(x % 16, y % 16, z % 16);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return 0; // TODO this is bad, fix it
+        }
+    }
+    public int getBlock(Vector3i pos) {
+        return getBlock(pos.x, pos.y, pos.z);
+    }
 }

@@ -73,6 +73,9 @@ public class Chunk {
             return false;
         }
     }
+    public int getBlock(int x, int y, int z) {
+        return blockIDs[GetIndex(x, y, z)];
+    }
     public void placeBlock(int x, int y, int z, int blockID) {
         blockIDs[GetIndex(x, y, z)] = blockID;
     }

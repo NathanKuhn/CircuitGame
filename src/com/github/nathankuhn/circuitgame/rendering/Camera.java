@@ -1,6 +1,7 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
 import com.github.nathankuhn.circuitgame.utils.Matrix4;
+import com.github.nathankuhn.circuitgame.utils.Vector2f;
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.VectorMath;
 
@@ -37,19 +38,21 @@ public class Camera {
     public void rotate(Vector3f rotationVector) {
         rotation.addSet(rotationVector);
     }
-    public void move(float x, float y, float z) {
+    public Vector3f moveVector(float x, float y, float z) {
+        Vector3f ret = new Vector3f();
         if (z != 0) {
-            position.x += (float)Math.sin(Math.toRadians(rotation.y)) * z;
-            position.z += (float)Math.cos(Math.toRadians(rotation.y)) * z;
+            ret.x += (float)Math.sin(Math.toRadians(rotation.y)) * z;
+            ret.z += (float)Math.cos(Math.toRadians(rotation.y)) * z;
         }
         if (x != 0) {
-            position.x += (float)Math.sin(Math.toRadians(rotation.y + 90)) * x;
-            position.z += (float)Math.cos(Math.toRadians(rotation.y + 90)) * x;
+            ret.x += (float)Math.sin(Math.toRadians(rotation.y + 90)) * x;
+            ret.z += (float)Math.cos(Math.toRadians(rotation.y + 90)) * x;
         }
-        position.y += y;
+        ret.y = y;
+        return ret;
     }
-    public void move(Vector3f moveVector) {
-        move(moveVector.x, moveVector.y, moveVector.z);
+    public Vector3f moveVector(Vector3f moveVector) {
+        return moveVector(moveVector.x, moveVector.y, moveVector.z);
     }
 
     public Matrix4 getViewMatrix() {

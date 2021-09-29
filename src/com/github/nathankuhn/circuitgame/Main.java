@@ -22,7 +22,7 @@ public class Main {
     private boolean polygon;
 
     public Main() {
-        window = new Window(500, 500);
+        window = new Window(1000, 1000);
         timer = new Timer();
         polygon = true;
     }
@@ -43,6 +43,7 @@ public class Main {
         world.generateAll();
 
         Camera camera = new Camera(new Vector3f(0.0f, 5.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
+        Player player = new Player(new Vector3f(10.0f, 10.0f, 10.0f), world, camera);
         Scene scene = new Scene(camera, world);
         //scene.addRenderObject(new RenderObject(testMesh, testTexture));
 
@@ -73,33 +74,33 @@ public class Main {
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
 
-        Vector3f cameraMovement = new Vector3f(0.0f, 0.0f, 0.0f);
+        Vector3f playerMovement = new Vector3f();
 
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            cameraMovement.set(0,0,0);
+            playerMovement.set(0,0,0);
 
             if (window.isKeyPressed(GLFW_KEY_W)) {
-                cameraMovement.z = -1.0f;
+                playerMovement.z = -1.0f;
             } else if (window.isKeyPressed(GLFW_KEY_S)) {
-                cameraMovement.z = 1.0f;
+                playerMovement.z = 1.0f;
             }
             if (window.isKeyPressed(GLFW_KEY_A)) {
-                cameraMovement.x = -1.0f;
+                playerMovement.x = -1.0f;
             } else if (window.isKeyPressed(GLFW_KEY_D)) {
-                cameraMovement.x = 1.0f;
+                playerMovement.x = 1.0f;
             }
             if (window.isKeyPressed(GLFW_KEY_SPACE)) {
-                cameraMovement.y = 1.0f;
-            } else if (window.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) {
-                cameraMovement.y = -1.0f;
+                player.jump(6);
             }
             if (window.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
-                cameraMovement.scaleSet(2.0f);
+                playerMovement.scaleSet(2.0f);
             }
-            cameraMovement.scaleSet(MOVE_SPEED * timer.deltaTime());
-            camera.move(cameraMovement);
+            playerMovement.scaleSet(MOVE_SPEED);
+            Vector3f inputMovement = camera.moveVector(playerMovement);
+
+            player.move(inputMovement);
 
             Vector2f rotVec = input.getDisplaceVec();
             rotVec.scaleSet(timer.deltaTime());
@@ -113,6 +114,7 @@ public class Main {
                 rot.x = -90;
             }
 
+            player.update(timer.deltaTime());
             renderer.render();
             window.update();
             input.update();

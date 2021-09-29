@@ -26,4 +26,7 @@ public class VectorMath {
     public static Vector3f Normalize(Vector3f a) {
         return Scale(a, 1.0f / a.length());
     }
+    public static Vector3f Lerp(Vector3f a, Vector3f b, float t) {
+        return Add(a, Scale(Subtract(b, a), t)); // a + t * (b - a)
+    }
 }
