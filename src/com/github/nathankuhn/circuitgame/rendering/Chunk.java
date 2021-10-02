@@ -8,23 +8,22 @@ import java.util.List;
 
 public class Chunk {
 
-    protected static int GetIndex(int x, int y, int z) {
-        return x + y * 16 + z * 256;
-    }
-    protected static Vector3i GetLocation(int index) {
-        return new Vector3i(index % 16, (index / 16) % 16 , (index / 256));
-    }
     private static boolean InBounds(int x, int y, int z) {
         return (x >= 0 && x < 16 && y >= 0 && y < 16 && z >= 0 && z < 16);
     }
 
-    private int[] blockIDs;
+    private World world;
+    private int[][][] blockIDs;
     private Mesh mesh;
     private RenderObject renderObject;
     private Vector3i location;
     private TextureAtlas textureAtlas;
 
-    public Chunk(int[] blocks, Vector3i location, TextureAtlas textureAtlas) {
+    public Chunk(World world, int[][][] blocks, Vector3i location, TextureAtlas textureAtlas) {
+        if (blocks.length != 16 || blocks[0].length != 16 || blocks[0][0].length != 16) {
+            System.out.println("you are a dodo head");
+        }
+        this.world = world;
         this.blockIDs = blocks;
         this.location = location;
         this.textureAtlas = textureAtlas;
@@ -39,24 +38,35 @@ public class Chunk {
     public void update() {
         List<Mesh> meshes = new ArrayList<>();
 
-        for (int b = 0; b < 4096; b++) {
-            if (blockIDs[b] != 0) {
-                Block block = new Block("Stone", "stone", blockIDs[b]);
-                BlockMesh cube = new BlockMesh(getData(GetLocation(b)), VectorMath.Add(GetLocation(b), location), block, textureAtlas);
-                meshes.add(cube.getMesh());
+        for (int x = 0; x < 16; x++) {
+            for (int y = 0; y < 16; y++) {
+                for (int z = 0; z < 16; z++) {
+                    if (blockIDs[x][y][z] != 0) {
+                        Block block = new Block("Stone", "stone", blockIDs[x][y][z]);
+                        BlockMesh cube = new BlockMesh(getData(new Vector3i(x, y, z)), VectorMath.Add(new Vector3i(x, y, z), location), block, textureAtlas);
+                        meshes.add(cube.getMesh());
+                    }
+                }
             }
         }
 
         mesh = Mesh.CombineMesh(meshes.toArray(new Mesh[0]));
-    }
-    private BlockMesh.CubeSideData getData(Vector3i p) {
+        if (renderObject != null) {
+            renderObject.setMesh(mesh);
+            renderObject.storeMeshData();
+        }
 
-        boolean north = hasBlock(p.x, p.y, p.z - 1);
-        boolean south = hasBlock(p.x, p.y, p.z + 1);
-        boolean east = hasBlock(p.x + 1, p.y, p.z);
-        boolean west = hasBlock(p.x - 1, p.y, p.z);
-        boolean up = hasBlock(p.x, p.y + 1, p.z);
-        boolean down = hasBlock(p.x, p.y - 1, p.z);
+    }
+    private BlockMesh.CubeSideData getData(Vector3i a) {
+
+        Vector3i p = VectorMath.Add(a, location);
+
+        boolean north = world.getBlock(p.x, p.y, p.z - 1) != 0;
+        boolean south = world.getBlock(p.x, p.y, p.z + 1) != 0;
+        boolean east = world.getBlock(p.x + 1, p.y, p.z) != 0;
+        boolean west = world.getBlock(p.x - 1, p.y, p.z) != 0;
+        boolean up = world.getBlock(p.x, p.y + 1, p.z) != 0;
+        boolean down = world.getBlock(p.x, p.y - 1, p.z) != 0;
 
         return new BlockMesh.CubeSideData(!north, !south, !east, !west, !up, !down);
     }
@@ -68,19 +78,19 @@ public class Chunk {
     }
     public boolean hasBlock(int x, int y, int z) {
         if (InBounds(x, y, z)) {
-            return blockIDs[GetIndex(x, y, z)] != 0;
+            return blockIDs[x][y][z] != 0;
         } else {
             return false;
         }
     }
     public int getBlock(int x, int y, int z) {
-        return blockIDs[GetIndex(x, y, z)];
+        return blockIDs[x][y][z];
     }
     public void placeBlock(int x, int y, int z, int blockID) {
-        blockIDs[GetIndex(x, y, z)] = blockID;
+        blockIDs[x][y][z] = blockID;
     }
     public void breakBlock(int x, int y, int z) {
-        blockIDs[GetIndex(x, y, z)] = 0;
+        blockIDs[x][y][z] = 0;
     }
 
 }

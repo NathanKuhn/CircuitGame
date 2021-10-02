@@ -206,4 +206,22 @@ public class Matrix4 {
         return RotationXYZ(vector.x, vector.y, vector.z);
     }
 
+    public static Matrix4 InverseRotationXYZ(float x, float y, float z) {
+
+        Matrix4 rx = RotationX(-x);
+        Matrix4 ry = RotationY(-y);
+        Matrix4 rz = RotationZ(-z);
+
+        Matrix4 ret = new Matrix4();
+        ret = Multiply(ret, rz);
+        ret = Multiply(ret, ry);
+        ret = Multiply(ret, rx);
+
+        return ret;
+    }
+
+    public static Matrix4 InverseRotationXYZ(Vector3f vector) {
+        return InverseRotationXYZ(vector.x, vector.y, vector.z);
+    }
+
 }

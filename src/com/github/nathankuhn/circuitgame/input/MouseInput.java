@@ -37,13 +37,6 @@ public class MouseInput {
         glfwSetMouseButtonCallback(window.getHandle(), (windowHandle, button, action, mode) -> {
             leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
             rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
-            if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-                if (locked) {
-                    unLockCursor();
-                } else {
-                    lockCursor();
-                }
-            }
         });
     }
 
@@ -72,6 +65,13 @@ public class MouseInput {
     public void unLockCursor() {
         glfwSetInputMode(window.getHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         locked = false;
+    }
+    public void toggleCursorLock() {
+        if (locked) {
+            unLockCursor();
+        } else {
+            lockCursor();
+        }
     }
 
     public boolean isLocked() {

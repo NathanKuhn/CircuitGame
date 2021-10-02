@@ -39,6 +39,12 @@ public class RenderObject {
     protected int getVertexCount() {
         return mesh.getVertexCount();
     }
+    protected Mesh getMesh() {
+        return mesh;
+    }
+    protected void setMesh(Mesh mesh) {
+        this.mesh = mesh;
+    }
 
     protected void init() throws Exception {
 
@@ -91,6 +97,40 @@ public class RenderObject {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
+    protected void storeMeshData() {
+
+        FloatBuffer verticesBuffer = MemoryUtil.memAllocFloat(mesh.vertPositions.length * 3);
+        verticesBuffer.put(mesh.getFlatVertPositions()).flip();
+
+        FloatBuffer normalsBuffer = MemoryUtil.memAllocFloat(mesh.vertPositions.length * 3);
+        normalsBuffer.put(mesh.getFlatNormals()).flip();
+
+        IntBuffer indicesBuffer = MemoryUtil.memAllocInt(mesh.faceIndices.length * 3);
+        indicesBuffer.put(mesh.getFlatFaceIndices()).flip();
+
+        FloatBuffer uvsBuffer = MemoryUtil.memAllocFloat(mesh.vertUVs.length * 2);
+        uvsBuffer.put(mesh.getFlatUVs()).flip();
+
+        glBindVertexArray(vaoID);
+
+        glBindBuffer(GL_ARRAY_BUFFER, positionVboID);
+        glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+        memFree(verticesBuffer);
+
+        glBindBuffer(GL_ARRAY_BUFFER, normalVboID);
+        glBufferData(GL_ARRAY_BUFFER, normalsBuffer, GL_STATIC_DRAW);
+        memFree(normalsBuffer);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVboID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
+        memFree(indicesBuffer);
+
+        glBindBuffer(GL_ARRAY_BUFFER, uvsVboID);
+        glBufferData(GL_ARRAY_BUFFER,uvsBuffer, GL_STATIC_DRAW);
+        memFree(uvsBuffer);
+
     }
 
     protected void cleanup() {

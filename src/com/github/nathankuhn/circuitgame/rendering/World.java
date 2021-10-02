@@ -1,5 +1,6 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
+import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.Vector3i;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class World {
     }
 
     public void generateAll() {
-        int[] map = new int[4096];
+        int[][][] map = new int[16][16][16];
 
         // Basic terrain generation
 
@@ -30,9 +31,9 @@ public class World {
             for (int y = 0; y < 4; y++) {
                 for (int z = 0; z < 16; z++) {
                     if (y >= 3) {
-                        map[Chunk.GetIndex(x, y, z)] = 4;
+                        map[x][y][z] = 4;
                     } else {
-                        map[Chunk.GetIndex(x, y, z)] = 1;
+                        map[x][y][z] = 1;
                     }
                 }
             }
@@ -43,11 +44,19 @@ public class World {
         for (int x = 0; x < chunks.length; x++) {
             for (int y = 0; y < chunks[0].length; y++) {
                 for (int z = 0; z < chunks[0][0].length; z++) {
-                    chunks[x][y][z] = new Chunk(map.clone(), new Vector3i(x * 16, y * 16, z * 16), textureAtlas);
+                    chunks[x][y][z] = new Chunk(this, copyMap(map), new Vector3i(x * 16, y * 16, z * 16), textureAtlas);
+                }
+            }
+        }
+
+        // initialize chunks
+
+        for (int x = 0; x < chunks.length; x++) {
+            for (int y = 0; y < chunks[0].length; y++) {
+                for (int z = 0; z < chunks[0][0].length; z++) {
                     try {
                         chunks[x][y][z].init();
                     } catch (Exception e) {
-                        System.out.println("Could not load chunk.");
                         e.printStackTrace();
                     }
                 }
@@ -78,20 +87,57 @@ public class World {
         return xChunks * yChunks * zChunks;
     }
 
-    public int getBlock(int x, int y, int z) {
-        int xChunk = x / 16;
-        int yChunk = y / 16;
-        int zChunk = z / 16;
+    private static int[][][] copyMap(int[][][] input) {
+        int[][][] ret = new int[input.length][input[0].length][input[0][0].length];
+
+        for (int x = 0; x < input.length; x++) {
+            for (int y = 0; y < input[0].length; y++) {
+                ret[x][y] = input[x][y].clone();
+            }
+        }
+
+        return ret;
+    }
+
+    private int chunkFromBlock(int n) {
+        if (n >= 0) {
+            return n / 16;
+        } else {
+            return (n / 16) - 1;
+        }
+    }
+    private Chunk getChunk(int x, int y, int z) {
+        int xChunk = chunkFromBlock(x);
+        int yChunk = chunkFromBlock(y);
+        int zChunk = chunkFromBlock(z);
+        if (xChunk < 0 || xChunk >= xChunks || yChunk < 0 || yChunk >= yChunks || zChunk < 0 || zChunk >= zChunks) {
+            return null;
+        }
+        return chunks[xChunk][yChunk][zChunk];
+    }
+
+    public int getBlock(int x, int y, int z) { // TODO use getChunk
+        int xChunk = chunkFromBlock(x);
+        int yChunk = chunkFromBlock(y);
+        int zChunk = chunkFromBlock(z);
         if (xChunk < 0 || xChunk >= xChunks || yChunk < 0 || yChunk >= yChunks || zChunk < 0 || zChunk >= zChunks) {
             return 0;
         }
         try {
             return chunks[xChunk][yChunk][zChunk].getBlock(x % 16, y % 16, z % 16);
         } catch (ArrayIndexOutOfBoundsException e) {
-            return 0; // TODO this is bad, fix it
+            return 0;
         }
     }
     public int getBlock(Vector3i pos) {
         return getBlock(pos.x, pos.y, pos.z);
+    }
+    public void placeBlock(int x, int y, int z, int blockID) {
+        Chunk chunk = getChunk(x, y, z);
+        chunk.placeBlock(x % 16, y % 16, z % 16, blockID);
+        chunk.update();
+    }
+    public void placeBlock(Vector3i position, int blockID) {
+        placeBlock(position.x, position.y, position.z, blockID);
     }
 }

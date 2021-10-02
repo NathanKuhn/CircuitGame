@@ -6,9 +6,9 @@ import com.github.nathankuhn.circuitgame.utils.VectorMath;
 
 public class Player {
 
-    private static float PLAYER_HEIGHT = 1.8f;
-    private static float PLAYER_GRAVITY = 20.0f;
-    private static float WALK_LERP_FACTOR = 20.0f;
+    private static final float PLAYER_HEIGHT = 1.8f;
+    private static final float PLAYER_GRAVITY = 20.0f;
+    private static final float WALK_LERP_FACTOR = 20.0f;
 
     private Vector3f position;
     private Vector3f velocity;
@@ -54,6 +54,10 @@ public class Player {
         if (isGrounded()) {
             velocity.y += speed;
         }
+    }
+
+    public Vector3f getPosition() {
+        return position;
     }
 
 
