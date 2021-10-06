@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL11C.glEnable;
 public class Main {
 
     public static final float MOVE_SPEED = 4.0f;
-    public static final float MOUSE_SENSITIVITY = 50.0f;
+    public static final float MOUSE_SENSITIVITY = 10.0f;
 
     private final Window window;
     private final Timer timer;
@@ -137,7 +137,7 @@ public class Main {
                 playerMovement.x = 1.0f;
             }
             if (window.isKeyPressed(GLFW_KEY_SPACE)) {
-                player.jump(6);
+                player.jump(6.0f);
             }
             if (window.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
                 playerMovement.scaleSet(2.0f);

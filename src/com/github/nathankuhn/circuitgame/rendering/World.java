@@ -132,10 +132,49 @@ public class World {
     public int getBlock(Vector3i pos) {
         return getBlock(pos.x, pos.y, pos.z);
     }
+    public int getBlock(float x, float y, float z) {
+        return getBlock((int)x, (int)y, (int)z);
+    }
     public void placeBlock(int x, int y, int z, int blockID) {
         Chunk chunk = getChunk(x, y, z);
         chunk.placeBlock(x % 16, y % 16, z % 16, blockID);
         chunk.update();
+
+        // If block is on an edge, update the adjacent chunk
+        Chunk otherChunk;
+        if (x % 16 == 0) {
+            otherChunk = getChunk(x-1, y, z);
+            if (otherChunk != null) {
+                otherChunk.update();
+            }
+        } else if (x % 16 == 15) {
+            otherChunk = getChunk(x+1, y, z);
+            if (otherChunk != null) {
+                otherChunk.update();
+            }
+        }
+        if (y % 16 == 0) {
+            otherChunk = getChunk(x, y-1, z);
+            if (otherChunk != null) {
+                otherChunk.update();
+            }
+        } else if (y % 16 == 15) {
+            otherChunk = getChunk(x, y+1, z);
+            if (otherChunk != null) {
+                otherChunk.update();
+            }
+        }
+        if (z % 16 == 0) {
+            otherChunk = getChunk(x, y, z-1);
+            if (otherChunk != null) {
+                otherChunk.update();
+            }
+        } else if (z % 16 == 15) {
+            otherChunk = getChunk(x, y, z+1);
+            if (otherChunk != null) {
+                otherChunk.update();
+            }
+        }
     }
     public void placeBlock(Vector3i position, int blockID) {
         placeBlock(position.x, position.y, position.z, blockID);

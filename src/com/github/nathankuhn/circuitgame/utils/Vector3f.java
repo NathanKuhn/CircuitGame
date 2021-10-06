@@ -89,4 +89,16 @@ public class Vector3f {
     public Vector3i toVector3i() {
         return new Vector3i((int)x, (int)y, (int)z);
     }
+
+    public Vector3i floor() {
+        return new Vector3i((int)Math.floor((double)x), (int)Math.floor((double)y), (int)Math.floor((double)z));
+    }
+
+    public Vector3i ceil() {
+        return new Vector3i((int)Math.ceil((double)x), (int)Math.floor((double)y), (int)Math.floor((double)z));
+    }
+
+    public Vector3f clone() {
+        return new Vector3f(x, y, z);
+    }
 }
