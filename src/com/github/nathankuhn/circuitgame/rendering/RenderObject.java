@@ -15,26 +15,20 @@ public class RenderObject {
     public Transform transform;
 
     private Mesh mesh;
-    private Texture image;
 
     private int vaoID;
     private int positionVboID;
     private int normalVboID;
     private int indexVboID;
     private int uvsVboID;
-    private int textureID;
 
-    public RenderObject(Mesh mesh, Texture image) {
+    public RenderObject(Mesh mesh) {
         this.transform = new Transform(new Vector3f(0.0f, 0.0f, 0.0f));
         this.mesh = mesh;
-        this.image = image;
     }
 
     protected int getVaoID() {
         return vaoID;
-    }
-    protected int getTextureID() {
-        return textureID;
     }
     protected int getVertexCount() {
         return mesh.getVertexCount();
@@ -90,13 +84,6 @@ public class RenderObject {
         glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0);
         memFree(uvsBuffer);
 
-        textureID = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getWidth(), image.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getBuffer());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glGenerateMipmap(GL_TEXTURE_2D);
     }
 
     protected void storeMeshData() {

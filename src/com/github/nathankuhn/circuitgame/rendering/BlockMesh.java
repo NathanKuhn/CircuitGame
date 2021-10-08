@@ -1,5 +1,6 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
+import com.github.nathankuhn.circuitgame.engine.Block;
 import com.github.nathankuhn.circuitgame.utils.Vector2f;
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.Vector3i;
@@ -129,44 +130,43 @@ public class BlockMesh {
         if (sides.north()) {
             positions.addAll(factorVerts(NORTH_FACE));
             normals.addAll(Arrays.asList(NORTH_NORMALS));
-            uvs.addAll(factorUVs(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS, block.getBlockTexture().getNorthTexture()));
             faces.addAll(Arrays.asList(FACE_INDICES));
             prevVerts += 4;
         }
         if (sides.south()) {
             positions.addAll(factorVerts(SOUTH_FACE));
             normals.addAll(Arrays.asList(SOUTH_NORMALS));
-            uvs.addAll(factorUVs(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS, block.getBlockTexture().getSouthTexture()));
             faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, prevVerts)));
             prevVerts += 4;
         }
         if (sides.east()) {
             positions.addAll(factorVerts(EAST_FACE));
             normals.addAll(Arrays.asList(EAST_NORMALS));
-            uvs.addAll(factorUVs(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS, block.getBlockTexture().getEastTexture()));
             faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, prevVerts)));
             prevVerts += 4;
         }
         if (sides.west()) {
             positions.addAll(factorVerts(WEST_FACE));
             normals.addAll(Arrays.asList(WEST_NORMALS));
-            uvs.addAll(factorUVs(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS, block.getBlockTexture().getWestTexture()));
             faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, prevVerts)));
             prevVerts += 4;
         }
         if (sides.up()) {
             positions.addAll(factorVerts(UP_FACE));
             normals.addAll(Arrays.asList(UP_NORMALS));
-            uvs.addAll(factorUVs(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS, block.getBlockTexture().getUpTexture()));
             faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, prevVerts)));
             prevVerts += 4;
         }
         if (sides.down()) {
             positions.addAll(factorVerts(DOWN_FACE));
             normals.addAll(Arrays.asList(DOWN_NORMALS));
-            uvs.addAll(factorUVs(FACE_UVS));
+            uvs.addAll(factorUVs(FACE_UVS, block.getBlockTexture().getDownTexture()));
             faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, prevVerts)));
-            prevVerts += 4;
         }
 
         Vector3f[] posArr = positions.toArray(new Vector3f[0]);
@@ -188,10 +188,10 @@ public class BlockMesh {
         return ret;
     }
 
-    private List<Vector2f> factorUVs(Vector2f[] uvs) {
+    private List<Vector2f> factorUVs(Vector2f[] uvs, int textureID) {
         List<Vector2f> ret = new ArrayList<>();
         for (int uv = 0; uv < uvs.length; uv++) {
-            ret.add(textureAtlas.factorUV(uvs[uv], block.getTextureID()));
+            ret.add(textureAtlas.factorUV(uvs[uv], textureID));
         }
         return ret;
     }

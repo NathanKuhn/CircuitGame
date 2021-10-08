@@ -62,8 +62,11 @@ public class Transform {
         this.rotationVector = rotationVector;
         updateRotation();
     }
-
     public void translate(Vector3f a) {
+        this.positionVector.addSet(a);
+        updateTranslation();
+    }
+    public void translate(Vector3i a) {
         this.positionVector.addSet(a);
         updateTranslation();
     }

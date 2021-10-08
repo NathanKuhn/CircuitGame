@@ -1,6 +1,6 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
-import com.github.nathankuhn.circuitgame.utils.Vector3f;
+import com.github.nathankuhn.circuitgame.engine.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,6 @@ public class Scene {
     private Camera mainCamera;
     private List<RenderObject> renderObjects; // legacy render objects
     private World world;
-    // TODO lights
 
     public Scene(Camera camera, World world) {
         mainCamera = camera;

@@ -1,7 +1,7 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
+import com.github.nathankuhn.circuitgame.engine.World;
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
-import com.github.nathankuhn.circuitgame.utils.Vector3i;
 import com.github.nathankuhn.circuitgame.utils.VectorMath;
 
 public class Ray {
@@ -88,6 +88,9 @@ public class Ray {
                     t = tMaxY - deltaDistY;
                 } else {
                     t = tMaxZ - deltaDistZ;
+                }
+                if (t > maxDistance) {
+                    return null;
                 }
                 return new RayHit(ray, t);
             }

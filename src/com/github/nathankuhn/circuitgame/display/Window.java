@@ -116,6 +116,10 @@ public class Window {
         return width;
     }
 
+    public float getAspectRatio() {
+        return (float) width / (float) height;
+    }
+
     public long getHandle() {
         return window;
     }

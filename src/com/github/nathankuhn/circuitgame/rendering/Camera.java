@@ -1,5 +1,6 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
+import com.github.nathankuhn.circuitgame.engine.World;
 import com.github.nathankuhn.circuitgame.utils.*;
 
 public class Camera {

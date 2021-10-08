@@ -1,5 +1,6 @@
-package com.github.nathankuhn.circuitgame.rendering;
+package com.github.nathankuhn.circuitgame.engine;
 
+import com.github.nathankuhn.circuitgame.engine.World;
 import com.github.nathankuhn.circuitgame.utils.Misc;
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.Vector3i;

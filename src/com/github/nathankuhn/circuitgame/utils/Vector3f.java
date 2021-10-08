@@ -66,6 +66,11 @@ public class Vector3f {
         this.y += other.y;
         this.z += other.z;
     }
+    public void addSet(Vector3i other) {
+        this.x += other.x;
+        this.y += other.y;
+        this.z += other.z;
+    }
     public void subtractSet(Vector3f other) {
         this.x -= other.x;
         this.y -= other.y;

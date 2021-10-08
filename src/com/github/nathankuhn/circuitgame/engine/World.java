@@ -1,5 +1,9 @@
-package com.github.nathankuhn.circuitgame.rendering;
+package com.github.nathankuhn.circuitgame.engine;
 
+import com.github.nathankuhn.circuitgame.engine.Chunk;
+import com.github.nathankuhn.circuitgame.rendering.RenderObject;
+import com.github.nathankuhn.circuitgame.rendering.TextureAtlas;
+import com.github.nathankuhn.circuitgame.utils.Misc;
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.Vector3i;
 
@@ -8,13 +12,15 @@ import java.util.List;
 
 public class World {
 
-    private Chunk[][][] chunks;
+    private BlockRegistry blockRegistry;
     private TextureAtlas textureAtlas;
+    private Chunk[][][] chunks;
     private int xChunks;
     private int yChunks;
     private int zChunks;
 
-    public World(TextureAtlas textureAtlas, int xChunks, int yChunks, int zChunks) {
+    public World(BlockRegistry blockRegistry, TextureAtlas textureAtlas, int xChunks, int yChunks, int zChunks) {
+        this.blockRegistry = blockRegistry;
         this.textureAtlas = textureAtlas;
         this.xChunks = xChunks;
         this.yChunks = yChunks;
@@ -22,29 +28,40 @@ public class World {
         chunks = new Chunk[xChunks][yChunks][zChunks];
     }
 
-    public void generateAll() {
+    public int[][][] generateChunkMap(int x0, int y0, int z0) {
         int[][][] map = new int[16][16][16];
 
-        // Basic terrain generation
+        int heightValue;
 
         for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 4; y++) {
+            for (int y = 0; y < 16; y++) {
                 for (int z = 0; z < 16; z++) {
-                    if (y >= 3) {
-                        map[x][y][z] = 4;
-                    } else {
+                    heightValue = (int) (Misc.PerlinNoise((float) (x + x0) / 20.0f, (float) (z + z0) / 20.0f) * 10 + 20) - y0;
+                    if (y < heightValue - 4) {
                         map[x][y][z] = 1;
+                    } else if (y < heightValue){
+                        map[x][y][z] = 2;
+                    } else if (y == heightValue){
+                        map[x][y][z] = 3;
                     }
                 }
             }
         }
 
-        // Copy map into every chunk
+        return map;
+    }
+
+    public void generateAll() {
+        int[][][] blankMap = new int[16][16][16];
 
         for (int x = 0; x < chunks.length; x++) {
             for (int y = 0; y < chunks[0].length; y++) {
                 for (int z = 0; z < chunks[0][0].length; z++) {
-                    chunks[x][y][z] = new Chunk(this, copyMap(map), new Vector3i(x * 16, y * 16, z * 16), textureAtlas);
+                    chunks[x][y][z] = new Chunk(
+                            this,
+                            generateChunkMap(x * 16, y * 16, z * 16),
+                            new Vector3i(x * 16, y * 16, z * 16)
+                    );
                 }
             }
         }
@@ -55,7 +72,7 @@ public class World {
             for (int y = 0; y < chunks[0].length; y++) {
                 for (int z = 0; z < chunks[0][0].length; z++) {
                     try {
-                        chunks[x][y][z].init();
+                        chunks[x][y][z].getChunkMesh().init();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -71,7 +88,7 @@ public class World {
             for (int y = 0; y < chunks[0].length; y++) {
                 for (int z = 0; z < chunks[0][0].length; z++) {
                     try {
-                        ret.add(chunks[x][y][z].getRenderObject());
+                        ret.add(chunks[x][y][z].getChunkMesh().getRenderObject());
                     } catch (Exception e) {
                         System.out.println("Failed to load chunk.");
                         e.printStackTrace();
@@ -81,6 +98,14 @@ public class World {
         }
 
         return ret;
+    }
+
+    public BlockRegistry getBlockRegistry() {
+        return blockRegistry;
+    }
+
+    public TextureAtlas getTextureAtlas() {
+        return textureAtlas;
     }
 
     public int getChunks() {
@@ -116,15 +141,13 @@ public class World {
         return chunks[xChunk][yChunk][zChunk];
     }
 
-    public int getBlock(int x, int y, int z) { // TODO use getChunk
-        int xChunk = chunkFromBlock(x);
-        int yChunk = chunkFromBlock(y);
-        int zChunk = chunkFromBlock(z);
-        if (xChunk < 0 || xChunk >= xChunks || yChunk < 0 || yChunk >= yChunks || zChunk < 0 || zChunk >= zChunks) {
+    public int getBlock(int x, int y, int z) {
+        Chunk chunk = getChunk(x, y, z);
+        if (chunk == null) {
             return 0;
         }
         try {
-            return chunks[xChunk][yChunk][zChunk].getBlock(x % 16, y % 16, z % 16);
+            return chunk.getBlockID(x % 16, y % 16, z % 16);
         } catch (ArrayIndexOutOfBoundsException e) {
             return 0;
         }
@@ -137,7 +160,10 @@ public class World {
     }
     public void placeBlock(int x, int y, int z, int blockID) {
         Chunk chunk = getChunk(x, y, z);
-        chunk.placeBlock(x % 16, y % 16, z % 16, blockID);
+        if (chunk == null) {
+            return;
+        }
+        chunk.setBlock(x % 16, y % 16, z % 16, blockID);
         chunk.update();
 
         // If block is on an edge, update the adjacent chunk
@@ -178,5 +204,13 @@ public class World {
     }
     public void placeBlock(Vector3i position, int blockID) {
         placeBlock(position.x, position.y, position.z, blockID);
+    }
+
+    public Vector3f getSpawn() {
+        return new Vector3f(
+                xChunks * 16 / 2,
+                yChunks * 16 / 2,
+                zChunks * 16 / 2
+        );
     }
 }

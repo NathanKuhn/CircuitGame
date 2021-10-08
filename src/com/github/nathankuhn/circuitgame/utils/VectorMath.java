@@ -13,6 +13,9 @@ public class VectorMath {
     public static Vector2f Add(Vector2f a, Vector2f b) {
         return new Vector2f(a.x + b.x, a.y + b.y);
     }
+    public static Vector2f Subtract(Vector2f a, Vector2f b) {
+        return new Vector2f(a.x - b.x, a.y - b.y);
+    }
     public static Vector3f Subtract(Vector3f a, Vector3f b) {
         return new Vector3f(a.x - b.x, a.y - b.y, a.z - b.z);
     }
@@ -31,7 +34,13 @@ public class VectorMath {
     public static Vector3f Normalize(Vector3f a) {
         return Scale(a, 1.0f / a.length());
     }
-    public static Vector3f Lerp(Vector3f a, Vector3f b, float t) {
-        return Add(a, Scale(Subtract(b, a), t)); // a + t * (b - a)
+    public static float Lerp(float a0, float a1, float t) {
+        return (a1 - a0) * t + a0;
+    }
+    public static Vector2f Lerp(Vector2f a0, Vector2f a1, float t) {
+        return Add(a0, Scale(Subtract(a1, a0), t));
+    }
+    public static Vector3f Lerp(Vector3f a0, Vector3f a1, float t) {
+        return Add(a0, Scale(Subtract(a1, a0), t)); // a + t * (b - a)
     }
 }

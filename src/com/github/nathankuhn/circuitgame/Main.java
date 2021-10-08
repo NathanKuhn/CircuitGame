@@ -1,13 +1,17 @@
 package com.github.nathankuhn.circuitgame;
 
+import com.github.nathankuhn.circuitgame.display.Draw;
 import com.github.nathankuhn.circuitgame.display.Window;
+import com.github.nathankuhn.circuitgame.engine.Block;
+import com.github.nathankuhn.circuitgame.engine.BlockRegistry;
+import com.github.nathankuhn.circuitgame.engine.Player;
+import com.github.nathankuhn.circuitgame.engine.World;
 import com.github.nathankuhn.circuitgame.rendering.*;
 import com.github.nathankuhn.circuitgame.input.MouseInput;
 import com.github.nathankuhn.circuitgame.utils.*;
 import org.lwjgl.*;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11C.glEnable;
@@ -33,24 +37,23 @@ public class Main {
 
         window.init();
 
-        Mesh testMesh = MeshImporter.LoadFromOBJ("cube.obj");
-        Texture testTexture = Texture.LoadPNG("Cube_1mx1m.png");
+        //Mesh testMesh = MeshImporter.LoadFromOBJ("cube.obj");
+        //Texture testTexture = Texture.LoadPNG("Cube_1mx1m.png");
 
-        Texture tex = Texture.LoadPNG("TextureAtlas.png");
+        BlockRegistry registry = new BlockRegistry();
+        registry.addBlock(new Block("Stone", 1, new BlockTexture(1, 1, 1, 1, 1, 1)));
+        registry.addBlock(new Block("Dirt",  2, new BlockTexture(2, 2, 2, 2, 2, 2)));
+        registry.addBlock(new Block("Grass",  3, new BlockTexture(3, 3, 3, 3, 0, 2)));
+                Texture tex = Texture.LoadPNG("TextureAtlas.png");
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
-        World world = new World(textureAtlas, 5, 1, 5);
+        World world = new World(registry, textureAtlas, 10, 3, 10);
         world.generateAll();
 
         Camera camera = new Camera(new Vector3f(0.0f, 5.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
-        Player player = new Player(new Vector3f(10.0f, 10.0f, 10.0f), world, camera);
-        Scene scene = new Scene(camera, world);
+        Player player = new Player(world, camera);
 
-        RenderObject thing = new RenderObject(testMesh, testTexture);
-        thing.transform.translate(new Vector3f(10.0f, 6.0f, 10.0f));
-        thing.transform.setScale(new Vector3f(0.1f, 0.1f, 0.1f));
-        scene.addRenderObject(thing);
-        Renderer renderer = new Renderer(window, scene);
+        Renderer renderer = new Renderer(window, world, camera);
         MouseInput input = new MouseInput(window);
 
         try {
@@ -84,11 +87,15 @@ public class Main {
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
+            Color white = new Color(1.0f, 1.0f, 1.0f);
+
+            Draw.Rectangle(white, new Vector2f(-0.050f, -0.005f), new Vector2f(0.01f, 0.01f));
+
             // cast rays and break blocks
 
             if (input.isLeftButtonPressed()) {
                 if (breakCoolDown <= 0) {
-                    RayHit hit = camera.castRayFromCenter(world, 10);
+                    RayHit hit = camera.castRayFromCenter(world, 5);
                     if (hit != null) {
                         world.placeBlock(
                                 VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), -0.01f)).toVector3i(),
@@ -104,7 +111,7 @@ public class Main {
 
             if (input.isRightButtonPressed()) {
                 if (placeCoolDown <= 0) {
-                    RayHit hit = camera.castRayFromCenter(world, 10);
+                    RayHit hit = camera.castRayFromCenter(world, 5);
                     if (hit != null) {
                         world.placeBlock(
                                 VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), 0.01f)).toVector3i(),
@@ -116,12 +123,6 @@ public class Main {
                 placeCoolDown -= timer.deltaTime();
             } else {
                 placeCoolDown = 0.0f;
-            }
-
-
-            RayHit hit = camera.castRayFromCenter(world, 10);
-            if (hit != null) {
-                thing.transform.setPosition(hit.getHitPosition());
             }
 
             playerMovement.set(0,0,0);
@@ -143,7 +144,7 @@ public class Main {
                 playerMovement.scaleSet(2.0f);
             }
             if (window.isKeyPressed(GLFW_KEY_R)) {
-                player.getPosition().set(10.0f, 10.0f, 10.0f);
+                player.getPosition().set(world.getSpawn());
             }
             playerMovement.scaleSet(MOVE_SPEED);
             Vector3f inputMovement = camera.moveVector(playerMovement);
@@ -151,8 +152,7 @@ public class Main {
             player.move(inputMovement);
 
             Vector2f rotVec = input.getDisplaceVec();
-            rotVec.scaleSet(timer.deltaTime());
-            camera.rotate(-rotVec.x * MOUSE_SENSITIVITY, -rotVec.y * MOUSE_SENSITIVITY, 0.0f);
+            camera.rotate(-rotVec.x * MOUSE_SENSITIVITY * timer.deltaTime(), -rotVec.y * MOUSE_SENSITIVITY * timer.deltaTime(), 0.0f);
 
             Vector3f rot = camera.getRotation();
 

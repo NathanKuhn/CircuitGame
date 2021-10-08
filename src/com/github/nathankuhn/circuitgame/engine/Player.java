@@ -1,15 +1,17 @@
-package com.github.nathankuhn.circuitgame.rendering;
+package com.github.nathankuhn.circuitgame.engine;
 
+import com.github.nathankuhn.circuitgame.rendering.Camera;
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
-import com.github.nathankuhn.circuitgame.utils.Vector3i;
 import com.github.nathankuhn.circuitgame.utils.VectorMath;
-import org.lwjgl.system.CallbackI;
+
+import java.awt.font.TextMeasurer;
 
 public class Player {
 
     private static final float PLAYER_HEIGHT = 1.8f;
     private static final float PLAYER_WIDTH = 0.5f;
     private static final float PLAYER_GRAVITY = 18.0f;
+    private static final float TERMINAL_VELOCITY = 30.0f;
     private static final float WALK_LERP_FACTOR = 20.0f;
 
     private Vector3f position;
@@ -21,8 +23,8 @@ public class Player {
     private BoundingBox boundingBox;
     private boolean grounded;
 
-    public Player(Vector3f position, World world, Camera camera) {
-        this.position = position;
+    public Player(World world, Camera camera) {
+        this.position = world.getSpawn();
         this.world = world;
         this.camera = camera;
         this.move = new Vector3f();
@@ -50,7 +52,11 @@ public class Player {
             velocity.y = 0;
             grounded = true;
         } else {
-            velocity.y -= PLAYER_GRAVITY * deltaTime;
+            if (velocity.y > - TERMINAL_VELOCITY) {
+                velocity.y -= PLAYER_GRAVITY * deltaTime;
+            } else {
+                velocity.y = -TERMINAL_VELOCITY;
+            }
             grounded = false;
         }
         if (correction.x != 0) {
