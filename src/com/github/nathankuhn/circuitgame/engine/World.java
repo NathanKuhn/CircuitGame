@@ -18,6 +18,7 @@ public class World {
     private int xChunks;
     private int yChunks;
     private int zChunks;
+    private List<RenderObject> otherObjects;
 
     public World(BlockRegistry blockRegistry, TextureAtlas textureAtlas, int xChunks, int yChunks, int zChunks) {
         this.blockRegistry = blockRegistry;
@@ -26,6 +27,7 @@ public class World {
         this.yChunks = yChunks;
         this.zChunks = zChunks;
         chunks = new Chunk[xChunks][yChunks][zChunks];
+        otherObjects = new ArrayList<>();
     }
 
     public int[][][] generateChunkMap(int x0, int y0, int z0) {
@@ -97,6 +99,7 @@ public class World {
             }
         }
 
+        ret.addAll(otherObjects);
         return ret;
     }
 
@@ -131,6 +134,7 @@ public class World {
             return (n / 16) - 1;
         }
     }
+
     private Chunk getChunk(int x, int y, int z) {
         int xChunk = chunkFromBlock(x);
         int yChunk = chunkFromBlock(y);
@@ -152,12 +156,15 @@ public class World {
             return 0;
         }
     }
+
     public int getBlock(Vector3i pos) {
         return getBlock(pos.x, pos.y, pos.z);
     }
+
     public int getBlock(float x, float y, float z) {
         return getBlock((int)x, (int)y, (int)z);
     }
+
     public void placeBlock(int x, int y, int z, int blockID) {
         Chunk chunk = getChunk(x, y, z);
         if (chunk == null) {
@@ -202,6 +209,7 @@ public class World {
             }
         }
     }
+
     public void placeBlock(Vector3i position, int blockID) {
         placeBlock(position.x, position.y, position.z, blockID);
     }
@@ -212,5 +220,17 @@ public class World {
                 yChunks * 16 / 2,
                 zChunks * 16 / 2
         );
+    }
+
+    public void addOtherRenderObject(RenderObject other) {
+        otherObjects.add(other);
+    }
+
+    public int getOtherObjectLength() {
+        return otherObjects.size();
+    }
+
+    public RenderObject getOtherRenderObject(int index) {
+        return otherObjects.get(index);
     }
 }

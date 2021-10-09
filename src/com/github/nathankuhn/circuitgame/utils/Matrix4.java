@@ -116,6 +116,26 @@ public class Matrix4 {
 
     }
 
+    public static Matrix4 Orthographic(float aspectRatio, float near, float far) {
+
+        Matrix4 out = new Matrix4();
+
+        float right = aspectRatio;
+        float left = -aspectRatio;
+        float top = 1.0f;
+        float bottom = -1.0f;
+
+        out.set(0, 0, 2.0f / (right - left));
+        out.set(0, 3, -(right + left) / (right-left));
+        out.set(1, 1, 2.0f / (top - bottom));
+        out.set(1, 3, -(top + bottom) / (top - bottom));
+        out.set(2, 2, -2.0f / (far - near));
+        out.set(2, 3, -(far + near) / (far - near));
+        out.set(3, 3, 1.0f);
+
+        return out;
+    }
+
     public static Matrix4 Translation(float x, float y, float z) {
 
         Matrix4 out = new Matrix4();

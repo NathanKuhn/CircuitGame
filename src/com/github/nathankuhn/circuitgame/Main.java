@@ -6,6 +6,9 @@ import com.github.nathankuhn.circuitgame.engine.Block;
 import com.github.nathankuhn.circuitgame.engine.BlockRegistry;
 import com.github.nathankuhn.circuitgame.engine.Player;
 import com.github.nathankuhn.circuitgame.engine.World;
+import com.github.nathankuhn.circuitgame.hud.FlatMesh;
+import com.github.nathankuhn.circuitgame.hud.Hud;
+import com.github.nathankuhn.circuitgame.hud.HudRenderer;
 import com.github.nathankuhn.circuitgame.rendering.*;
 import com.github.nathankuhn.circuitgame.input.MouseInput;
 import com.github.nathankuhn.circuitgame.utils.*;
@@ -37,29 +40,98 @@ public class Main {
 
         window.init();
 
-        //Mesh testMesh = MeshImporter.LoadFromOBJ("cube.obj");
-        //Texture testTexture = Texture.LoadPNG("Cube_1mx1m.png");
-
         BlockRegistry registry = new BlockRegistry();
-        registry.addBlock(new Block("Stone", 1, new BlockTexture(1, 1, 1, 1, 1, 1)));
-        registry.addBlock(new Block("Dirt",  2, new BlockTexture(2, 2, 2, 2, 2, 2)));
-        registry.addBlock(new Block("Grass",  3, new BlockTexture(3, 3, 3, 3, 0, 2)));
-                Texture tex = Texture.LoadPNG("TextureAtlas.png");
+        registry.addBlock(new Block("Stone", 1, new BlockTexture(0, 0, 0, 0, 0, 0)));
+        registry.addBlock(new Block("Dirt",  2, new BlockTexture(1, 1, 1, 1, 1, 1)));
+        registry.addBlock(new Block("Grass",  3, new BlockTexture(2, 2, 2, 2, 3, 1)));
+        registry.addBlock(new Block("Wood", 4, new BlockTexture(4, 4, 4, 4, 4, 4)));
+        Texture tex = Texture.LoadPNG("TextureAtlas.png");
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
         World world = new World(registry, textureAtlas, 10, 3, 10);
         world.generateAll();
 
+        //Mesh testMesh = MeshImporter.LoadFromOBJ("teapot.obj");
+        //Mesh testMesh = FlatMesh.BuildHudMesh(1f, 0.5f, 2, 4);
+        //Texture testTexture = Texture.LoadPNG("Cube_1mx1m.png");
+        //RenderObject test = new RenderObject(testMesh, testTexture);
+        //test.transform.translate(world.getSpawn());
+
+        //world.addOtherRenderObject(test);
+
         Camera camera = new Camera(new Vector3f(0.0f, 5.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
         Player player = new Player(world, camera);
 
+        // Hud
+
+        Hud hud = new Hud();
+        Texture crosshairTexture = Texture.LoadPNG("Crosshair.png");
+        float x = (float) crosshairTexture.getWidth() / window.getWidth() * 2;
+        float y = (float) crosshairTexture.getHeight() / window.getHeight() * 2;
+        RenderObject crosshair = new RenderObject(FlatMesh.BuildHudMesh(-x / 2.0f, -y / 2.0f, x, y, 1, 1), Texture.LoadPNG("Crosshair.png"));
+        hud.addRenderObject(crosshair);
+
+        RenderObject[] hudBlocks = new RenderObject[4];
+        int selectedBlock = 1;
+        Vector3f hudBlockPosition = new Vector3f(1.5f, -0.7f, 0.0f);
+
+        BlockMesh stoneBlock = new BlockMesh(registry.getBlock(1), textureAtlas);
+        RenderObject hudStoneBlock = new RenderObject(stoneBlock.getMesh(), textureAtlas.getTexture());
+        hudStoneBlock.transform.scale(new Vector3f(0.1f, 0.1f, 0.1f));
+        hudStoneBlock.transform.rotate(new Vector3f(25.0f, 45.0f, 0.0f));
+        hudStoneBlock.transform.translate(hudBlockPosition);
+        hudStoneBlock.setShouldRender(true);
+        hudBlocks[0] = hudStoneBlock;
+
+        hud.addRenderObject(hudStoneBlock);
+
+        BlockMesh dirtBlock = new BlockMesh(registry.getBlock(2), textureAtlas);
+        RenderObject hudDirtBlock = new RenderObject(dirtBlock.getMesh(), textureAtlas.getTexture());
+        hudDirtBlock.transform.scale(new Vector3f(0.1f, 0.1f, 0.1f));
+        hudDirtBlock.transform.rotate(new Vector3f(25.0f, 45.0f, 0.0f));
+        hudDirtBlock.transform.translate(hudBlockPosition);
+        hudDirtBlock.setShouldRender(false);
+        hudBlocks[1] = hudDirtBlock;
+
+        hud.addRenderObject(hudDirtBlock);
+
+        BlockMesh grassBlock = new BlockMesh(registry.getBlock(3), textureAtlas);
+        RenderObject hudGrassBlock = new RenderObject(grassBlock.getMesh(), textureAtlas.getTexture());
+        hudGrassBlock.transform.scale(new Vector3f(0.1f, 0.1f, 0.1f));
+        hudGrassBlock.transform.rotate(new Vector3f(25.0f, 45.0f, 0.0f));
+        hudGrassBlock.transform.translate(hudBlockPosition);
+        hudGrassBlock.setShouldRender(false);
+        hudBlocks[2] = hudGrassBlock;
+
+        hud.addRenderObject(hudGrassBlock);
+
+        BlockMesh woodBlock = new BlockMesh(registry.getBlock(4), textureAtlas);
+        RenderObject hudWoodBlock = new RenderObject(woodBlock.getMesh(), textureAtlas.getTexture());
+        hudWoodBlock.transform.scale(new Vector3f(0.1f, 0.1f, 0.1f));
+        hudWoodBlock.transform.rotate(new Vector3f(25.0f, 45.0f, 0.0f));
+        hudWoodBlock.transform.translate(hudBlockPosition);
+        hudWoodBlock.setShouldRender(false);
+        hudBlocks[3] = hudWoodBlock;
+
+        hud.addRenderObject(hudWoodBlock);
+
+        // Setting up renderer
+
         Renderer renderer = new Renderer(window, world, camera);
+        HudRenderer hudRenderer = new HudRenderer(window, hud);
         MouseInput input = new MouseInput(window);
 
         try {
             renderer.init();
         } catch (Exception e) {
             System.out.println("Error in render init");
+            e.printStackTrace();
+        }
+
+        try {
+            hudRenderer.init();
+        } catch(Exception e) {
+            System.out.println("Error in hud render init");
             e.printStackTrace();
         }
         input.init();
@@ -83,13 +155,14 @@ public class Main {
         Vector3f playerMovement = new Vector3f();
         float breakCoolDown = 0.0f;
         float placeCoolDown = 0.0f;
+        boolean wasButtonPressed = false;
 
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            Color white = new Color(1.0f, 1.0f, 1.0f);
+            //Color white = new Color(1.0f, 1.0f, 1.0f);
 
-            Draw.Rectangle(white, new Vector2f(-0.050f, -0.005f), new Vector2f(0.01f, 0.01f));
+            //Draw.Rectangle(white, new Vector2f(-0.005f, -0.005f), new Vector2f(0.01f, 0.01f));
 
             // cast rays and break blocks
 
@@ -115,7 +188,7 @@ public class Main {
                     if (hit != null) {
                         world.placeBlock(
                                 VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), 0.01f)).toVector3i(),
-                                1
+                                selectedBlock
                         );
                     }
                     placeCoolDown += 1.0f;
@@ -123,6 +196,20 @@ public class Main {
                 placeCoolDown -= timer.deltaTime();
             } else {
                 placeCoolDown = 0.0f;
+            }
+
+            if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
+                if (!wasButtonPressed) {
+                    hudBlocks[selectedBlock - 1].setShouldRender(false);
+                    selectedBlock += 1;
+                    if (selectedBlock > 4) {
+                        selectedBlock = 1;
+                    }
+                    hudBlocks[selectedBlock - 1].setShouldRender(true);
+                    wasButtonPressed = true;
+                }
+            } else {
+                wasButtonPressed = false;
             }
 
             playerMovement.set(0,0,0);
@@ -164,12 +251,14 @@ public class Main {
 
             player.update(timer.deltaTime());
             renderer.render();
+            hudRenderer.render();
             window.update();
             input.update();
             timer.update();
         }
 
         renderer.cleanup();
+        hudRenderer.cleanup();
         window.close();
 
     }

@@ -82,8 +82,8 @@ public class Transform {
     public Matrix4 getMatrix() {
         Matrix4 ret = new Matrix4();
         ret = Matrix4.Multiply(ret, translation);
-        ret = Matrix4.Multiply(ret, rotation);
         ret = Matrix4.Multiply(ret, scale);
+        ret = Matrix4.Multiply(ret, rotation);
 
         return ret;
     }

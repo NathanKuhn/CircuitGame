@@ -14,9 +14,9 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class Renderer {
 
+    private Window window;
     private World world;
     private Camera camera;
-    private Window window;
     private ShaderProgram shaderProgram;
     private int textureAtlasID;
 
@@ -43,8 +43,8 @@ public class Renderer {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        for (int i = 0; i < world.getRenderList().size(); i++) {
-            world.getRenderList().get(i).init();
+        for (RenderObject renderObject : world.getRenderList()) {
+            renderObject.init();
         }
 
     }
@@ -62,13 +62,16 @@ public class Renderer {
         shaderProgram.setUniform("texture_sampler", 0);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureAtlasID);
 
-        for (int i = 0; i < world.getRenderList().size(); i++) {
+        for (RenderObject renderObject : world.getRenderList()) {
 
-            RenderObject renderObject = world.getRenderList().get(i);
+            if (renderObject.hasSeparateTexture()) {
+                glBindTexture(GL_TEXTURE_2D, renderObject.getTextureID());
+            } else {
+                glBindTexture(GL_TEXTURE_2D, textureAtlasID);
+            }
+
             shaderProgram.setUniform("transformMatrix", renderObject.transform.getMatrix());
-
 
             glBindVertexArray(renderObject.getVaoID());
             glEnableVertexAttribArray(0);
@@ -88,8 +91,8 @@ public class Renderer {
 
     public void cleanup() {
         shaderProgram.cleanup();
-        for (int i = 0; i < world.getRenderList().size(); i++) {
-            world.getRenderList().get(i).cleanup();
+        for (RenderObject renderObject : world.getRenderList()) {
+            renderObject.cleanup();
         }
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);

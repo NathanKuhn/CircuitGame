@@ -25,11 +25,11 @@ public class TextureAtlas {
     }
 
     private Vector2f getUV(int textureID) {
-        int x = (textureID + 1) % atlasTextureWidth;
-        int y = (textureID + 1) / atlasTextureWidth;
+        int x = (textureID % atlasTextureWidth);
+        int y = atlasTextureWidth - (textureID / atlasTextureWidth) - 1;
         return new Vector2f(
-                x * 1.0f / atlasTextureWidth,
-                y * 1.0f / atlasTextureWidth
+                (float) x  / (float) atlasTextureWidth,
+                (float) y  / (float) atlasTextureWidth
         );
     }
 

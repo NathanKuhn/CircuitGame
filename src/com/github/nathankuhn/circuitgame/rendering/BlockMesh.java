@@ -119,6 +119,15 @@ public class BlockMesh {
         updateMesh();
     }
 
+    public BlockMesh(Block block, TextureAtlas textureAtlas) {
+        this.block = block;
+        this.textureAtlas = textureAtlas;
+        sides = new BlockMesh.CubeSideData(true, true, true, true, true, true);
+        location = new Vector3i(0,0,0);
+        mesh = new Mesh(new Vector3f[0], new Vector3f[0], new Vector2f[0], new Vector3i[0]);
+        updateMesh();
+    }
+
     private void updateMesh() {
         List<Vector3f> positions = new ArrayList<>();
         List<Vector3f> normals = new ArrayList<>(); // TODO refactor to simple normal identifier

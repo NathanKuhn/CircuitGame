@@ -14,8 +14,8 @@ import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderProgram {
 
-    protected static final String DEFAULT_VERTEX_PATH = "shaders/defaultVertex.shader";
-    protected static final String DEFAULT_FRAGMENT_PATH = "shaders/defaultFragment.shader";
+    protected static final String DEFAULT_VERTEX_PATH = "shaders/worldVertex.shader";
+    protected static final String DEFAULT_FRAGMENT_PATH = "shaders/worldFragment.shader";
 
     private int programId;
     private int vertexShaderId;

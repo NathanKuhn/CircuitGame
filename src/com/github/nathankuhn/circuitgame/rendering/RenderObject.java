@@ -15,32 +15,66 @@ public class RenderObject {
     public Transform transform;
 
     private Mesh mesh;
+    private Texture texture; // will contain null if the RenderObject uses the TextureAtlas in World
+
+    private boolean hasSeparateTexture;
+    private boolean render;
 
     private int vaoID;
     private int positionVboID;
     private int normalVboID;
     private int indexVboID;
     private int uvsVboID;
+    private int textureID;
 
     public RenderObject(Mesh mesh) {
         this.transform = new Transform(new Vector3f(0.0f, 0.0f, 0.0f));
         this.mesh = mesh;
+        hasSeparateTexture = false;
+        render = true;
     }
 
-    protected int getVaoID() {
+    public RenderObject(Mesh mesh, Texture texture) {
+        this.transform = new Transform(new Vector3f(0.0f, 0.0f, 0.0f));
+        this.mesh = mesh;
+        this.texture = texture;
+        hasSeparateTexture = true;
+        render = true;
+    }
+
+    public int getVaoID() {
         return vaoID;
     }
-    protected int getVertexCount() {
+
+    public int getTextureID() {
+        return textureID;
+    }
+
+    public boolean hasSeparateTexture() {
+        return hasSeparateTexture;
+    }
+
+    public boolean shouldRender() {
+        return render;
+    }
+
+    public void setShouldRender(boolean shouldRender) {
+        render = shouldRender;
+    }
+
+    public int getVertexCount() {
         return mesh.getVertexCount();
     }
-    protected Mesh getMesh() {
+
+    public Mesh getMesh() {
         return mesh;
     }
-    protected void setMesh(Mesh mesh) {
+
+    public void setMesh(Mesh mesh) {
         this.mesh = mesh;
     }
 
-    protected void init() throws Exception {
+    public void init() throws Exception {
 
         // Create Buffers to store data off-heap where it can be accessed by native code
 
@@ -84,6 +118,16 @@ public class RenderObject {
         glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0);
         memFree(uvsBuffer);
 
+        if (hasSeparateTexture) {
+            textureID = glGenTextures();
+            glBindTexture(GL_TEXTURE_2D, textureID);
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.getWidth(), texture.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.getBuffer());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+
     }
 
     protected void storeMeshData() {
@@ -120,7 +164,7 @@ public class RenderObject {
 
     }
 
-    protected void cleanup() {
+    public void cleanup() {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDeleteBuffers(positionVboID);

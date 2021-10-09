@@ -18,4 +18,5 @@ void main()
         shade = 0.8;
     }
     fragColor = texture(texture_sampler, texCoord) * shade;
+    fragColor.w = 1.0;
 }
