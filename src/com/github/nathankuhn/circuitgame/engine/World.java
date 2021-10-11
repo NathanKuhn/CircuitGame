@@ -38,7 +38,7 @@ public class World {
         for (int x = 0; x < 16; x++) {
             for (int y = 0; y < 16; y++) {
                 for (int z = 0; z < 16; z++) {
-                    heightValue = (int) (Misc.PerlinNoise((float) (x + x0) / 20.0f, (float) (z + z0) / 20.0f) * 10 + 20) - y0;
+                    heightValue = (int) (Misc.PerlinNoise((float) (x + x0) / 20.0f, (float) (z + z0) / 20.0f) * 20 + 20) - y0;
                     if (y < heightValue - 4) {
                         map[x][y][z] = 1;
                     } else if (y < heightValue){

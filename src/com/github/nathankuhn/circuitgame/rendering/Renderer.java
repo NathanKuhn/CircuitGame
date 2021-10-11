@@ -50,11 +50,6 @@ public class Renderer {
     }
     public void render() {
 
-        if (window.isResized()) {
-            glViewport(0, 0, window.getWidth(), window.getHeight());
-            window.setResized(false);
-        }
-
         shaderProgram.bind();
 
         shaderProgram.setUniform("projectionMatrix", window.getProjectionMatrix());

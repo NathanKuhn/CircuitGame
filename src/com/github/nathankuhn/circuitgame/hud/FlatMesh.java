@@ -7,7 +7,10 @@ import com.github.nathankuhn.circuitgame.utils.Vector3i;
 
 public class FlatMesh {
 
-    public static Mesh BuildHudMesh(float originX, float originY, float sizeX, float sizeY, int rows, int cols) {
+    public static Mesh BuildHudMesh(float centerX, float centerY, float sizeX, float sizeY, int rows, int cols) {
+
+        float originX = centerX - sizeX / 2;
+        float originY = centerY - sizeY / 2;
 
         int cells = rows * cols;
 
@@ -53,6 +56,10 @@ public class FlatMesh {
 
         return new Mesh(verts, normals, uvs, faces);
 
+    }
+
+    public static Mesh BuildHudMesh(Vector2f origin, Vector2f size, int rows, int cols) {
+        return BuildHudMesh(origin.x, origin.y, size.x, size.y, rows, cols);
     }
 
 }

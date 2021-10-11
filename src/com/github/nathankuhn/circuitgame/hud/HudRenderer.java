@@ -71,6 +71,13 @@ public class HudRenderer {
         shaderProgram.unbind();
     }
 
+    public void update() throws Exception{
+        hud.updateHudElementResize(window.getDimensions());
+        for (RenderObject renderObject : hud.getRenderObjects()) {
+            renderObject.init();
+        }
+    }
+
     public void cleanup() {
         shaderProgram.cleanup();
         glDisableVertexAttribArray(0);

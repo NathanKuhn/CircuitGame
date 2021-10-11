@@ -29,7 +29,7 @@ public class VectorMath {
         return new Vector3f(a.x * s, a.y * s, a.z * s);
     }
     public static Vector2f Scale(Vector2f a, float s) {
-        return new Vector2f(a.x / s, a.y / s);
+        return new Vector2f(a.x * s, a.y * s);
     }
     public static Vector3f Normalize(Vector3f a) {
         return Scale(a, 1.0f / a.length());

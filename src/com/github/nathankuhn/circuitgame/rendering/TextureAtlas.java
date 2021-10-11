@@ -21,7 +21,7 @@ public class TextureAtlas {
     }
 
     public Vector2f factorUV(Vector2f uv, int textureID) {
-        return VectorMath.Add(VectorMath.Scale(uv, atlasTextureWidth), getUV(textureID));
+        return VectorMath.Add(VectorMath.Scale(uv, 1.0f / atlasTextureWidth), getUV(textureID));
     }
 
     private Vector2f getUV(int textureID) {

@@ -1,5 +1,7 @@
 package com.github.nathankuhn.circuitgame.utils;
 
+import com.github.nathankuhn.circuitgame.display.Window;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -27,11 +29,20 @@ public class Texture {
         buffer.flip();
         return buffer;
     }
+
     public int getWidth() {
         return width;
     }
+
     public int getHeight() {
         return height;
+    }
+
+    public Vector2f getIdeaDimensions(Vector2i windowDimensions) {
+        return new Vector2f(
+                (float) width / (float) windowDimensions.y * 2,
+                (float) height / (float) windowDimensions.y * 2
+        );
     }
 
     public static Texture LoadPNG(String filename) {
@@ -54,6 +65,14 @@ public class Texture {
         byte[] rgba = intARGBtoByteRGBA(argb);
 
         return new Texture(bufferedImage.getWidth(), bufferedImage.getHeight(), rgba);
+    }
+
+    public static Texture SingleColor(Color color) {
+        byte r = (byte) (color.r * 255);
+        byte g = (byte) (color.g * 255);
+        byte b = (byte) (color.b * 255);
+        byte a = (byte) (color.a * 255);
+        return new Texture(1, 1, new byte[] {r, g, b, a});
     }
 
     public static byte[] intARGBtoByteRGBA(int[] argb) {

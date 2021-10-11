@@ -1,6 +1,8 @@
 package com.github.nathankuhn.circuitgame.display;
 
 import com.github.nathankuhn.circuitgame.utils.Matrix4;
+import com.github.nathankuhn.circuitgame.utils.Vector2i;
+import com.github.nathankuhn.circuitgame.utils.Vector3i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -161,4 +163,7 @@ public class Window {
         glfwSetErrorCallback(null).free();
     }
 
+    public Vector2i getDimensions() {
+        return new Vector2i(width, height);
+    }
 }

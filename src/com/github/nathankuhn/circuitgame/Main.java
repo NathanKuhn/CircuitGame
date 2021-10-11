@@ -6,9 +6,7 @@ import com.github.nathankuhn.circuitgame.engine.Block;
 import com.github.nathankuhn.circuitgame.engine.BlockRegistry;
 import com.github.nathankuhn.circuitgame.engine.Player;
 import com.github.nathankuhn.circuitgame.engine.World;
-import com.github.nathankuhn.circuitgame.hud.FlatMesh;
-import com.github.nathankuhn.circuitgame.hud.Hud;
-import com.github.nathankuhn.circuitgame.hud.HudRenderer;
+import com.github.nathankuhn.circuitgame.hud.*;
 import com.github.nathankuhn.circuitgame.rendering.*;
 import com.github.nathankuhn.circuitgame.input.MouseInput;
 import com.github.nathankuhn.circuitgame.utils.*;
@@ -65,55 +63,30 @@ public class Main {
         // Hud
 
         Hud hud = new Hud();
-        Texture crosshairTexture = Texture.LoadPNG("Crosshair.png");
-        float x = (float) crosshairTexture.getWidth() / window.getWidth() * 2;
-        float y = (float) crosshairTexture.getHeight() / window.getHeight() * 2;
-        RenderObject crosshair = new RenderObject(FlatMesh.BuildHudMesh(-x / 2.0f, -y / 2.0f, x, y, 1, 1), Texture.LoadPNG("Crosshair.png"));
-        hud.addRenderObject(crosshair);
+        Texture texture = Texture.LoadPNG("Crosshair.png");
+        hud.addHudElement(new Image(new Vector2f(0, 0), window.getDimensions(), texture));
 
-        RenderObject[] hudBlocks = new RenderObject[4];
-        int selectedBlock = 1;
-        Vector3f hudBlockPosition = new Vector3f(1.5f, -0.7f, 0.0f);
+        int selectedBlock = 0;
+        HudElement[] hudBlocks = new HudElement[4];
 
         BlockMesh stoneBlock = new BlockMesh(registry.getBlock(1), textureAtlas);
-        RenderObject hudStoneBlock = new RenderObject(stoneBlock.getMesh(), textureAtlas.getTexture());
-        hudStoneBlock.transform.scale(new Vector3f(0.1f, 0.1f, 0.1f));
-        hudStoneBlock.transform.rotate(new Vector3f(25.0f, 45.0f, 0.0f));
-        hudStoneBlock.transform.translate(hudBlockPosition);
-        hudStoneBlock.setShouldRender(true);
-        hudBlocks[0] = hudStoneBlock;
-
-        hud.addRenderObject(hudStoneBlock);
+        hudBlocks[0] = new OrthoMesh(new Vector2f(0.1f, 0.1f), new Vector2f(0.0f, -0.7f), new Vector3f(25, 45, 0), stoneBlock.getMesh(), textureAtlas.getTexture());
 
         BlockMesh dirtBlock = new BlockMesh(registry.getBlock(2), textureAtlas);
-        RenderObject hudDirtBlock = new RenderObject(dirtBlock.getMesh(), textureAtlas.getTexture());
-        hudDirtBlock.transform.scale(new Vector3f(0.1f, 0.1f, 0.1f));
-        hudDirtBlock.transform.rotate(new Vector3f(25.0f, 45.0f, 0.0f));
-        hudDirtBlock.transform.translate(hudBlockPosition);
-        hudDirtBlock.setShouldRender(false);
-        hudBlocks[1] = hudDirtBlock;
-
-        hud.addRenderObject(hudDirtBlock);
+        hudBlocks[1] = new OrthoMesh(new Vector2f(0.1f, 0.1f), new Vector2f(0.0f, -0.7f), new Vector3f(25, 45, 0), dirtBlock.getMesh(), textureAtlas.getTexture());
 
         BlockMesh grassBlock = new BlockMesh(registry.getBlock(3), textureAtlas);
-        RenderObject hudGrassBlock = new RenderObject(grassBlock.getMesh(), textureAtlas.getTexture());
-        hudGrassBlock.transform.scale(new Vector3f(0.1f, 0.1f, 0.1f));
-        hudGrassBlock.transform.rotate(new Vector3f(25.0f, 45.0f, 0.0f));
-        hudGrassBlock.transform.translate(hudBlockPosition);
-        hudGrassBlock.setShouldRender(false);
-        hudBlocks[2] = hudGrassBlock;
-
-        hud.addRenderObject(hudGrassBlock);
+        hudBlocks[2] = new OrthoMesh(new Vector2f(0.1f, 0.1f), new Vector2f(0.0f, -0.7f), new Vector3f(25, 45, 0), grassBlock.getMesh(), textureAtlas.getTexture());
 
         BlockMesh woodBlock = new BlockMesh(registry.getBlock(4), textureAtlas);
-        RenderObject hudWoodBlock = new RenderObject(woodBlock.getMesh(), textureAtlas.getTexture());
-        hudWoodBlock.transform.scale(new Vector3f(0.1f, 0.1f, 0.1f));
-        hudWoodBlock.transform.rotate(new Vector3f(25.0f, 45.0f, 0.0f));
-        hudWoodBlock.transform.translate(hudBlockPosition);
-        hudWoodBlock.setShouldRender(false);
-        hudBlocks[3] = hudWoodBlock;
+        hudBlocks[3] = new OrthoMesh(new Vector2f(0.1f, 0.1f), new Vector2f(0.0f, -0.7f), new Vector3f(25, 45, 0), woodBlock.getMesh(), textureAtlas.getTexture());
 
-        hud.addRenderObject(hudWoodBlock);
+        for (HudElement element : hudBlocks) {
+            hud.addHudElement(element);
+            element.setShouldRender(false);
+        }
+
+        hudBlocks[selectedBlock].setShouldRender(true);
 
         // Setting up renderer
 
@@ -188,7 +161,7 @@ public class Main {
                     if (hit != null) {
                         world.placeBlock(
                                 VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), 0.01f)).toVector3i(),
-                                selectedBlock
+                                selectedBlock + 1
                         );
                     }
                     placeCoolDown += 1.0f;
@@ -200,12 +173,12 @@ public class Main {
 
             if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
                 if (!wasButtonPressed) {
-                    hudBlocks[selectedBlock - 1].setShouldRender(false);
+                    hudBlocks[selectedBlock].setShouldRender(false);
                     selectedBlock += 1;
-                    if (selectedBlock > 4) {
-                        selectedBlock = 1;
+                    if (selectedBlock > 3) {
+                        selectedBlock = 0;
                     }
-                    hudBlocks[selectedBlock - 1].setShouldRender(true);
+                    hudBlocks[selectedBlock].setShouldRender(true);
                     wasButtonPressed = true;
                 }
             } else {
@@ -247,6 +220,16 @@ public class Main {
                 rot.x = 90;
             } else if (rot.x < -90) {
                 rot.x = -90;
+            }
+
+            if (window.isResized()) {
+                glViewport(0, 0, window.getWidth(), window.getHeight());
+                window.setResized(false);
+                try {
+                    hudRenderer.update();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             player.update(timer.deltaTime());
