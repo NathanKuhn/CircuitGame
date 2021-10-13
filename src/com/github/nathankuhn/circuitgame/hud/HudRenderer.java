@@ -72,9 +72,12 @@ public class HudRenderer {
     }
 
     public void update() throws Exception{
+        root.updateSize(window);
         for (HudElement hudElement : root.getAllChildren()) {
             hudElement.update(window.getDimensions());
-            hudElement.getRenderObject().init();
+            if (hudElement.getRenderObject() != null) {
+                hudElement.getRenderObject().init();
+            }
         }
     }
 

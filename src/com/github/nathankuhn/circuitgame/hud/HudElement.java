@@ -3,6 +3,7 @@ package com.github.nathankuhn.circuitgame.hud;
 import com.github.nathankuhn.circuitgame.rendering.RenderObject;
 import com.github.nathankuhn.circuitgame.utils.Vector2f;
 import com.github.nathankuhn.circuitgame.utils.Vector2i;
+import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.VectorMath;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public abstract class HudElement {
         if (parent == null) {
             return center;
         }
-        return VectorMath.Add(center, parent.getCenter());
+        return VectorMath.Add(getCenter(), parent.getRelativeCenter());
     }
 
     public Vector2f getDimensions() {
@@ -74,6 +75,10 @@ public abstract class HudElement {
         this.dimensions = dimensions;
     }
 
+    public void setZOffset(float zOffset) {
+        this.zOffset = zOffset;
+    }
+
     private void addChild(HudElement hudElement) {
         children.add(hudElement);
     }
@@ -92,6 +97,15 @@ public abstract class HudElement {
         return renderObject;
     }
 
-    public void update(Vector2i windowDimensions) {}
+    public void update(Vector2i windowDimensions) {
+        update();
+    }
+
+    public void update() {
+        if (getRenderObject() != null) {
+            getRenderObject().transform.setScale(new Vector3f(dimensions, 1.0f));
+            getRenderObject().transform.setPosition(new Vector3f(getRelativeCenter(), getZOffset()));
+        }
+    }
 
 }

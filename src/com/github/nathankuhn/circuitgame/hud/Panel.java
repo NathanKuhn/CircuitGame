@@ -13,7 +13,7 @@ public class Panel extends HudElement{
         super(parent, center, dimensions, true);
         this.color = color;
         setRenderObject( new RenderObject(
-                FlatMesh.BuildHudMesh(getRelativeCenter(), getDimensions(), 1, 1, getZOffset()),
+                FlatMesh.BuildHudMesh(new Vector2f(), new Vector2f(1.0f, 1.0f), 1, 1, 0.0f),
                 Texture.SingleColor(color)
         ));
     }

@@ -38,7 +38,7 @@ public class Texture {
         return height;
     }
 
-    public Vector2f getIdeaDimensions(Vector2i windowDimensions) {
+    public Vector2f getIdealDimensions(Vector2i windowDimensions) {
         return new Vector2f(
                 (float) width / (float) windowDimensions.y * 2,
                 (float) height / (float) windowDimensions.y * 2

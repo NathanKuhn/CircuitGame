@@ -20,4 +20,8 @@ public class OrthoMesh extends HudElement{
         getRenderObject().transform.setRotation(rotation);
     }
 
+    public void update() {
+        getRenderObject().transform.setPosition(new Vector3f(getRelativeCenter(), getZOffset()));
+    }
+
 }

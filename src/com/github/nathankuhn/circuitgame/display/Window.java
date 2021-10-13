@@ -21,7 +21,10 @@ public class Window {
     private long window;
     private int width;
     private int height;
+    private int oldWidth;
+    private int oldHeight;
     private boolean resized;
+    private boolean fullscreen;
     private float fov;
     private float nearPlane;
     private float farPlane;
@@ -30,7 +33,10 @@ public class Window {
     public Window(int width, int height) {
         this.width = width;
         this.height = height;
+        oldWidth = width;
+        oldHeight = height;
         resized = false;
+        fullscreen = false;
 
         fov = (float) Math.toRadians(90);
         nearPlane = 0.05f;
@@ -53,7 +59,7 @@ public class Window {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create the window
-        window = glfwCreateWindow(width, height, "Render Window", NULL, NULL);
+        window = glfwCreateWindow(width, height, "Circuit Game", NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -73,7 +79,6 @@ public class Window {
 
             // Get the resolution of the primary monitor
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
             // Center the window
             glfwSetWindowPos(
                     window,
@@ -105,6 +110,8 @@ public class Window {
         // Support for transparencies
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        //setFullscreen(true);
     }
 
     public void update() {
@@ -139,6 +146,32 @@ public class Window {
 
     public boolean isResized() {
         return resized;
+    }
+
+    public void setFullscreen(boolean fullscreen) {
+        this.fullscreen = fullscreen;
+
+        if (fullscreen) {
+            oldWidth = width;
+            oldHeight = height;
+            // get resolution of monitor
+            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            width = vidmode.width();
+            height = vidmode.height();
+
+            glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, 0);
+
+            resized = true;
+        } else {
+            width = oldWidth;
+            height = oldHeight;
+            glfwSetWindowMonitor(window, NULL, 0, 0, width, height, 0);
+        }
+
+    }
+
+    public void toggleFullscreen() {
+        setFullscreen(!fullscreen);
     }
 
     public boolean shouldClose() {

@@ -49,21 +49,22 @@ public class MouseInput {
         displaceVec.x = 0;
         displaceVec.y = 0;
         if (locked) {
-            float deltaX = currentPos.x - window.getWidth() / 2;
-            float deltaY = currentPos.y - window.getHeight() / 2;
+            float deltaX = currentPos.x - window.getWidth() / 2.0f;
+            float deltaY = currentPos.y - window.getHeight() / 2.0f;
             if (deltaX != 0) {
                 displaceVec.y = deltaX;
             }
             if (deltaY != 0) {
                 displaceVec.x = deltaY;
             }
-            glfwSetCursorPos(window.getHandle(), window.getWidth() / 2, window.getHeight() / 2);
+            glfwSetCursorPos(window.getHandle(), window.getWidth() / 2.0, window.getHeight() / 2.0);
         }
 
     }
 
     public void lockCursor() {
         glfwSetInputMode(window.getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        glfwSetCursorPos(window.getHandle(), window.getWidth() / 2.0, window.getHeight() / 2.0);
         //glfwSetInputMode(window.getHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         locked = true;
     }

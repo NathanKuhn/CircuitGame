@@ -36,7 +36,9 @@ public class Main {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
         System.out.println("Press enter to print ups");
 
+        System.out.print("Initializing window... ");
         window.init();
+        System.out.println("[Done]");
 
         BlockRegistry registry = new BlockRegistry();
         registry.addBlock(new Block("Stone", 1, new BlockTexture(0, 0, 0, 0, 0, 0)));
@@ -50,7 +52,9 @@ public class Main {
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
         World world = new World(registry, textureAtlas, 10, 3, 10);
+        System.out.print("Generating world... ");
         world.generateAll();
+        System.out.println("[Done]");
 
         //Mesh testMesh = MeshImporter.LoadFromOBJ("teapot.obj");
         //Mesh testMesh = FlatMesh.BuildHudMesh(1f, 0.5f, 2, 4);
@@ -70,43 +74,23 @@ public class Main {
         Texture texture = Texture.LoadPNG("Crosshair.png");
         new Image(root, new Vector2f(0, 0), window.getDimensions(), texture);
 
-        Panel panel = new Panel(root, new Vector2f(0.0f, -0.8f), new Vector2f(0.2f, 0.2f), new Color(0.7f, 0.7f, 0.7f, 0.5f));
+        Panel panel = new Panel(root.getRightAnchor(), new Vector2f(-0.2f, 0.0f), new Vector2f(0.2f, 0.2f), new Color(0.5f, 0.5f, 0.5f, 0.6f));
+
 
         int selectedBlock = 0;
         HudElement[] hudBlocks = new HudElement[7];
 
-        BlockMesh stoneBlock = new BlockMesh(registry.getBlock(1), textureAtlas);
-        hudBlocks[0] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), stoneBlock.getMesh(), textureAtlas.getTexture());
-
-        BlockMesh dirtBlock = new BlockMesh(registry.getBlock(2), textureAtlas);
-        hudBlocks[1] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), dirtBlock.getMesh(), textureAtlas.getTexture());
-
-        BlockMesh grassBlock = new BlockMesh(registry.getBlock(3), textureAtlas);
-        hudBlocks[2] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), grassBlock.getMesh(), textureAtlas.getTexture());
-
-        BlockMesh woodBlock = new BlockMesh(registry.getBlock(4), textureAtlas);
-        hudBlocks[3] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), woodBlock.getMesh(), textureAtlas.getTexture());
-
-        BlockMesh logBlock = new BlockMesh(registry.getBlock(5), textureAtlas);
-        hudBlocks[4] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), logBlock.getMesh(), textureAtlas.getTexture());
-
-        BlockMesh tileBlock = new BlockMesh(registry.getBlock(6), textureAtlas);
-        hudBlocks[5] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), tileBlock.getMesh(), textureAtlas.getTexture());
-
-        BlockMesh sandBlock = new BlockMesh(registry.getBlock(7), textureAtlas);
-        hudBlocks[6] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), sandBlock.getMesh(), textureAtlas.getTexture());
-
-        for (HudElement element : hudBlocks) {
-            element.setShouldRender(false);
+        for (int i = 0; i < hudBlocks.length; i++) {
+            BlockMesh mesh = new BlockMesh(registry.getBlock(i + 1), textureAtlas);
+            hudBlocks[i] = new OrthoMesh(panel, 0.1f, new Vector2f(0.0f, i * 0.2f), new Vector3f(25, 45, 0), mesh.getMesh(), textureAtlas.getTexture());
         }
-
-        hudBlocks[selectedBlock].setShouldRender(true);
 
         // Setting up renderer
 
         Renderer renderer = new Renderer(window, world, camera);
         HudRenderer hudRenderer = new HudRenderer(window, root);
         MouseInput input = new MouseInput(window);
+        input.lockCursor();
 
         try {
             renderer.init();
@@ -126,11 +110,13 @@ public class Main {
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window.getHandle(), (window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-                input.toggleCursorLock();
+                glfwSetWindowShouldClose(window, true);
             if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
                 printFrameRate();
             if (key == GLFW_KEY_M && action == GLFW_PRESS)
                 swapRenderModes();
+            if (key == GLFW_KEY_F11 && action == GLFW_PRESS)
+                this.window.toggleFullscreen();
         });
 
         // Set the clear color
@@ -185,9 +171,14 @@ public class Main {
             }
 
             if (selectedBlock != Misc.Mod((int)input.getScrollOffset(), hudBlocks.length)) {
-                hudBlocks[selectedBlock].setShouldRender(false);
+
                 selectedBlock = Misc.Mod((int)input.getScrollOffset(), hudBlocks.length);
-                hudBlocks[selectedBlock].setShouldRender(true);
+
+                for (int i = 0; i < hudBlocks.length; i++) {
+                    hudBlocks[i].setCenter(new Vector2f(0.0f, (i - selectedBlock) * 0.2f));
+                    hudBlocks[i].update();
+                }
+
             }
 
             playerMovement.set(0,0,0);
