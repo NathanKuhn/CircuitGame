@@ -43,6 +43,9 @@ public class Main {
         registry.addBlock(new Block("Dirt",  2, new BlockTexture(1, 1, 1, 1, 1, 1)));
         registry.addBlock(new Block("Grass",  3, new BlockTexture(2, 2, 2, 2, 3, 1)));
         registry.addBlock(new Block("Wood", 4, new BlockTexture(4, 4, 4, 4, 4, 4)));
+        registry.addBlock(new Block("Log", 5, new BlockTexture(8, 8, 8, 8, 7, 7)));
+        registry.addBlock(new Block("Tile", 6, new BlockTexture(5, 5, 5, 5, 5, 5)));
+        registry.addBlock(new Block("sand", 7, new BlockTexture(6, 6, 6, 6, 6, 6)));
         Texture tex = Texture.LoadPNG("TextureAtlas.png");
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
@@ -70,19 +73,28 @@ public class Main {
         Panel panel = new Panel(root, new Vector2f(0.0f, -0.8f), new Vector2f(0.2f, 0.2f), new Color(0.7f, 0.7f, 0.7f, 0.5f));
 
         int selectedBlock = 0;
-        HudElement[] hudBlocks = new HudElement[4];
+        HudElement[] hudBlocks = new HudElement[7];
 
         BlockMesh stoneBlock = new BlockMesh(registry.getBlock(1), textureAtlas);
-        hudBlocks[0] = new OrthoMesh(panel, 0.1f, new Vector2f(0.0f, 0.0f), new Vector3f(25, 45, 0), stoneBlock.getMesh(), textureAtlas.getTexture());
+        hudBlocks[0] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), stoneBlock.getMesh(), textureAtlas.getTexture());
 
         BlockMesh dirtBlock = new BlockMesh(registry.getBlock(2), textureAtlas);
-        hudBlocks[1] = new OrthoMesh(panel, 0.1f, new Vector2f(0.0f, 0.0f), new Vector3f(25, 45, 0), dirtBlock.getMesh(), textureAtlas.getTexture());
+        hudBlocks[1] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), dirtBlock.getMesh(), textureAtlas.getTexture());
 
         BlockMesh grassBlock = new BlockMesh(registry.getBlock(3), textureAtlas);
-        hudBlocks[2] = new OrthoMesh(panel, 0.1f, new Vector2f(0.0f, 0.0f), new Vector3f(25, 45, 0), grassBlock.getMesh(), textureAtlas.getTexture());
+        hudBlocks[2] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), grassBlock.getMesh(), textureAtlas.getTexture());
 
         BlockMesh woodBlock = new BlockMesh(registry.getBlock(4), textureAtlas);
-        hudBlocks[3] = new OrthoMesh(panel, 0.1f, new Vector2f(0.0f, 0.0f), new Vector3f(25, 45, 0), woodBlock.getMesh(), textureAtlas.getTexture());
+        hudBlocks[3] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), woodBlock.getMesh(), textureAtlas.getTexture());
+
+        BlockMesh logBlock = new BlockMesh(registry.getBlock(5), textureAtlas);
+        hudBlocks[4] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), logBlock.getMesh(), textureAtlas.getTexture());
+
+        BlockMesh tileBlock = new BlockMesh(registry.getBlock(6), textureAtlas);
+        hudBlocks[5] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), tileBlock.getMesh(), textureAtlas.getTexture());
+
+        BlockMesh sandBlock = new BlockMesh(registry.getBlock(7), textureAtlas);
+        hudBlocks[6] = new OrthoMesh(panel, 0.1f, new Vector2f(), new Vector3f(25, 45, 0), sandBlock.getMesh(), textureAtlas.getTexture());
 
         for (HudElement element : hudBlocks) {
             element.setShouldRender(false);
