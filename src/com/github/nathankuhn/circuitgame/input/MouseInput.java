@@ -16,6 +16,8 @@ public class MouseInput {
     private boolean leftButtonPressed;
     private boolean rightButtonPressed;
 
+    private int scrollOffset;
+
     public MouseInput(Window window) {
         currentPos = new Vector2f(0, 0);
         displaceVec = new Vector2f(0, 0);
@@ -37,6 +39,9 @@ public class MouseInput {
         glfwSetMouseButtonCallback(window.getHandle(), (windowHandle, button, action, mode) -> {
             leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
             rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
+        });
+        glfwSetScrollCallback(window.getHandle(), (windowHandle, xOffset, yOffset) -> {
+            scrollOffset += yOffset;
         });
     }
 
@@ -77,15 +82,22 @@ public class MouseInput {
     public boolean isLocked() {
         return locked;
     }
+
     public boolean isInWindow() {
         return inWindow;
     }
     public boolean isLeftButtonPressed() {
         return leftButtonPressed;
     }
+
     public boolean isRightButtonPressed() {
         return rightButtonPressed;
     }
+
+    public float getScrollOffset() {
+        return scrollOffset;
+    }
+
     public Vector2f getDisplaceVec() {
         return displaceVec;
     }

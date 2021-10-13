@@ -62,27 +62,29 @@ public class Main {
 
         // Hud
 
-        Hud hud = new Hud();
+        Root root = new Root();
+
         Texture texture = Texture.LoadPNG("Crosshair.png");
-        hud.addHudElement(new Image(new Vector2f(0, 0), window.getDimensions(), texture));
+        new Image(root, new Vector2f(0, 0), window.getDimensions(), texture);
+
+        Panel panel = new Panel(root, new Vector2f(0.0f, -0.8f), new Vector2f(0.2f, 0.2f), new Color(0.7f, 0.7f, 0.7f, 0.5f));
 
         int selectedBlock = 0;
         HudElement[] hudBlocks = new HudElement[4];
 
         BlockMesh stoneBlock = new BlockMesh(registry.getBlock(1), textureAtlas);
-        hudBlocks[0] = new OrthoMesh(new Vector2f(0.1f, 0.1f), new Vector2f(0.0f, -0.7f), new Vector3f(25, 45, 0), stoneBlock.getMesh(), textureAtlas.getTexture());
+        hudBlocks[0] = new OrthoMesh(panel, 0.1f, new Vector2f(0.0f, 0.0f), new Vector3f(25, 45, 0), stoneBlock.getMesh(), textureAtlas.getTexture());
 
         BlockMesh dirtBlock = new BlockMesh(registry.getBlock(2), textureAtlas);
-        hudBlocks[1] = new OrthoMesh(new Vector2f(0.1f, 0.1f), new Vector2f(0.0f, -0.7f), new Vector3f(25, 45, 0), dirtBlock.getMesh(), textureAtlas.getTexture());
+        hudBlocks[1] = new OrthoMesh(panel, 0.1f, new Vector2f(0.0f, 0.0f), new Vector3f(25, 45, 0), dirtBlock.getMesh(), textureAtlas.getTexture());
 
         BlockMesh grassBlock = new BlockMesh(registry.getBlock(3), textureAtlas);
-        hudBlocks[2] = new OrthoMesh(new Vector2f(0.1f, 0.1f), new Vector2f(0.0f, -0.7f), new Vector3f(25, 45, 0), grassBlock.getMesh(), textureAtlas.getTexture());
+        hudBlocks[2] = new OrthoMesh(panel, 0.1f, new Vector2f(0.0f, 0.0f), new Vector3f(25, 45, 0), grassBlock.getMesh(), textureAtlas.getTexture());
 
         BlockMesh woodBlock = new BlockMesh(registry.getBlock(4), textureAtlas);
-        hudBlocks[3] = new OrthoMesh(new Vector2f(0.1f, 0.1f), new Vector2f(0.0f, -0.7f), new Vector3f(25, 45, 0), woodBlock.getMesh(), textureAtlas.getTexture());
+        hudBlocks[3] = new OrthoMesh(panel, 0.1f, new Vector2f(0.0f, 0.0f), new Vector3f(25, 45, 0), woodBlock.getMesh(), textureAtlas.getTexture());
 
         for (HudElement element : hudBlocks) {
-            hud.addHudElement(element);
             element.setShouldRender(false);
         }
 
@@ -91,7 +93,7 @@ public class Main {
         // Setting up renderer
 
         Renderer renderer = new Renderer(window, world, camera);
-        HudRenderer hudRenderer = new HudRenderer(window, hud);
+        HudRenderer hudRenderer = new HudRenderer(window, root);
         MouseInput input = new MouseInput(window);
 
         try {
@@ -128,7 +130,6 @@ public class Main {
         Vector3f playerMovement = new Vector3f();
         float breakCoolDown = 0.0f;
         float placeCoolDown = 0.0f;
-        boolean wasButtonPressed = false;
 
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
@@ -171,18 +172,10 @@ public class Main {
                 placeCoolDown = 0.0f;
             }
 
-            if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
-                if (!wasButtonPressed) {
-                    hudBlocks[selectedBlock].setShouldRender(false);
-                    selectedBlock += 1;
-                    if (selectedBlock > 3) {
-                        selectedBlock = 0;
-                    }
-                    hudBlocks[selectedBlock].setShouldRender(true);
-                    wasButtonPressed = true;
-                }
-            } else {
-                wasButtonPressed = false;
+            if (selectedBlock != Misc.Mod((int)input.getScrollOffset(), hudBlocks.length)) {
+                hudBlocks[selectedBlock].setShouldRender(false);
+                selectedBlock = Misc.Mod((int)input.getScrollOffset(), hudBlocks.length);
+                hudBlocks[selectedBlock].setShouldRender(true);
             }
 
             playerMovement.set(0,0,0);

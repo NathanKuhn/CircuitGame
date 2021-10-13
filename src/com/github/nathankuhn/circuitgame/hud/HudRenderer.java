@@ -20,12 +20,12 @@ public class HudRenderer {
     private static final String HUD_VERTEX_SHADER_PATH = "shaders/hudVertex.shader";
 
     private Window window;
-    private Hud hud;
+    private Root root;
     private ShaderProgram shaderProgram;
 
-    public HudRenderer(Window window, Hud hud) {
+    public HudRenderer(Window window, Root root) {
         this.window = window;
-        this.hud = hud;
+        this.root = root;
         shaderProgram = new ShaderProgram();
     }
 
@@ -35,7 +35,7 @@ public class HudRenderer {
         shaderProgram.createUniform("transformMatrix");
         shaderProgram.createUniform("color");
 
-        for (RenderObject renderObject : hud.getRenderObjects()) {
+        for (RenderObject renderObject : root.getRenderObjects()) {
             renderObject.init();
         }
     }
@@ -47,7 +47,7 @@ public class HudRenderer {
 
         glActiveTexture(GL_TEXTURE0);
 
-        for (RenderObject renderObject : hud.getRenderObjects()) {
+        for (RenderObject renderObject : root.getRenderObjects()) {
             if (renderObject.shouldRender()) {
 
                 shaderProgram.setUniform("transformMatrix", renderObject.transform.getMatrix());
@@ -72,9 +72,9 @@ public class HudRenderer {
     }
 
     public void update() throws Exception{
-        hud.updateHudElementResize(window.getDimensions());
-        for (RenderObject renderObject : hud.getRenderObjects()) {
-            renderObject.init();
+        for (HudElement hudElement : root.getAllChildren()) {
+            hudElement.update(window.getDimensions());
+            hudElement.getRenderObject().init();
         }
     }
 
@@ -83,7 +83,7 @@ public class HudRenderer {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
-        for (RenderObject renderObject : hud.getRenderObjects()) {
+        for (RenderObject renderObject : root.getRenderObjects()) {
             renderObject.cleanup();
         }
     }

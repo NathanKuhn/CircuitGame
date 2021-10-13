@@ -9,11 +9,11 @@ public class Image extends HudElement{
 
     private Texture texture;
 
-    public Image(Vector2f center, Vector2i windowDimensions, Texture texture) {
-        super(center, texture.getIdeaDimensions(windowDimensions));
+    public Image(HudElement parent, Vector2f center, Vector2i windowDimensions, Texture texture) {
+        super(parent, center, texture.getIdeaDimensions(windowDimensions), false);
         this.texture = texture;
         setRenderObject( new RenderObject(
-                FlatMesh.BuildHudMesh(getCenter(), texture.getIdeaDimensions(windowDimensions), 1, 1),
+                FlatMesh.BuildHudMesh(getRelativeCenter(), texture.getIdeaDimensions(windowDimensions), 1, 1, getZOffset()),
                 texture
         ));
     }

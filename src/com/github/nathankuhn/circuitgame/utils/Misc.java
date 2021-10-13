@@ -54,4 +54,8 @@ public class Misc {
         return VectorMath.Lerp(ix0, ix1, sy);
     }
 
+    public static int Mod(int a, int b) {
+        return (a % b + b) % b;
+    }
+
 }
