@@ -11,7 +11,7 @@ public class Chunk {
         return (x >= 0 && x < 16 && y >= 0 && y < 16 && z >= 0 && z < 16);
     }
 
-    private World world;
+    private final World world;
     private int[][][] blockIDs;
     private Vector3i position;
     private ChunkMesh chunkMesh;
@@ -23,19 +23,19 @@ public class Chunk {
         this.world = world;
         this.blockIDs = blocks;
         this.position = position;
-        chunkMesh = new ChunkMesh(world.getTextureAtlas(), this);
+        chunkMesh = new ChunkMesh(world.getTextureAtlas(), this, world.getBlockRegistry(), world.getLayers());
     }
 
-    public BlockMesh.CubeSideData getSideData(Vector3i a) {
+    public BlockMesh.CubeSideData getSideData(Vector3i a, int layer) {
 
         Vector3i p = VectorMath.Add(a, position);
 
-        boolean north = world.getBlock(p.x, p.y, p.z - 1) != 0;
-        boolean south = world.getBlock(p.x, p.y, p.z + 1) != 0;
-        boolean east = world.getBlock(p.x + 1, p.y, p.z) != 0;
-        boolean west = world.getBlock(p.x - 1, p.y, p.z) != 0;
-        boolean up = world.getBlock(p.x, p.y + 1, p.z) != 0;
-        boolean down = world.getBlock(p.x, p.y - 1, p.z) != 0;
+        boolean north = world.hasBlockOfLayer(p.x, p.y, p.z - 1, layer);
+        boolean south = world.hasBlockOfLayer(p.x, p.y, p.z + 1, layer);
+        boolean east = world.hasBlockOfLayer(p.x + 1, p.y, p.z, layer);
+        boolean west = world.hasBlockOfLayer(p.x - 1, p.y, p.z, layer);
+        boolean up = world.hasBlockOfLayer(p.x, p.y + 1, p.z, layer);
+        boolean down = world.hasBlockOfLayer(p.x, p.y - 1, p.z, layer);
 
         return new BlockMesh.CubeSideData(!north, !south, !east, !west, !up, !down);
     }

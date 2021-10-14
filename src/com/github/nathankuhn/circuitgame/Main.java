@@ -1,6 +1,5 @@
 package com.github.nathankuhn.circuitgame;
 
-import com.github.nathankuhn.circuitgame.display.Draw;
 import com.github.nathankuhn.circuitgame.display.Window;
 import com.github.nathankuhn.circuitgame.engine.Block;
 import com.github.nathankuhn.circuitgame.engine.BlockRegistry;
@@ -38,6 +37,7 @@ public class Main {
 
         System.out.print("Initializing window... ");
         window.init();
+        //window.setFullscreen(true);
         System.out.println("[Done]");
 
         BlockRegistry registry = new BlockRegistry();
@@ -48,6 +48,7 @@ public class Main {
         registry.addBlock(new Block("Log", 5, new BlockTexture(8, 8, 8, 8, 7, 7)));
         registry.addBlock(new Block("Tile", 6, new BlockTexture(5, 5, 5, 5, 5, 5)));
         registry.addBlock(new Block("sand", 7, new BlockTexture(6, 6, 6, 6, 6, 6)));
+        registry.addBlock(new Block("glass", 8, new BlockTexture(9, 9, 9, 9, 9, 9), 0));
         Texture tex = Texture.LoadPNG("TextureAtlas.png");
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
@@ -78,7 +79,7 @@ public class Main {
 
 
         int selectedBlock = 0;
-        HudElement[] hudBlocks = new HudElement[7];
+        HudElement[] hudBlocks = new HudElement[8];
 
         for (int i = 0; i < hudBlocks.length; i++) {
             BlockMesh mesh = new BlockMesh(registry.getBlock(i + 1), textureAtlas);
@@ -170,9 +171,9 @@ public class Main {
                 placeCoolDown = 0.0f;
             }
 
-            if (selectedBlock != Misc.Mod((int)input.getScrollOffset(), hudBlocks.length)) {
+            if (selectedBlock != Misc.Mod((int)-input.getScrollOffset(), hudBlocks.length)) {
 
-                selectedBlock = Misc.Mod((int)input.getScrollOffset(), hudBlocks.length);
+                selectedBlock = Misc.Mod((int)-input.getScrollOffset(), hudBlocks.length);
 
                 for (int i = 0; i < hudBlocks.length; i++) {
                     hudBlocks[i].setCenter(new Vector2f(0.0f, (i - selectedBlock) * 0.2f));

@@ -69,23 +69,8 @@ public class Window {
             Window.this.setResized(true);
         });
 
-        // Get the thread stack and push a new frame
-        try ( MemoryStack stack = stackPush() ) {
-            IntBuffer pWidth = stack.mallocInt(1); // int*
-            IntBuffer pHeight = stack.mallocInt(1); // int*
+        centerWindow();
 
-            // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(window, pWidth, pHeight);
-
-            // Get the resolution of the primary monitor
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-            // Center the window
-            glfwSetWindowPos(
-                    window,
-                    (vidmode.width() - pWidth.get(0)) / 2,
-                    (vidmode.height() - pHeight.get(0)) / 2
-            );
-        } // the stack frame is popped automatically
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
@@ -166,6 +151,7 @@ public class Window {
             width = oldWidth;
             height = oldHeight;
             glfwSetWindowMonitor(window, NULL, 0, 0, width, height, 0);
+            centerWindow();
         }
 
     }
@@ -198,5 +184,25 @@ public class Window {
 
     public Vector2i getDimensions() {
         return new Vector2i(width, height);
+    }
+
+    private void centerWindow() {
+        // Get the thread stack and push a new frame
+        try ( MemoryStack stack = stackPush() ) {
+            IntBuffer pWidth = stack.mallocInt(1); // int*
+            IntBuffer pHeight = stack.mallocInt(1); // int*
+
+            // Get the window size passed to glfwCreateWindow
+            glfwGetWindowSize(window, pWidth, pHeight);
+
+            // Get the resolution of the primary monitor
+            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            // Center the window
+            glfwSetWindowPos(
+                    window,
+                    (vidmode.width() - pWidth.get(0)) / 2,
+                    (vidmode.height() - pHeight.get(0)) / 2
+            );
+        } // the stack frame is popped automatically
     }
 }

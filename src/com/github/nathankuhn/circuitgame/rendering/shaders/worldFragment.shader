@@ -17,6 +17,11 @@ void main()
     {
         shade = 0.8;
     }
-    fragColor = texture(texture_sampler, texCoord) * shade;
-    fragColor.w = 1.0;
+
+    vec4 color = texture(texture_sampler, texCoord);
+    if (color.w < 0.1) {
+        discard;
+    }
+    fragColor = color * shade;
+    fragColor.w = color.w;
 }

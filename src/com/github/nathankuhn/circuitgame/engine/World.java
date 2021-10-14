@@ -1,6 +1,5 @@
 package com.github.nathankuhn.circuitgame.engine;
 
-import com.github.nathankuhn.circuitgame.engine.Chunk;
 import com.github.nathankuhn.circuitgame.rendering.RenderObject;
 import com.github.nathankuhn.circuitgame.rendering.TextureAtlas;
 import com.github.nathankuhn.circuitgame.utils.Misc;
@@ -19,6 +18,7 @@ public class World {
     private int yChunks;
     private int zChunks;
     private List<RenderObject> otherObjects;
+    private int layers;
 
     public World(BlockRegistry blockRegistry, TextureAtlas textureAtlas, int xChunks, int yChunks, int zChunks) {
         this.blockRegistry = blockRegistry;
@@ -28,6 +28,7 @@ public class World {
         this.zChunks = zChunks;
         chunks = new Chunk[xChunks][yChunks][zChunks];
         otherObjects = new ArrayList<>();
+        layers = 2;
     }
 
     public int[][][] generateChunkMap(int x0, int y0, int z0) {
@@ -83,14 +84,14 @@ public class World {
         }
     }
 
-    public List<RenderObject> getRenderList() {
+    public List<RenderObject> getRenderList(int layer) {
         List<RenderObject> ret = new ArrayList<>();
 
         for (int x = 0; x < chunks.length; x++) {
             for (int y = 0; y < chunks[0].length; y++) {
                 for (int z = 0; z < chunks[0][0].length; z++) {
                     try {
-                        ret.add(chunks[x][y][z].getChunkMesh().getRenderObject());
+                        ret.add(chunks[x][y][z].getChunkMesh().getRenderObject(layer));
                     } catch (Exception e) {
                         System.out.println("Failed to load chunk.");
                         e.printStackTrace();
@@ -100,6 +101,14 @@ public class World {
         }
 
         ret.addAll(otherObjects);
+        return ret;
+    }
+
+    public List<RenderObject> getRenderList() {
+        List<RenderObject> ret = new ArrayList<>();
+        for (int i = 0; i < layers; i++) {
+            ret.addAll(getRenderList(i));
+        }
         return ret;
     }
 
@@ -165,6 +174,23 @@ public class World {
         return getBlock((int)x, (int)y, (int)z);
     }
 
+    public boolean hasBlockOfLayer(int x, int y, int z, int layer) {
+        int block = getBlock(x, y, z);
+        if (block == 0) {
+            return false;
+        }
+
+        if (blockRegistry.getBlock(block).getLayer() == layer) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean hasBlockOfLayer(Vector3i pos, int layer) {
+        return hasBlockOfLayer(pos.x, pos.y, pos.z, layer);
+    }
+
     public void placeBlock(int x, int y, int z, int blockID) {
         Chunk chunk = getChunk(x, y, z);
         if (chunk == null) {
@@ -215,10 +241,23 @@ public class World {
     }
 
     public Vector3f getSpawn() {
+
+        int posX = xChunks * 16 / 2;
+        int posZ = zChunks * 16 / 2;
+        int posY = 0;
+
+        int blockID = 1;
+        while(blockID != 0) {
+            blockID = getBlock(posX, posY, posZ);
+            posY++;
+            if (posY > yChunks * 16)
+                break;
+        }
+
         return new Vector3f(
-                xChunks * 16 / 2,
-                yChunks * 16 / 2,
-                zChunks * 16 / 2
+                posX + 0.5f,
+                posY + 1.0f,
+                posZ + 0.5f
         );
     }
 
@@ -232,5 +271,9 @@ public class World {
 
     public RenderObject getOtherRenderObject(int index) {
         return otherObjects.get(index);
+    }
+
+    public int getLayers() {
+        return layers;
     }
 }

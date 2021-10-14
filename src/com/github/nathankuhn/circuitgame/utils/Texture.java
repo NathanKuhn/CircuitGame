@@ -57,7 +57,7 @@ public class Texture {
             } catch (IOException mte) {
                 System.err.println("Could not find missing texture image");
                 mte.printStackTrace();
-                return null;
+                return new Texture(1, 1, new byte[] {0,0,0,0});
             }
         }
 
