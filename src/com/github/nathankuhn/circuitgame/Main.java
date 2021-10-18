@@ -44,6 +44,7 @@ public class Main {
         registry.addBlock(new Block("Tile", 6, new BlockTexture(5, 5, 5, 5, 5, 5)));
         registry.addBlock(new Block("sand", 7, new BlockTexture(6, 6, 6, 6, 6, 6)));
         registry.addBlock(new Block("glass", 8, new BlockTexture(9, 9, 9, 9, 9, 9), 0));
+        registry.addBlock(new Block("leaves", 9, new BlockTexture(10, 10, 10, 10, 10, 10)));
         Texture tex = Texture.LoadPNG("TextureAtlas.png");
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
@@ -55,28 +56,15 @@ public class Main {
 
         Camera camera = new Camera(new Vector3f(0.0f, 5.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
         Player player = new Player(world, camera);
+        UserInput input = new UserInput(window);
 
-        // Hud
-
-        Root root = new Root();
-
-        Texture texture = Texture.LoadPNG("Crosshair.png");
-        new Image(root, new Vector2f(0, 0), window.getDimensions(), texture);
-
-        Panel panel = new Panel(root.getRightAnchor(), new Vector2f(-0.2f, 0.0f), new Vector2f(0.2f, 0.2f), new Color(0.5f, 0.5f, 0.5f, 0.6f));
-
-        HudElement[] hudBlocks = new HudElement[8];
-
-        for (int i = 0; i < hudBlocks.length; i++) {
-            BlockMesh mesh = new BlockMesh(registry.getBlock(i + 1), textureAtlas);
-            hudBlocks[i] = new OrthoMesh(panel, 0.1f, new Vector2f(0.0f, i * 0.2f), new Vector3f(25, 45, 0), mesh.getMesh(), textureAtlas.getTexture());
-        }
+        PlayerController playerController = new PlayerController(player, world, input, window);
+        playerController.focus();
 
         // Setting up renderer
 
         Renderer renderer = new Renderer(window, world, camera);
-        HudRenderer hudRenderer = new HudRenderer(window, root);
-        UserInput input = new UserInput(window);
+        HudRenderer hudRenderer = new HudRenderer(window, playerController.getHudRoot());
 
         try {
             renderer.init();
@@ -101,14 +89,11 @@ public class Main {
                 printFrameRate();
             if (key == GLFW_KEY_M && action == GLFW_PRESS) {
                 swapRenderModes();
-                root.setEnabled(!root.isEnabled());
+                playerController.setHudEnabled(!playerController.isHudEnabled());
             }
             if (key == GLFW_KEY_F11 && action == GLFW_PRESS)
                 this.window.toggleFullscreen();
         });
-
-        PlayerController playerController = new PlayerController(player, world, input);
-        playerController.focus();
 
         // Set the clear color
         glClearColor(0.7f, 0.9f, 1.0f, 1.0f);
@@ -118,11 +103,6 @@ public class Main {
 
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-            for (int i = 0; i < hudBlocks.length; i++) {
-                hudBlocks[i].setCenter(new Vector2f(0.0f, (i - playerController.getSelectedBlock() + 1) * 0.2f));
-                hudBlocks[i].update();
-            }
 
             if (window.isResized()) {
                 glViewport(0, 0, window.getWidth(), window.getHeight());

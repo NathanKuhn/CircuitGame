@@ -106,9 +106,9 @@ public class BlockMesh {
 
     private CubeSideData sides;
     private Vector3i location;
-    private Block block;
+    private final Block block;
     private Mesh mesh;
-    private TextureAtlas textureAtlas;
+    private final TextureAtlas textureAtlas;
 
     public BlockMesh(CubeSideData sides, Vector3i location, Block block, TextureAtlas textureAtlas) {
         this.sides = sides;

@@ -1,11 +1,10 @@
 package com.github.nathankuhn.circuitgame.engine;
 
-import com.github.nathankuhn.circuitgame.hud.Root;
+import com.github.nathankuhn.circuitgame.display.Window;
+import com.github.nathankuhn.circuitgame.hud.*;
+import com.github.nathankuhn.circuitgame.rendering.BlockMesh;
 import com.github.nathankuhn.circuitgame.rendering.RayHit;
-import com.github.nathankuhn.circuitgame.utils.Misc;
-import com.github.nathankuhn.circuitgame.utils.Vector2f;
-import com.github.nathankuhn.circuitgame.utils.Vector3f;
-import com.github.nathankuhn.circuitgame.utils.VectorMath;
+import com.github.nathankuhn.circuitgame.utils.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -20,28 +19,35 @@ public class PlayerController {
     private Player player;
     private World world;
     private UserInput userInput;
+    private final Window window;
 
     private Root playerHud;
 
     private int selectedBlockIndex;
     private int[] blockList;
+    private HudElement[] hudBlocks;
 
     private float breakCoolDown;
     private float placeCoolDown;
 
-    public PlayerController(Player player, World world, UserInput mouseInput) {
+    public PlayerController(Player player, World world, UserInput mouseInput, Window window) {
         this.player = player;
         this.world = world;
         this.userInput = mouseInput;
+        this.window = window;
 
         breakCoolDown = 0.0f;
         placeCoolDown = 0.0f;
 
-        blockList = new int[] {1, 2, 3, 4, 5, 6, 7, 8};
+        blockList = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+        playerHud = new Root();
+        createHud();
     }
 
     public void focus() {
 
+        playerHud.setEnabled(true);
         userInput.lockCursor();
 
         userInput.setMouseButtonCallback((windowHandle, button, action, mode) -> {
@@ -123,7 +129,47 @@ public class PlayerController {
     }
 
     private void onScrollIncrement(float offset) {
-        selectedBlockIndex = Misc.Mod((int) (selectedBlockIndex + offset), blockList.length);
+        selectedBlockIndex = Misc.Mod((int) (selectedBlockIndex - offset), blockList.length);
+        updateHudBlocks();
     }
 
+    public Root getHudRoot() {
+        return playerHud;
+    }
+
+    public void setHudEnabled(boolean enabled) {
+        playerHud.setEnabled(enabled);
+    }
+
+    public boolean isHudEnabled() {
+        return playerHud.isEnabled();
+    }
+
+    private void createHud() {
+
+        Texture texture = Texture.LoadPNG("Crosshair.png");
+        new Image(playerHud, new Vector2f(0, 0), window.getDimensions(), texture);
+
+        Panel panel = new Panel(playerHud.getDownAnchor(), new Vector2f(0.0f, 0.15f), new Vector2f(0.2f, 0.2f), new Color(0.5f, 0.5f, 0.5f, 0.3f));
+        hudBlocks = new HudElement[blockList.length];
+
+        for (int i = 0; i < hudBlocks.length; i++) {
+            BlockMesh mesh = new BlockMesh(world.getBlockRegistry().getBlock(i + 1), world.getTextureAtlas());
+            hudBlocks[i] = new OrthoMesh(panel, 0.075f, new Vector2f(0.2f, 0.0f), new Vector3f(25, 45, 0), mesh.getMesh(), world.getTextureAtlas().getTexture());
+        }
+
+        updateHudBlocks();
+    }
+
+    private void updateHudBlocks() {
+        for (int i = 0; i < blockList.length; i++) {
+            hudBlocks[i].setCenter(new Vector2f((i - selectedBlockIndex) * 0.17f, 0.0f));
+            if (i == selectedBlockIndex) {
+                hudBlocks[i].setDimensions(new Vector2f(0.11f, 0.11f));
+            } else {
+                hudBlocks[i].setDimensions(new Vector2f(0.075f, 0.075f));
+            }
+            hudBlocks[i].update();
+        }
+    }
 }

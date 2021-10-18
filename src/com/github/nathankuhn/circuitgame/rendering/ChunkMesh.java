@@ -3,6 +3,7 @@ package com.github.nathankuhn.circuitgame.rendering;
 import com.github.nathankuhn.circuitgame.engine.Block;
 import com.github.nathankuhn.circuitgame.engine.BlockRegistry;
 import com.github.nathankuhn.circuitgame.engine.Chunk;
+import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.Vector3i;
 
 import java.util.ArrayList;

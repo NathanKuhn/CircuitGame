@@ -22,6 +22,7 @@ public class OrthoMesh extends HudElement{
 
     public void update() {
         getRenderObject().transform.setPosition(new Vector3f(getRelativeCenter(), getZOffset()));
+        getRenderObject().transform.setScale(new Vector3f(getDimensions().x, getDimensions().x, getDimensions().x));
     }
 
 }
