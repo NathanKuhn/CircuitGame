@@ -42,6 +42,14 @@ public class RenderObject {
         render = true;
     }
 
+    public RenderObject(Mesh mesh, int textureID) {
+        this.transform = new Transform(new Vector3f(0.0f, 0.0f, 0.0f));
+        this.mesh = mesh;
+        this.textureID = textureID;
+        hasSeparateTexture = true;
+        render = true;
+    }
+
     public int getVaoID() {
         return vaoID;
     }
@@ -118,7 +126,7 @@ public class RenderObject {
         glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0);
         memFree(uvsBuffer);
 
-        if (hasSeparateTexture) {
+        if (hasSeparateTexture && texture != null) {
             textureID = glGenTextures();
             glBindTexture(GL_TEXTURE_2D, textureID);
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

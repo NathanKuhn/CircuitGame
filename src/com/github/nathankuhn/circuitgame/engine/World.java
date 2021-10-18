@@ -19,13 +19,15 @@ public class World {
     private int zChunks;
     private List<RenderObject> otherObjects;
     private int layers;
+    private int seed;
 
-    public World(BlockRegistry blockRegistry, TextureAtlas textureAtlas, int xChunks, int yChunks, int zChunks) {
+    public World(BlockRegistry blockRegistry, TextureAtlas textureAtlas, int xChunks, int yChunks, int zChunks, int seed) {
         this.blockRegistry = blockRegistry;
         this.textureAtlas = textureAtlas;
         this.xChunks = xChunks;
         this.yChunks = yChunks;
         this.zChunks = zChunks;
+        this.seed = seed;
         chunks = new Chunk[xChunks][yChunks][zChunks];
         otherObjects = new ArrayList<>();
         layers = 2;
@@ -39,12 +41,14 @@ public class World {
         for (int x = 0; x < 16; x++) {
             for (int y = 0; y < 16; y++) {
                 for (int z = 0; z < 16; z++) {
-                    heightValue = (int) (Misc.PerlinNoise((float) (x + x0) / 20.0f, (float) (z + z0) / 20.0f) * 20 + 20) - y0;
-                    if (y < heightValue - 4) {
+                    float noise = Misc.PerlinNoise((float) (x + x0) / 20.0f, (float) (z + z0) / 20.0f, seed);
+                    noise += Misc.PerlinNoise((float) (x + x0) / 100.0f, (float) (z + z0) / 100.0f, ~seed) * 5;
+                    heightValue = (int) (noise * 10 + 60);
+                    if (y + y0 < heightValue - 4) {
                         map[x][y][z] = 1;
-                    } else if (y < heightValue){
+                    } else if (y + y0 < heightValue){
                         map[x][y][z] = 2;
-                    } else if (y == heightValue){
+                    } else if (y + y0 == heightValue){
                         map[x][y][z] = 3;
                     }
                 }

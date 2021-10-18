@@ -23,6 +23,12 @@ public class Texture {
         this.data = data;
     }
 
+    public Texture(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.data = new byte[width * height * 4];
+    }
+
     public ByteBuffer getBuffer() {
         ByteBuffer buffer = ByteBuffer.allocateDirect(width * height * 4);
         buffer.put(data);

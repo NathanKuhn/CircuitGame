@@ -92,5 +92,7 @@ public class Player {
         return new Vector3f(position.x, position.y - PLAYER_HEIGHT / 2, position.z);
     }
 
-
+    public Camera getCamera() {
+        return camera;
+    }
 }

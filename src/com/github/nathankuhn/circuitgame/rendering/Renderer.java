@@ -5,12 +5,16 @@ import com.github.nathankuhn.circuitgame.engine.World;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11C.GL_BACK;
+import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11C.glCullFace;
+import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
 
@@ -84,6 +88,18 @@ public class Renderer {
         shaderProgram.unbind();
     }
 
+    public void render(RenderTexture renderTexture) {
+
+        glBindFramebuffer(GL_FRAMEBUFFER, renderTexture.getFboID());
+        glViewport(0, 0, renderTexture.getWidth(), renderTexture.getHeight());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        render();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, window.getWidth(), window.getHeight());
+    }
+
     public void cleanup() {
         shaderProgram.cleanup();
         for (RenderObject renderObject : world.getRenderList()) {
@@ -92,6 +108,7 @@ public class Renderer {
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
+        glDeleteTextures(textureAtlasID);
     }
 
 }

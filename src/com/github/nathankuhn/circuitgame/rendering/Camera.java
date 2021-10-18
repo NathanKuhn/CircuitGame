@@ -35,6 +35,11 @@ public class Camera {
 
     public void rotate(float x, float y, float z) {
         rotation.addSet(new Vector3f(x, y, z));
+        if (rotation.x > 90) {
+            rotation.x = 90;
+        } else if (rotation.x < -90) {
+            rotation.x = -90;
+        }
     }
 
     public void rotate(Vector3f rotationVector) {

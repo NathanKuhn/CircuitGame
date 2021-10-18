@@ -17,6 +17,7 @@ public abstract class HudElement {
     private Vector2f dimensions;
     private float zOffset;
     private RenderObject renderObject;
+    private boolean enabled;
 
     public HudElement(HudElement parent, Vector2f center, Vector2f dimensions, boolean hasChildren) {
         this.parent = parent;
@@ -31,6 +32,7 @@ public abstract class HudElement {
         if (parent != null) {
             zOffset = parent.getZOffset() + 1.0f;
         }
+        enabled = true;
     }
 
     public HudElement getParent() {
@@ -87,10 +89,18 @@ public abstract class HudElement {
         this.renderObject = renderObject;
     }
 
-    public void setShouldRender(boolean shouldRender) {
-        if (renderObject != null) {
-            renderObject.setShouldRender(shouldRender);
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        if (enabled) {
+            if (parent != null) {
+                return parent.isEnabled();
+            }
+            return true;
         }
+        return false;
     }
 
     public RenderObject getRenderObject() {

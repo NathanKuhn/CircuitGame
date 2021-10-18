@@ -19,9 +19,9 @@ public class HudRenderer {
     private static final String HUD_FRAGMENT_SHADER_PATH = "shaders/hudFragment.shader";
     private static final String HUD_VERTEX_SHADER_PATH = "shaders/hudVertex.shader";
 
-    private Window window;
+    private final Window window;
     private Root root;
-    private ShaderProgram shaderProgram;
+    private final ShaderProgram shaderProgram;
 
     public HudRenderer(Window window, Root root) {
         this.window = window;
@@ -47,8 +47,14 @@ public class HudRenderer {
 
         glActiveTexture(GL_TEXTURE0);
 
-        for (RenderObject renderObject : root.getRenderObjects()) {
-            if (renderObject.shouldRender()) {
+        for (HudElement hudElement : root.getAllChildren()) {
+            RenderObject renderObject = hudElement.getRenderObject();
+
+            if (renderObject == null) {
+                continue;
+            }
+
+            if (renderObject.shouldRender() && hudElement.isEnabled()) {
 
                 shaderProgram.setUniform("transformMatrix", renderObject.transform.getMatrix());
 
