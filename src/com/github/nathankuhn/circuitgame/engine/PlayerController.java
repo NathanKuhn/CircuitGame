@@ -22,6 +22,8 @@ public class PlayerController {
     private final Window window;
 
     private Root playerHud;
+    private HudElement playerInventory;
+    private boolean inventoryOpen;
 
     private int selectedBlockIndex;
     private int[] blockList;
@@ -43,6 +45,9 @@ public class PlayerController {
 
         playerHud = new Root();
         createHud();
+        playerInventory = new Panel(playerHud, new Vector2f(), new Vector2f(), new Color(0.0f, 0.0f, 0.0f, 0.0f));
+        inventoryOpen = false;
+        createInventory();
     }
 
     public void focus() {
@@ -68,6 +73,10 @@ public class PlayerController {
     }
 
     public void update(float deltaTime) {
+
+        if (inventoryOpen) {
+            return;
+        }
 
         Vector3f playerMovement = new Vector3f();
 
@@ -109,6 +118,11 @@ public class PlayerController {
     }
 
     private void onLeftClick() {
+
+        if (inventoryOpen) {
+            return;
+        }
+
         RayHit hit = player.getCamera().castRayFromCenter(world, 5);
         if (hit != null) {
             world.placeBlock(
@@ -119,6 +133,11 @@ public class PlayerController {
     }
 
     private void onRightClick() {
+
+        if (inventoryOpen) {
+            return;
+        }
+
         RayHit hit = player.getCamera().castRayFromCenter(world, 5);
         if (hit != null) {
             world.placeBlock(
@@ -131,6 +150,31 @@ public class PlayerController {
     private void onScrollIncrement(float offset) {
         selectedBlockIndex = Misc.Mod((int) (selectedBlockIndex - offset), blockList.length);
         updateHudBlocks();
+    }
+
+    public void openInventory() {
+        playerInventory.setEnabled(true);
+        userInput.unLockCursor();
+        player.move(new Vector3f());
+        inventoryOpen = true;
+    }
+
+    public void closeInventory() {
+        playerInventory.setEnabled(false);
+        userInput.lockCursor();
+        inventoryOpen = false;
+    }
+
+    public void toggleInventory() {
+        if (inventoryOpen) {
+            closeInventory();
+        } else {
+            openInventory();
+        }
+    }
+
+    public boolean isInventoryOpen() {
+        return inventoryOpen;
     }
 
     public Root getHudRoot() {
@@ -159,6 +203,19 @@ public class PlayerController {
         }
 
         updateHudBlocks();
+    }
+
+    private void createInventory() {
+
+        Panel panel = new Panel(playerInventory, new Vector2f(0.0f, 0.0f), new Vector2f(1.6f, 1.0f), new Color(0.2f, 0.2f, 0.2f, 0.7f));
+        playerInventory.setEnabled(false);
+
+        for (int x = -3; x < 5; x++) {
+            for (int y = -2; y < 3; y++) {
+                BlockMesh mesh = new BlockMesh(world.getBlockRegistry().getBlock(1), world.getTextureAtlas());
+                OrthoMesh stone = new OrthoMesh(panel, 0.1f, new Vector2f(x * 0.2f - 0.1f, y * 0.2f), new Vector3f(25f, 45f, 0f), mesh.getMesh(), world.getTextureAtlas().getTexture());
+            }
+        }
     }
 
     private void updateHudBlocks() {

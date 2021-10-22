@@ -85,7 +85,7 @@ public class UserInput {
 
     public void lockCursor() {
         glfwSetInputMode(window.getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        glfwSetCursorPos(window.getHandle(), window.getWidth() / 2.0, window.getHeight() / 2.0);
+        setCursorPos(window.getWidth() / 2.0, window.getHeight() / 2.0);
         //glfwSetInputMode(window.getHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         locked = true;
     }
@@ -100,6 +100,12 @@ public class UserInput {
         } else {
             lockCursor();
         }
+    }
+
+    public void setCursorPos(double x, double y) {
+        glfwSetCursorPos(window.getHandle(), x, y);
+        currentPos.x = (float)x;
+        currentPos.y = (float)y;
     }
 
     public boolean isLocked() {

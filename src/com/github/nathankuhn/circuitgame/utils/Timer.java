@@ -21,6 +21,10 @@ public class Timer {
         deltaTime = (lastTime - temp) / UNITS;
     }
 
+    public void reset() {
+        lastTime = getCurrentTime();
+    }
+
     private long getCurrentTime() {
         return System.nanoTime();
     }

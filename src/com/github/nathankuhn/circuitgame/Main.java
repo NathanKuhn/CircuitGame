@@ -30,10 +30,12 @@ public class Main {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
         System.out.println("Press enter to print ups");
 
-        System.out.print("Initializing window... ");
+        System.out.println("Initializing window... ");
+        timer.update();
         window.init();
         //window.setFullscreen(true); // DON'T USE WHEN DEBUGGING ( ͡° ͜ʖ ͡°)
-        System.out.println("[Done]");
+        timer.update();
+        System.out.println("Finished: " + (int)(timer.deltaTime() * 1000) + "ms elapsed");
 
         BlockRegistry registry = new BlockRegistry();
         registry.addBlock(new Block("Stone", 1, new BlockTexture(0, 0, 0, 0, 0, 0)));
@@ -50,9 +52,11 @@ public class Main {
 
         Random random = new Random();
         World world = new World(registry, textureAtlas, 10, 7, 10, random.nextInt());
-        System.out.print("Generating world... ");
+        System.out.println("Generating world... ");
+        timer.update();
         world.generateAll();
-        System.out.println("[Done]");
+        timer.update();
+        System.out.println("Finished: " + (int)(timer.deltaTime() * 1000) + "ms elapsed");
 
         Camera camera = new Camera(new Vector3f(0.0f, 5.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
         Player player = new Player(world, camera);
@@ -91,6 +95,9 @@ public class Main {
                 swapRenderModes();
                 playerController.setHudEnabled(!playerController.isHudEnabled());
             }
+            if (key == GLFW_KEY_TAB && action == GLFW_PRESS) {
+                playerController.toggleInventory();
+            }
             if (key == GLFW_KEY_F11 && action == GLFW_PRESS)
                 this.window.toggleFullscreen();
         });
@@ -100,6 +107,8 @@ public class Main {
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
+
+        timer.reset();
 
         while ( !window.shouldClose() ) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
