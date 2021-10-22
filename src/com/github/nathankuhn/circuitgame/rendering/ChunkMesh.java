@@ -3,7 +3,6 @@ package com.github.nathankuhn.circuitgame.rendering;
 import com.github.nathankuhn.circuitgame.engine.Block;
 import com.github.nathankuhn.circuitgame.engine.BlockRegistry;
 import com.github.nathankuhn.circuitgame.engine.Chunk;
-import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.Vector3i;
 
 import java.util.ArrayList;
@@ -40,9 +39,9 @@ public class ChunkMesh {
     public void updateMesh(int layer) {
         List<Mesh> meshes = new ArrayList<>();
 
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 16; y++) {
-                for (int z = 0; z < 16; z++) {
+        for (int x = 0; x < 32; x++) {
+            for (int y = 0; y < 32; y++) {
+                for (int z = 0; z < 32; z++) {
 
                     int blockID = chunk.getBlockID(x, y, z);
                     if (blockID != 0) {

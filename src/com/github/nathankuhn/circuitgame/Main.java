@@ -51,7 +51,7 @@ public class Main {
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
         Random random = new Random();
-        World world = new World(registry, textureAtlas, 10, 7, 10, random.nextInt());
+        World world = new World(registry, textureAtlas, 5, 5, 5, random.nextInt());
         System.out.println("Generating world... ");
         timer.update();
         world.generateAll();

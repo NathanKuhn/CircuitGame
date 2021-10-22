@@ -8,7 +8,7 @@ import com.github.nathankuhn.circuitgame.utils.VectorMath;
 public class Chunk {
 
     private static boolean InBounds(int x, int y, int z) {
-        return (x >= 0 && x < 16 && y >= 0 && y < 16 && z >= 0 && z < 16);
+        return (x >= 0 && x < 32 && y >= 0 && y < 32 && z >= 0 && z < 32);
     }
 
     private final World world;
@@ -17,7 +17,7 @@ public class Chunk {
     private ChunkMesh chunkMesh;
 
     public Chunk(World world, int[][][] blocks, Vector3i position) {
-        if (blocks.length != 16 || blocks[0].length != 16 || blocks[0][0].length != 16) {
+        if (blocks.length != 32 || blocks[0].length != 32 || blocks[0][0].length != 32) {
             // outside of chunk
         }
         this.world = world;

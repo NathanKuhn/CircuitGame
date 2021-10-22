@@ -34,13 +34,13 @@ public class World {
     }
 
     public int[][][] generateChunkMap(int x0, int y0, int z0) {
-        int[][][] map = new int[16][16][16];
+        int[][][] map = new int[32][32][32];
 
         int heightValue;
 
-        for (int x = 0; x < 16; x++) {
-            for (int y = 0; y < 16; y++) {
-                for (int z = 0; z < 16; z++) {
+        for (int x = 0; x < 32; x++) {
+            for (int y = 0; y < 32; y++) {
+                for (int z = 0; z < 32; z++) {
                     float noise = Misc.PerlinNoise((float) (x + x0) / 20.0f, (float) (z + z0) / 20.0f, seed);
                     noise += Misc.PerlinNoise((float) (x + x0) / 100.0f, (float) (z + z0) / 100.0f, ~seed) * 5;
                     heightValue = (int) (noise * 10 + 60);
@@ -59,15 +59,15 @@ public class World {
     }
 
     public void generateAll() {
-        int[][][] blankMap = new int[16][16][16];
+        int[][][] blankMap = new int[32][32][32];
 
         for (int x = 0; x < chunks.length; x++) {
             for (int y = 0; y < chunks[0].length; y++) {
                 for (int z = 0; z < chunks[0][0].length; z++) {
                     chunks[x][y][z] = new Chunk(
                             this,
-                            generateChunkMap(x * 16, y * 16, z * 16),
-                            new Vector3i(x * 16, y * 16, z * 16)
+                            generateChunkMap(x * 32, y * 32, z * 32),
+                            new Vector3i(x * 32, y * 32, z * 32)
                     );
                 }
             }
@@ -142,9 +142,9 @@ public class World {
 
     private int chunkFromBlock(int n) {
         if (n >= 0) {
-            return n / 16;
+            return n / 32;
         } else {
-            return (n / 16) - 1;
+            return (n / 32) - 1;
         }
     }
 
@@ -164,7 +164,7 @@ public class World {
             return 0;
         }
         try {
-            return chunk.getBlockID(x % 16, y % 16, z % 16);
+            return chunk.getBlockID(x % 32, y % 32, z % 32);
         } catch (ArrayIndexOutOfBoundsException e) {
             return 0;
         }
@@ -200,39 +200,39 @@ public class World {
         if (chunk == null) {
             return;
         }
-        chunk.setBlock(x % 16, y % 16, z % 16, blockID);
+        chunk.setBlock(x % 32, y % 32, z % 32, blockID);
         chunk.update();
 
         // If block is on an edge, update the adjacent chunk
         Chunk otherChunk;
-        if (x % 16 == 0) {
+        if (x % 32 == 0) {
             otherChunk = getChunk(x-1, y, z);
             if (otherChunk != null) {
                 otherChunk.update();
             }
-        } else if (x % 16 == 15) {
+        } else if (x % 32 == 31) {
             otherChunk = getChunk(x+1, y, z);
             if (otherChunk != null) {
                 otherChunk.update();
             }
         }
-        if (y % 16 == 0) {
+        if (y % 32 == 0) {
             otherChunk = getChunk(x, y-1, z);
             if (otherChunk != null) {
                 otherChunk.update();
             }
-        } else if (y % 16 == 15) {
+        } else if (y % 32 == 31) {
             otherChunk = getChunk(x, y+1, z);
             if (otherChunk != null) {
                 otherChunk.update();
             }
         }
-        if (z % 16 == 0) {
+        if (z % 32 == 0) {
             otherChunk = getChunk(x, y, z-1);
             if (otherChunk != null) {
                 otherChunk.update();
             }
-        } else if (z % 16 == 15) {
+        } else if (z % 32 == 31) {
             otherChunk = getChunk(x, y, z+1);
             if (otherChunk != null) {
                 otherChunk.update();
@@ -246,21 +246,21 @@ public class World {
 
     public Vector3f getSpawn() {
 
-        int posX = xChunks * 16 / 2;
-        int posZ = zChunks * 16 / 2;
+        int posX = xChunks * 32 / 2;
+        int posZ = zChunks * 32 / 2;
         int posY = 0;
 
         int blockID = 1;
         while(blockID != 0) {
             blockID = getBlock(posX, posY, posZ);
             posY++;
-            if (posY > yChunks * 16)
+            if (posY > yChunks * 32)
                 break;
         }
 
         return new Vector3f(
                 posX + 0.5f,
-                posY + 1.0f,
+                posY + 2.0f,
                 posZ + 0.5f
         );
     }
