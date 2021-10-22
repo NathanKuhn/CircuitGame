@@ -47,6 +47,7 @@ public class Vector3f {
     public float length() {
         return (float) Math.sqrt(x * x + y * y + z * z);
     }
+
     public float[] getArray() {
         return new float[] {x, y, z};
     }

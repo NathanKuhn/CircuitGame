@@ -22,6 +22,7 @@ void main()
     if (color.w < 0.1) {
         discard;
     }
+
     fragColor = color * shade;
     fragColor.w = color.w;
 }

@@ -66,8 +66,6 @@ public class Renderer {
 
             if (renderObject.hasSeparateTexture()) {
                 glBindTexture(GL_TEXTURE_2D, renderObject.getTextureID());
-            } else {
-                glBindTexture(GL_TEXTURE_2D, textureAtlasID);
             }
 
             shaderProgram.setUniform("transformMatrix", renderObject.transform.getMatrix());

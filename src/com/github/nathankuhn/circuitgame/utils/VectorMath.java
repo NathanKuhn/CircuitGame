@@ -1,6 +1,7 @@
 package com.github.nathankuhn.circuitgame.utils;
 
 public class VectorMath {
+
     public static Vector3f Add(Vector3f a, Vector3f b) {
         return new Vector3f(a.x + b.x, a.y + b.y, a.z + b.z);
     }
