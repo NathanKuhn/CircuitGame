@@ -9,8 +9,8 @@ public class FlatMesh {
 
     public static Mesh BuildHudMesh(float centerX, float centerY, float sizeX, float sizeY, int rows, int cols, float zOffset) {
 
-        float originX = centerX - sizeX / 2;
-        float originY = centerY - sizeY / 2;
+        float originX = centerX - (sizeX * cols) / 2;
+        float originY = centerY - (sizeY * rows) / 2;
 
         int cells = rows * cols;
 
