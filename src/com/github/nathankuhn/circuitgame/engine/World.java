@@ -5,6 +5,7 @@ import com.github.nathankuhn.circuitgame.rendering.TextureAtlas;
 import com.github.nathankuhn.circuitgame.utils.Misc;
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.Vector3i;
+import com.github.nathankuhn.circuitgame.utils.VectorMath;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class World {
                     float noise = Misc.PerlinNoise((float) (x + x0) / 20.0f, (float) (z + z0) / 20.0f, seed);
                     noise += Misc.PerlinNoise((float) (x + x0) / 100.0f, (float) (z + z0) / 100.0f, ~seed) * 5;
                     heightValue = (int) (noise * 10 + 60);
+
                     if (y + y0 < heightValue - 4) {
                         map[x][y][z] = 1;
                     } else if (y + y0 < heightValue){
@@ -67,7 +69,7 @@ public class World {
                     chunks[x][y][z] = new Chunk(
                             this,
                             generateChunkMap(x * 32, y * 32, z * 32),
-                            new Vector3i(x * 32, y * 32, z * 32)
+                            new Vector3i((x - xChunks / 2) * 32, y * 32, (z - zChunks / 2) * 32)
                     );
                 }
             }
@@ -143,15 +145,21 @@ public class World {
     private int chunkFromBlock(int n) {
         if (n >= 0) {
             return n / 32;
-        } else {
-            return (n / 32) - 1;
         }
+        return ((n + 1) / 32) - 1;
+    }
+
+    private int blockInChunk(int n) {
+        if (n >= 0) {
+            return n % 32;
+        }
+        return 31 + ((n + 1) % 32);
     }
 
     private Chunk getChunk(int x, int y, int z) {
-        int xChunk = chunkFromBlock(x);
+        int xChunk = chunkFromBlock(x) + xChunks / 2;
         int yChunk = chunkFromBlock(y);
-        int zChunk = chunkFromBlock(z);
+        int zChunk = chunkFromBlock(z) + zChunks / 2;
         if (xChunk < 0 || xChunk >= xChunks || yChunk < 0 || yChunk >= yChunks || zChunk < 0 || zChunk >= zChunks) {
             return null;
         }
@@ -164,7 +172,7 @@ public class World {
             return 0;
         }
         try {
-            return chunk.getBlockID(x % 32, y % 32, z % 32);
+            return chunk.getBlockID(blockInChunk(x), blockInChunk(y), blockInChunk(z));
         } catch (ArrayIndexOutOfBoundsException e) {
             return 0;
         }
@@ -200,39 +208,42 @@ public class World {
         if (chunk == null) {
             return;
         }
-        chunk.setBlock(x % 32, y % 32, z % 32, blockID);
+        if (blockID == 5) {
+            System.out.println(blockInChunk(x));
+        }
+        chunk.setBlock(blockInChunk(x), blockInChunk(y), blockInChunk(z), blockID);
         chunk.update();
 
         // If block is on an edge, update the adjacent chunk
         Chunk otherChunk;
-        if (x % 32 == 0) {
+        if (blockInChunk(x) == 0) {
             otherChunk = getChunk(x-1, y, z);
             if (otherChunk != null) {
                 otherChunk.update();
             }
-        } else if (x % 32 == 31) {
+        } else if (blockInChunk(x) == 31) {
             otherChunk = getChunk(x+1, y, z);
             if (otherChunk != null) {
                 otherChunk.update();
             }
         }
-        if (y % 32 == 0) {
+        if (blockInChunk(y) == 0) {
             otherChunk = getChunk(x, y-1, z);
             if (otherChunk != null) {
                 otherChunk.update();
             }
-        } else if (y % 32 == 31) {
+        } else if (blockInChunk(y) == 31) {
             otherChunk = getChunk(x, y+1, z);
             if (otherChunk != null) {
                 otherChunk.update();
             }
         }
-        if (z % 32 == 0) {
+        if (blockInChunk(z) == 0) {
             otherChunk = getChunk(x, y, z-1);
             if (otherChunk != null) {
                 otherChunk.update();
             }
-        } else if (z % 32 == 31) {
+        } else if (blockInChunk(z) == 31) {
             otherChunk = getChunk(x, y, z+1);
             if (otherChunk != null) {
                 otherChunk.update();
@@ -246,8 +257,8 @@ public class World {
 
     public Vector3f getSpawn() {
 
-        int posX = xChunks * 32 / 2;
-        int posZ = zChunks * 32 / 2;
+        int posX = 0;
+        int posZ = 0;
         int posY = 0;
 
         int blockID = 1;
@@ -260,7 +271,7 @@ public class World {
 
         return new Vector3f(
                 posX + 0.5f,
-                posY + 2.0f,
+                posY + 1.0f,
                 posZ + 0.5f
         );
     }
@@ -280,4 +291,5 @@ public class World {
     public int getLayers() {
         return layers;
     }
+
 }

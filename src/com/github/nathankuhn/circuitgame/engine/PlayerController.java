@@ -126,7 +126,7 @@ public class PlayerController {
         RayHit hit = player.getCamera().castRayFromCenter(world, 5);
         if (hit != null) {
             world.placeBlock(
-                    VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), -0.01f)).toVector3i(),
+                    VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), -0.5f)).toVector3iWorld(),
                     0
             );
         }
@@ -141,7 +141,7 @@ public class PlayerController {
         RayHit hit = player.getCamera().castRayFromCenter(world, 5);
         if (hit != null) {
             world.placeBlock(
-                    VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), 0.01f)).toVector3i(),
+                    VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), 0.05f)).toVector3iWorld(),
                     blockList[selectedBlockIndex]
             );
         }

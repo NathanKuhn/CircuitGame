@@ -102,6 +102,20 @@ public class Vector3f {
         return new Vector3i((int)x, (int)y, (int)z);
     }
 
+    public Vector3i toVector3iWorld() {
+        Vector3i ret = new Vector3i((int)x, (int)y, (int)z);
+        if (x < 0) {
+            ret.x = (int)x - 1;
+        }
+        if (y < 0) {
+            ret.y = (int)y - 1;
+        }
+        if (z < 0) {
+            ret.z = (int)z - 1;
+        }
+        return ret;
+    }
+
     public Vector3i floor() {
         return new Vector3i((int)Math.floor((double)x), (int)Math.floor((double)y), (int)Math.floor((double)z));
     }
