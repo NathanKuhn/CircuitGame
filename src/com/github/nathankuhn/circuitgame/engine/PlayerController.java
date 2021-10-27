@@ -41,7 +41,7 @@ public class PlayerController {
         breakCoolDown = 0.0f;
         placeCoolDown = 0.0f;
 
-        blockList = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        blockList = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 10};
 
         playerHud = new Root();
         createHud();
@@ -198,7 +198,7 @@ public class PlayerController {
         hudBlocks = new HudElement[blockList.length];
 
         for (int i = 0; i < hudBlocks.length; i++) {
-            BlockMesh mesh = new BlockMesh(world.getBlockRegistry().getBlock(i + 1), world.getTextureAtlas());
+            BlockMesh mesh = new BlockMesh(world.getBlockRegistry().getBlock(blockList[i]), world.getTextureAtlas());
             hudBlocks[i] = new OrthoMesh(panel, 0.075f, new Vector2f(0.2f, 0.0f), new Vector3f(25, 45, 0), mesh.getMesh(), world.getTextureAtlas().getTexture());
         }
 

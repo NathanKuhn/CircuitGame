@@ -1,7 +1,5 @@
 package com.github.nathankuhn.circuitgame.utils;
 
-import java.util.Random;
-
 public class Misc {
 
     public static int minIndex(float[] values) {
@@ -20,7 +18,7 @@ public class Misc {
     // For computing perlin noise
 
     private static Vector2f RandomGradient(int x, int y, int seed) {
-        int rand = noise(x, y, seed);
+        int rand = Noise(x, y, seed);
         float randFloat = (float) rand / Integer.MAX_VALUE;
         float a = (float) (randFloat * Math.PI * 2);
         return new Vector2f((float)Math.sin(a), (float)Math.cos(a));
@@ -59,7 +57,7 @@ public class Misc {
         return (a % b + b) % b;
     }
 
-    public static int hash32shift(int key)
+    public static int Hash32Shift(int key)
     {
         key = ~key + (key << 15);
         key = key ^ (key >>> 12);
@@ -70,9 +68,28 @@ public class Misc {
         return key;
     }
 
-    public static int noise(int x, int y, int seed)
+    public static int Noise(int x, int y, int seed)
     {
-        return hash32shift(seed+hash32shift(x+hash32shift(y)));
+        return Hash32Shift(seed+ Hash32Shift(x+ Hash32Shift(y)));
     }
 
+    public static String FindValue(String line, String value) {
+        int start = line.indexOf(value) + value.length();
+        int end = line.indexOf(' ', start);
+        if (end == -1) {
+            return line.substring(start);
+        }
+        return line.substring(start, end);
+    }
+
+    public static int Floor(float a) {
+        if (a >= 0) {
+            return (int)a;
+        }
+        return (int)a - 1;
+    }
+
+    public static float Abs(float a) {
+        return (a > 0) ? a : -a;
+    }
 }

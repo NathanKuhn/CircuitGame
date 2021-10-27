@@ -47,11 +47,12 @@ public class Main {
         registry.addBlock(new Block("sand", 7, new BlockTexture(6, 6, 6, 6, 6, 6)));
         registry.addBlock(new Block("glass", 8, new BlockTexture(9, 9, 9, 9, 9, 9), 0));
         registry.addBlock(new Block("leaves", 9, new BlockTexture(10, 10, 10, 10, 10, 10)));
+        registry.addBlock(new Block("JackOLantern", 10, new BlockTexture(12, 11, 12, 12, 13, 14)));
         Texture tex = Texture.LoadPNG("TextureAtlas.png");
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
         Random random = new Random();
-        World world = new World(registry, textureAtlas, 5, 5, 5, random.nextInt());
+        World world = new World(registry, textureAtlas, 5, 3, 5, random.nextInt());
         System.out.println("Generating world... ");
         timer.update();
         world.generateAll();
@@ -156,6 +157,12 @@ public class Main {
 
     public static void main(String[] args) {
         new Main().run();
+//        try {
+//            Font font = new Font("LucidaConsole.fnt");
+//            System.out.println(font.getUVCoords('a')[-1]);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
 }

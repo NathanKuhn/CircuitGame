@@ -1,5 +1,6 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
+import com.github.nathankuhn.circuitgame.utils.Misc;
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.Vector3i;
 import com.github.nathankuhn.circuitgame.utils.VectorMath;
@@ -18,17 +19,17 @@ public class RayHit {
         hitPosition = VectorMath.Add(VectorMath.Scale(ray.getDirection(), t), ray.getOrigin());
         hitNormal = new Vector3i();
 
-        float xf = hitPosition.x - (int)hitPosition.x;
-        float yf = hitPosition.y - (int)hitPosition.y;
-        float zf = hitPosition.z - (int)hitPosition.z;
+        float xf = hitPosition.x - Misc.Floor(hitPosition.x);
+        float yf = hitPosition.y - Misc.Floor(hitPosition.y);
+        float zf = hitPosition.z - Misc.Floor(hitPosition.z);
 
         int stepX = (ray.getDirection().x > 0) ? 1 : -1;
         int stepY = (ray.getDirection().y > 0) ? 1 : -1;
         int stepZ = (ray.getDirection().z > 0) ? 1 : -1;
 
-        if (xf < yf && xf < zf) {
+        if (Misc.Abs(xf * xf - xf) < 0.01f) {
             hitNormal.x = -stepX;
-        } else if (yf < xf && yf < zf) {
+        } else if (Misc.Abs(yf * yf - yf) < 0.01f) {
             hitNormal.y = -stepY;
         } else {
             hitNormal.z = -stepZ;
