@@ -22,14 +22,16 @@ public class PlayerController {
     private final Window window;
 
     private Root playerHud;
-    private HudElement playerInventory;
-    private boolean inventoryOpen;
     private Font hudFont;
 
     private int selectedBlockIndex;
     private int[] blockList;
     private HudElement[] hudBlocks;
     private Text fpsIndicator;
+
+    private HudElement playerInventory;
+    private int[] inventoryBlockList;
+    private boolean inventoryOpen;
 
     private float breakCoolDown;
     private float placeCoolDown;
@@ -46,6 +48,7 @@ public class PlayerController {
         textUpdateCoolDown = 0.0f;
 
         blockList = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 10};
+        inventoryBlockList = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
         try {
             hudFont = new Font("LucidaConsole.fnt");
@@ -219,7 +222,7 @@ public class PlayerController {
             fpsIndicator = new Text(playerHud.getUpperLeftAnchor(), new Vector2f(0.01f, -0.01f), hudFont, "FPS: ");
         }
 
-        Panel panel = new Panel(playerHud.getDownAnchor(), new Vector2f(0.0f, 0.15f), new Vector2f(0.2f, 0.2f), new Color(0.5f, 0.5f, 0.5f, 0.3f));
+        Panel panel = new Panel(playerHud.getDownAnchor(), new Vector2f(0.0f, 0.15f), new Vector2f(0.2f, 0.2f), new Color(0.7f, 0.7f, 0.7f, 0.5f));
         hudBlocks = new HudElement[blockList.length];
 
         for (int i = 0; i < hudBlocks.length; i++) {
@@ -235,10 +238,16 @@ public class PlayerController {
         Panel panel = new Panel(playerInventory, new Vector2f(0.0f, 0.0f), new Vector2f(1.6f, 1.0f), new Color(0.2f, 0.2f, 0.2f, 0.7f));
         playerInventory.setEnabled(false);
 
+        int index;
+
         for (int x = -3; x < 5; x++) {
             for (int y = -2; y < 3; y++) {
-                BlockMesh mesh = new BlockMesh(world.getBlockRegistry().getBlock(1), world.getTextureAtlas());
-                OrthoMesh stone = new OrthoMesh(panel, 0.1f, new Vector2f(x * 0.2f - 0.1f, y * 0.2f), new Vector3f(25f, 45f, 0f), mesh.getMesh(), world.getTextureAtlas().getTexture());
+
+                index = (x + 3) + (y + 2) * 8;
+                if (index < inventoryBlockList.length) {
+                    BlockMesh mesh = new BlockMesh(world.getBlockRegistry().getBlock(inventoryBlockList[index]), world.getTextureAtlas());
+                    OrthoMesh block = new OrthoMesh(panel, 0.1f, new Vector2f(x * 0.2f - 0.1f, -y * 0.2f), new Vector3f(25f, 45f, 0f), mesh.getMesh(), world.getTextureAtlas().getTexture());
+                }
             }
         }
     }
