@@ -9,6 +9,7 @@ import com.github.nathankuhn.circuitgame.utils.VectorMath;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class World {
 
@@ -39,12 +40,15 @@ public class World {
 
         int heightValue;
 
+        Random random = new Random(seed);
+
         for (int x = 0; x < 32; x++) {
             for (int y = 0; y < 32; y++) {
                 for (int z = 0; z < 32; z++) {
                     float noise = Misc.PerlinNoise((float) (x + x0) / 20.0f, (float) (z + z0) / 20.0f, seed);
                     noise += Misc.PerlinNoise((float) (x + x0) / 100.0f, (float) (z + z0) / 100.0f, ~seed) * 5;
                     heightValue = (int) (noise * 10 + 60);
+                    float pumpkinNoise = Misc.PerlinNoise((float) (x + x0) / 20.0f, (float) (z + z0) / 20.0f, seed + 100);
 
                     if (y + y0 < heightValue - 4) {
                         map[x][y][z] = 1;
@@ -52,6 +56,8 @@ public class World {
                         map[x][y][z] = 2;
                     } else if (y + y0 == heightValue){
                         map[x][y][z] = 3;
+                    } else if (random.nextFloat() < (pumpkinNoise - 0.4f) / 0.6f && y + y0 == heightValue + 1) {
+                        map[x][y][z] = 10;
                     }
                 }
             }
