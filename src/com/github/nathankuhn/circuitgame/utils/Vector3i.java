@@ -26,4 +26,7 @@ public class Vector3i {
         return "(" + x + ", " + y + ", " + z + ")";
     }
 
+    public Vector3f toVector3f() {
+        return new Vector3f(x, y, z);
+    }
 }

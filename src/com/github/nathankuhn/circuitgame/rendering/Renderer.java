@@ -61,8 +61,13 @@ public class Renderer {
         shaderProgram.setUniform("texture_sampler", 0);
 
         glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureAtlasID);
 
         for (RenderObject renderObject : world.getRenderList()) {
+
+            if (!renderObject.shouldRender()) {
+                continue;
+            }
 
             if (renderObject.hasSeparateTexture()) {
                 glBindTexture(GL_TEXTURE_2D, renderObject.getTextureID());
@@ -81,6 +86,10 @@ public class Renderer {
             glDisableVertexAttribArray(1);
             glDisableVertexAttribArray(2);
             glBindVertexArray(0);
+
+            if (renderObject.hasSeparateTexture()) {
+                glBindTexture(GL_TEXTURE_2D, textureAtlasID);
+            }
         }
 
         shaderProgram.unbind();

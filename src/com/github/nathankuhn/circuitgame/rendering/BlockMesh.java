@@ -205,6 +205,51 @@ public class BlockMesh {
         return ret;
     }
 
+    public static Mesh getRawMesh() {
+        List<Vector3f> positions = new ArrayList<>();
+        List<Vector3f> normals = new ArrayList<>();
+        List<Vector2f> uvs = new ArrayList<>();
+        List<Vector3i> faces = new ArrayList<>();
+
+        positions.addAll(Arrays.asList(NORTH_FACE));
+        normals.addAll(Arrays.asList(NORTH_NORMALS));
+        uvs.addAll(Arrays.asList(FACE_UVS));
+        faces.addAll(Arrays.asList(FACE_INDICES));
+
+        positions.addAll(Arrays.asList(SOUTH_FACE));
+        normals.addAll(Arrays.asList(SOUTH_NORMALS));
+        uvs.addAll(Arrays.asList(FACE_UVS));
+        faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, 4)));
+
+        positions.addAll(Arrays.asList(EAST_FACE));
+        normals.addAll(Arrays.asList(EAST_NORMALS));
+        uvs.addAll(Arrays.asList(FACE_UVS));
+        faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, 8)));
+
+        positions.addAll(Arrays.asList(WEST_FACE));
+        normals.addAll(Arrays.asList(WEST_NORMALS));
+        uvs.addAll(Arrays.asList(FACE_UVS));
+        faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, 12)));
+
+        positions.addAll(Arrays.asList(UP_FACE));
+        normals.addAll(Arrays.asList(UP_NORMALS));
+        uvs.addAll(Arrays.asList(FACE_UVS));
+        faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, 16)));
+
+        positions.addAll(Arrays.asList(DOWN_FACE));
+        normals.addAll(Arrays.asList(DOWN_NORMALS));
+        uvs.addAll(Arrays.asList(FACE_UVS));
+        faces.addAll(Arrays.asList(AddIndex(FACE_INDICES, 20)));
+
+        Vector3f[] posArr = positions.toArray(new Vector3f[0]);
+        Vector3f[] nrmArr = normals.toArray(new Vector3f[0]);
+        Vector2f[] uvsArr = uvs.toArray(new Vector2f[0]);
+        Vector3i[] idxArr = faces.toArray(new Vector3i[0]);
+
+        return new Mesh(posArr, nrmArr, uvsArr, idxArr);
+
+    }
+
     public static class CubeSideData {
 
         private int filledSides;

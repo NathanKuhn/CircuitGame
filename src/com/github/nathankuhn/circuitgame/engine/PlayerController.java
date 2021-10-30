@@ -4,6 +4,7 @@ import com.github.nathankuhn.circuitgame.display.Window;
 import com.github.nathankuhn.circuitgame.hud.*;
 import com.github.nathankuhn.circuitgame.rendering.BlockMesh;
 import com.github.nathankuhn.circuitgame.rendering.RayHit;
+import com.github.nathankuhn.circuitgame.rendering.RenderObject;
 import com.github.nathankuhn.circuitgame.utils.*;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -20,6 +21,8 @@ public class PlayerController {
     private World world;
     private UserInput userInput;
     private final Window window;
+
+    private RenderObject blockHighlight;
 
     private Root playerHud;
     private Font hudFont;
@@ -62,6 +65,13 @@ public class PlayerController {
         inventoryOpen = false;
         createInventory();
 
+        blockHighlight = new RenderObject(
+                BlockMesh.getRawMesh(),
+                Texture.SingleColor(new Color(0.8f, 0.8f, 0.8f, 0.4f))
+        );
+        blockHighlight.transform.setScale(new Vector3f(1.005f, 1.005f, 1.005f));
+        world.addOtherRenderObject(blockHighlight);
+
     }
 
     public void focus() {
@@ -99,6 +109,16 @@ public class PlayerController {
             } else {
                 textUpdateCoolDown -= deltaTime;
             }
+        }
+
+        RayHit hit = player.getCamera().castRayFromCenter(world, 5);
+        if (hit != null) {
+            blockHighlight.setShouldRender(true);
+            Vector3f p = VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), -0.05f)).toVector3iWorld().toVector3f();
+            p.subtractSet(VectorMath.Scale(VectorMath.Subtract(blockHighlight.transform.getScaleVector(), new Vector3f(1.0f, 1.0f, 1.0f)), 0.5f));
+            blockHighlight.transform.setPosition(p);
+        } else {
+            blockHighlight.setShouldRender(false);
         }
 
         Vector3f playerMovement = new Vector3f();

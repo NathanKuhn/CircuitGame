@@ -105,8 +105,6 @@ public class World {
                 }
             }
         }
-
-        ret.addAll(otherObjects);
         return ret;
     }
 
@@ -115,6 +113,7 @@ public class World {
         for (int i = 0; i < layers; i++) {
             ret.addAll(getRenderList(i));
         }
+        ret.addAll(otherObjects);
         return ret;
     }
 

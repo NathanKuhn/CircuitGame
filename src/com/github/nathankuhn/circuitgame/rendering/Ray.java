@@ -1,7 +1,9 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
 import com.github.nathankuhn.circuitgame.engine.World;
+import com.github.nathankuhn.circuitgame.utils.Misc;
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
+import com.github.nathankuhn.circuitgame.utils.Vector3i;
 import com.github.nathankuhn.circuitgame.utils.VectorMath;
 
 public class Ray {
@@ -10,9 +12,9 @@ public class Ray {
 
         // find voxel ray starts in
 
-        int x = (int)ray.origin.x;
-        int y = (int)ray.origin.y;
-        int z = (int)ray.origin.z;
+        int x = Misc.Floor(ray.origin.x);
+        int y = Misc.Floor(ray.origin.y);
+        int z = Misc.Floor(ray.origin.z);
 
         // constants find t required to increment x, y, or z by 1
 

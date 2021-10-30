@@ -27,9 +27,9 @@ public class RayHit {
         int stepY = (ray.getDirection().y > 0) ? 1 : -1;
         int stepZ = (ray.getDirection().z > 0) ? 1 : -1;
 
-        if (Misc.Abs(xf * xf - xf) < 0.01f) {
+        if (Misc.Abs(xf * xf - xf) < 0.0005f) {
             hitNormal.x = -stepX;
-        } else if (Misc.Abs(yf * yf - yf) < 0.01f) {
+        } else if (Misc.Abs(yf * yf - yf) < 0.0005f) {
             hitNormal.y = -stepY;
         } else {
             hitNormal.z = -stepZ;

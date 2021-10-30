@@ -44,10 +44,10 @@ public class Main {
         registry.addBlock(new Block("Wood", 4, new BlockTexture(4, 4, 4, 4, 4, 4)));
         registry.addBlock(new Block("Log", 5, new BlockTexture(8, 8, 8, 8, 7, 7)));
         registry.addBlock(new Block("Tile", 6, new BlockTexture(5, 5, 5, 5, 5, 5)));
-        registry.addBlock(new Block("sand", 7, new BlockTexture(6, 6, 6, 6, 6, 6)));
-        registry.addBlock(new Block("glass", 8, new BlockTexture(9, 9, 9, 9, 9, 9), 0));
-        registry.addBlock(new Block("leaves", 9, new BlockTexture(10, 10, 10, 10, 10, 10)));
-        registry.addBlock(new Block("JackOLantern", 10, new BlockTexture(12, 11, 12, 12, 13, 14)));
+        registry.addBlock(new Block("Sand", 7, new BlockTexture(6, 6, 6, 6, 6, 6)));
+        registry.addBlock(new Block("Glass", 8, new BlockTexture(9, 9, 9, 9, 9, 9), 0));
+        registry.addBlock(new Block("Leaves", 9, new BlockTexture(10, 10, 10, 10, 10, 10)));
+        registry.addBlock(new Block("Jack-O-Lantern", 10, new BlockTexture(12, 11, 12, 12, 13, 14)));
         Texture tex = Texture.LoadPNG("TextureAtlas.png");
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
