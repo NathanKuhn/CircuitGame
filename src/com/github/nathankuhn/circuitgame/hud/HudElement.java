@@ -1,10 +1,8 @@
 package com.github.nathankuhn.circuitgame.hud;
 
+import com.github.nathankuhn.circuitgame.display.Window;
 import com.github.nathankuhn.circuitgame.rendering.RenderObject;
-import com.github.nathankuhn.circuitgame.utils.Vector2f;
-import com.github.nathankuhn.circuitgame.utils.Vector2i;
-import com.github.nathankuhn.circuitgame.utils.Vector3f;
-import com.github.nathankuhn.circuitgame.utils.VectorMath;
+import com.github.nathankuhn.circuitgame.utils.*;
 
 import java.util.ArrayList;
 import java.util.List;

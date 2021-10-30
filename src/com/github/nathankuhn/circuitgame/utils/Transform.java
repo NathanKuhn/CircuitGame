@@ -119,4 +119,11 @@ public class Transform {
         return ret;
     }
 
+    public Transform clone() {
+        Transform ret = new Transform(positionVector);
+        ret.setScale(scaleVector);
+        ret.setRotation(rotationVector);
+        return ret;
+    }
+
 }

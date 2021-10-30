@@ -52,7 +52,7 @@ public class Main {
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
         Random random = new Random();
-        World world = new World(registry, textureAtlas, 5, 3, 5, random.nextInt());
+        World world = new World(registry, textureAtlas, 3, 3, 3, random.nextInt());
         System.out.println("Generating world... ");
         timer.update();
         world.generateAll();
@@ -127,11 +127,12 @@ public class Main {
             playerController.update(timer.deltaTime());
             player.update(timer.deltaTime());
 
+            timer.update();
+            input.update();
             renderer.render();
             hudRenderer.render();
             window.update();
-            input.update();
-            timer.update();
+
         }
 
         renderer.cleanup();
@@ -143,6 +144,7 @@ public class Main {
     public void printFrameRate() {
         System.out.println(1.0f / timer.deltaTime());
     }
+
     public void swapRenderModes() {
         if (polygon) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

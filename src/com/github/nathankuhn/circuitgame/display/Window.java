@@ -145,7 +145,7 @@ public class Window {
             height = vidmode.height();
 
             glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, 0);
-
+            glfwSwapInterval(1);
             resized = true;
         } else {
             width = oldWidth;

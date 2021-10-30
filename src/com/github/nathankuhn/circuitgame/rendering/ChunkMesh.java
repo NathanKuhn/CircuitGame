@@ -60,7 +60,6 @@ public class ChunkMesh {
 
         if (layerRenderObjects[layer] != null) {
             layerRenderObjects[layer].setMesh(layerMeshes[layer]);
-            layerRenderObjects[layer].storeMeshData();
         }
 
     }

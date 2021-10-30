@@ -24,13 +24,16 @@ public class PlayerController {
     private Root playerHud;
     private HudElement playerInventory;
     private boolean inventoryOpen;
+    private Font hudFont;
 
     private int selectedBlockIndex;
     private int[] blockList;
     private HudElement[] hudBlocks;
+    private Text fpsIndicator;
 
     private float breakCoolDown;
     private float placeCoolDown;
+    private float textUpdateCoolDown;
 
     public PlayerController(Player player, World world, UserInput mouseInput, Window window) {
         this.player = player;
@@ -40,14 +43,22 @@ public class PlayerController {
 
         breakCoolDown = 0.0f;
         placeCoolDown = 0.0f;
+        textUpdateCoolDown = 0.0f;
 
         blockList = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 10};
+
+        try {
+            hudFont = new Font("LucidaConsole.fnt");
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
         playerHud = new Root();
         createHud();
         playerInventory = new Panel(playerHud, new Vector2f(), new Vector2f(), new Color(0.0f, 0.0f, 0.0f, 0.0f));
         inventoryOpen = false;
         createInventory();
+
     }
 
     public void focus() {
@@ -78,6 +89,15 @@ public class PlayerController {
             return;
         }
 
+        if (fpsIndicator != null) {
+            if (textUpdateCoolDown <= 0.0f) {
+                fpsIndicator.setText("FPS: " + (int) (1 / deltaTime));
+                textUpdateCoolDown = 0.2f;
+            } else {
+                textUpdateCoolDown -= deltaTime;
+            }
+        }
+
         Vector3f playerMovement = new Vector3f();
 
         if (userInput.isKeyPressed(GLFW_KEY_W)) {
@@ -105,7 +125,8 @@ public class PlayerController {
         player.move(inputMovement);
 
         Vector2f rotVec = userInput.getDisplaceVec();
-        player.getCamera().rotate(-rotVec.x * MOUSE_SENSITIVITY * deltaTime, -rotVec.y * MOUSE_SENSITIVITY * deltaTime, 0.0f);
+        rotVec.scaleSet(deltaTime);
+        player.getCamera().rotate(-rotVec.x * MOUSE_SENSITIVITY, -rotVec.y * MOUSE_SENSITIVITY, 0.0f);
 
     }
 
@@ -189,10 +210,14 @@ public class PlayerController {
         return playerHud.isEnabled();
     }
 
-    private void createHud() {
+    private void createHud(){
 
         Texture texture = Texture.LoadPNG("Crosshair.png");
         new Image(playerHud, new Vector2f(0, 0), window.getDimensions(), texture);
+
+        if (hudFont != null) {
+            fpsIndicator = new Text(playerHud.getUpperLeftAnchor(), new Vector2f(0.01f, -0.01f), hudFont, "FPS: ");
+        }
 
         Panel panel = new Panel(playerHud.getDownAnchor(), new Vector2f(0.0f, 0.15f), new Vector2f(0.2f, 0.2f), new Color(0.5f, 0.5f, 0.5f, 0.3f));
         hudBlocks = new HudElement[blockList.length];

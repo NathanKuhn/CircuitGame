@@ -1,10 +1,10 @@
 package com.github.nathankuhn.circuitgame.utils;
 
+import org.lwjgl.glfw.GLFW;
+
 public class Timer {
 
-    private final float UNITS = 1_000_000_000.0f;
-
-    private long lastTime;
+    private double lastTime;
     private float deltaTime;
 
     public Timer() {
@@ -16,17 +16,17 @@ public class Timer {
     }
 
     public void update() {
-        long temp = lastTime;
+        double temp = lastTime;
         lastTime = getCurrentTime();
-        deltaTime = (lastTime - temp) / UNITS;
+        deltaTime = (float) (lastTime - temp);
     }
 
     public void reset() {
         lastTime = getCurrentTime();
     }
 
-    private long getCurrentTime() {
-        return System.nanoTime();
+    private double getCurrentTime() {
+        return (GLFW.glfwGetTime());
     }
 
 

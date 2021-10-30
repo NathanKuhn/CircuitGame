@@ -80,6 +80,7 @@ public class RenderObject {
 
     public void setMesh(Mesh mesh) {
         this.mesh = mesh;
+        storeMeshData();
     }
 
     public void init() throws Exception {

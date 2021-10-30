@@ -1,5 +1,6 @@
 package com.github.nathankuhn.circuitgame.hud;
 
+import com.github.nathankuhn.circuitgame.display.Window;
 import com.github.nathankuhn.circuitgame.utils.Misc;
 import com.github.nathankuhn.circuitgame.utils.Texture;
 import com.github.nathankuhn.circuitgame.utils.Vector2f;
@@ -7,6 +8,7 @@ import com.github.nathankuhn.circuitgame.utils.Vector2i;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.Buffer;
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ public class Font {
     private Vector2i characterPixelSize;
     private Vector2f characterSize;
 
-    public Font(String fontFilePath) throws Exception{
+    public Font(String fontFilePath) throws Exception {
 
         File fontFile = new File(FONT_FILE_PATH + fontFilePath);
         BufferedReader br = new BufferedReader(new FileReader(fontFile));
@@ -36,6 +38,7 @@ public class Font {
         String page = br.readLine();
 
         String texturePath = Misc.FindValue(page, "file=");
+        texturePath = texturePath.replace("\"", "");
         fontTexture = Texture.LoadPNG(texturePath);
 
         String chars = br.readLine();
@@ -78,16 +81,23 @@ public class Font {
         return getUVCoords(charPos[index]);
     }
 
+    public Vector2f getIdealTileSize(Vector2i windowDimensions) {
+        return new Vector2f(
+                (float)  characterPixelSize.x / windowDimensions.y * 2,
+                (float) characterPixelSize.y / windowDimensions.y * 2
+        );
+    }
+
     public Texture getTexture() {
         return fontTexture;
     }
 
     private Vector2f[] getUVCoords(Vector2f pos) {
         return new Vector2f[] {
-                new Vector2f(pos.x, pos.y),
-                new Vector2f(pos.x + characterSize.x, pos.y),
-                new Vector2f(pos.x + characterSize.x, pos.y + characterSize.y),
-                new Vector2f(pos.x, pos.y + characterSize.y)
+                new Vector2f(pos.x,1.0f - (pos.y + characterSize.y)),
+                new Vector2f(pos.x, 1.0f - pos.y),
+                new Vector2f(pos.x + characterSize.x, 1.0f - pos.y),
+                new Vector2f(pos.x + characterSize.x, 1.0f - (pos.y + characterSize.y))
         };
     }
 
