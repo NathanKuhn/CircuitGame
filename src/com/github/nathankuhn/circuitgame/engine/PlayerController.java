@@ -184,10 +184,13 @@ public class PlayerController {
 
         RayHit hit = player.getCamera().castRayFromCenter(world, 5);
         if (hit != null) {
-            world.placeBlock(
-                    VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), 0.05f)).toVector3iWorld(),
-                    blockList[selectedBlockIndex]
-            );
+            Vector3i pos = VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), 0.05f)).toVector3iWorld();
+            if (!player.getBoundingBox().isColliding(pos)) {
+                world.placeBlock(
+                        pos,
+                        blockList[selectedBlockIndex]
+                );
+            }
         }
     }
 

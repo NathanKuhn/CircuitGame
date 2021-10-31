@@ -90,6 +90,7 @@ public class BoundingBox {
                             ret.z = -northFactor;
                         }
 
+                        break;
                     }
                 }
             }

@@ -8,7 +8,8 @@ import java.awt.font.TextMeasurer;
 
 public class Player {
 
-    private static final float PLAYER_HEIGHT = 1.8f;
+    private static final float PLAYER_HEIGHT = 1.85f;
+    private static final float EYE_HEIGHT = 1.75f;
     private static final float PLAYER_WIDTH = 0.5f;
     private static final float PLAYER_GRAVITY = 18.0f;
     private static final float TERMINAL_VELOCITY = 30.0f;
@@ -36,6 +37,8 @@ public class Player {
     public void update(float deltaTime) {
         camera.setPosition(position);
 
+        System.out.println(position.y);
+
         position = VectorMath.Add(position, VectorMath.Scale(velocity, deltaTime));
         boundingBox.setCenter(getBoundingBoxCenter());
 
@@ -50,7 +53,9 @@ public class Player {
         if (correction.y != 0) {
             position.y += correction.y;
             velocity.y = 0;
-            grounded = true;
+            if (correction.y > 0) {
+                grounded = true;
+            }
         } else {
             if (velocity.y > - TERMINAL_VELOCITY) {
                 velocity.y -= PLAYER_GRAVITY * deltaTime;
@@ -89,7 +94,11 @@ public class Player {
 
     private Vector3f getBoundingBoxCenter() {
         //return VectorMath.Subtract(new Vector3f(position.x, position.y - PLAYER_HEIGHT / 2, position.z), position.toVector3i());
-        return new Vector3f(position.x, position.y - PLAYER_HEIGHT / 2, position.z);
+        return new Vector3f(position.x, position.y - EYE_HEIGHT + PLAYER_HEIGHT / 2, position.z);
+    }
+
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
     }
 
     public Camera getCamera() {
