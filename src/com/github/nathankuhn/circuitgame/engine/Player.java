@@ -1,7 +1,9 @@
 package com.github.nathankuhn.circuitgame.engine;
 
 import com.github.nathankuhn.circuitgame.rendering.Camera;
+import com.github.nathankuhn.circuitgame.rendering.RayHit;
 import com.github.nathankuhn.circuitgame.utils.Vector3f;
+import com.github.nathankuhn.circuitgame.utils.Vector3i;
 import com.github.nathankuhn.circuitgame.utils.VectorMath;
 
 import java.awt.font.TextMeasurer;
@@ -36,8 +38,6 @@ public class Player {
 
     public void update(float deltaTime) {
         camera.setPosition(position);
-
-        System.out.println(position.y);
 
         position = VectorMath.Add(position, VectorMath.Scale(velocity, deltaTime));
         boundingBox.setCenter(getBoundingBoxCenter());
@@ -103,5 +103,29 @@ public class Player {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public void destroyBlock() {
+
+        RayHit hit = camera.castRayFromCenter(world, 5);
+        if (hit != null) {
+            world.placeBlock(
+                    VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), -0.5f)).toVector3iWorld(),
+                    0
+            );
+        }
+
+    }
+
+    public void placeBlock(int blockID) {
+
+        RayHit hit = camera.castRayFromCenter(world, 5);
+        if (hit != null) {
+            Vector3i pos = VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), 0.05f)).toVector3iWorld();
+            if (!boundingBox.isColliding(pos)) {
+                world.placeBlock(pos, blockID);
+            }
+        }
+
     }
 }

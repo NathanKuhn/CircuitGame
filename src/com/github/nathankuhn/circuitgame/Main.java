@@ -1,5 +1,6 @@
 package com.github.nathankuhn.circuitgame;
 
+import com.github.nathankuhn.circuitgame.client.Client;
 import com.github.nathankuhn.circuitgame.display.Window;
 import com.github.nathankuhn.circuitgame.engine.*;
 import com.github.nathankuhn.circuitgame.hud.*;
@@ -52,92 +53,17 @@ public class Main {
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
         Random random = new Random();
-        World world = new World(registry, textureAtlas, 1, 3, 1, random.nextInt());
+        World world = new World(registry, textureAtlas, 5, 3, 5, random.nextInt());
         System.out.println("Generating world... ");
         timer.update();
         world.generateAll();
         timer.update();
         System.out.println("Finished: " + (int)(timer.deltaTime() * 1000) + "ms elapsed");
 
-        Camera camera = new Camera(new Vector3f(0.0f, 5.0f, 0.0f), new Vector3f(0.0f, 0.0f, 0.0f));
-        Player player = new Player(world, camera);
-        UserInput input = new UserInput(window);
+        Client client = new Client(window, world);
 
-        PlayerController playerController = new PlayerController(player, world, input, window);
-        playerController.focus();
-
-        // Setting up renderer
-
-        Renderer renderer = new Renderer(window, world, camera);
-        HudRenderer hudRenderer = new HudRenderer(window, playerController.getHudRoot());
-
-        try {
-            renderer.init();
-        } catch (Exception e) {
-            System.out.println("Error in render init");
-            e.printStackTrace();
-        }
-
-        try {
-            hudRenderer.init();
-        } catch(Exception e) {
-            System.out.println("Error in hud render init");
-            e.printStackTrace();
-        }
-        input.init();
-
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window.getHandle(), (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-                glfwSetWindowShouldClose(window, true);
-            if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
-                printFrameRate();
-            if (key == GLFW_KEY_M && action == GLFW_PRESS) {
-                swapRenderModes();
-                playerController.setHudEnabled(!playerController.isHudEnabled());
-            }
-            if (key == GLFW_KEY_TAB && action == GLFW_PRESS) {
-                playerController.toggleInventory();
-            }
-            if (key == GLFW_KEY_F11 && action == GLFW_PRESS)
-                this.window.toggleFullscreen();
-        });
-
-        // Set the clear color
-        glClearColor(0.7f, 0.9f, 1.0f, 1.0f);
-
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-
-        timer.reset();
-
-        while ( !window.shouldClose() ) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-            if (window.isResized()) {
-                glViewport(0, 0, window.getWidth(), window.getHeight());
-                window.setResized(false);
-                try {
-                    hudRenderer.update();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            playerController.update(timer.deltaTime());
-            player.update(timer.deltaTime());
-
-            timer.update();
-            input.update();
-            renderer.render();
-            hudRenderer.render();
-            window.update();
-
-        }
-
-        renderer.cleanup();
-        hudRenderer.cleanup();
-        window.close();
+        client.init();
+        client.run();
 
     }
 
@@ -145,26 +71,8 @@ public class Main {
         System.out.println(1.0f / timer.deltaTime());
     }
 
-    public void swapRenderModes() {
-        if (polygon) {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            glDisable(GL_CULL_FACE);
-            polygon = false;
-        } else {
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            glEnable(GL_CULL_FACE);
-            polygon = true;
-        }
-    }
-
     public static void main(String[] args) {
         new Main().run();
-//        try {
-//            Font font = new Font("LucidaConsole.fnt");
-//            System.out.println(font.getUVCoords('a')[-1]);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
 }

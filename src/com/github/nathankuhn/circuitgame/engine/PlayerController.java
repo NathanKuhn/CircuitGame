@@ -40,10 +40,10 @@ public class PlayerController {
     private float placeCoolDown;
     private float textUpdateCoolDown;
 
-    public PlayerController(Player player, World world, UserInput mouseInput, Window window) {
+    public PlayerController(Window window, Player player, World world, UserInput userInput) {
         this.player = player;
         this.world = world;
-        this.userInput = mouseInput;
+        this.userInput = userInput;
         this.window = window;
 
         breakCoolDown = 0.0f;
@@ -98,10 +98,6 @@ public class PlayerController {
 
     public void update(float deltaTime) {
 
-        if (inventoryOpen) {
-            return;
-        }
-
         if (fpsIndicator != null) {
             if (textUpdateCoolDown <= 0.0f) {
                 fpsIndicator.setText("FPS: " + (int) (1 / deltaTime));
@@ -109,6 +105,11 @@ public class PlayerController {
             } else {
                 textUpdateCoolDown -= deltaTime;
             }
+        }
+
+        if (inventoryOpen) {
+            blockHighlight.setShouldRender(false);
+            return;
         }
 
         RayHit hit = player.getCamera().castRayFromCenter(world, 5);
@@ -151,6 +152,8 @@ public class PlayerController {
         rotVec.scaleSet(deltaTime);
         player.getCamera().rotate(-rotVec.x * MOUSE_SENSITIVITY, -rotVec.y * MOUSE_SENSITIVITY, 0.0f);
 
+        player.update(deltaTime);
+
     }
 
     public int getSelectedBlock() {
@@ -167,13 +170,7 @@ public class PlayerController {
             return;
         }
 
-        RayHit hit = player.getCamera().castRayFromCenter(world, 5);
-        if (hit != null) {
-            world.placeBlock(
-                    VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), -0.5f)).toVector3iWorld(),
-                    0
-            );
-        }
+        player.destroyBlock();
     }
 
     private void onRightClick() {
@@ -182,16 +179,7 @@ public class PlayerController {
             return;
         }
 
-        RayHit hit = player.getCamera().castRayFromCenter(world, 5);
-        if (hit != null) {
-            Vector3i pos = VectorMath.Add(hit.getHitPosition(), VectorMath.Scale(hit.getHitNormal(), 0.05f)).toVector3iWorld();
-            if (!player.getBoundingBox().isColliding(pos)) {
-                world.placeBlock(
-                        pos,
-                        blockList[selectedBlockIndex]
-                );
-            }
-        }
+        player.placeBlock(blockList[selectedBlockIndex]);
     }
 
     private void onScrollIncrement(float offset) {

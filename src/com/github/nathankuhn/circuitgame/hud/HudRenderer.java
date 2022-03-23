@@ -96,4 +96,19 @@ public class HudRenderer {
             renderObject.cleanup();
         }
     }
+
+    public void setHudRoot(Root root) {
+        for (RenderObject renderObject : this.root.getRenderObjects()) {
+            renderObject.cleanup();
+        }
+        this.root = root;
+        try {
+            for (RenderObject renderObject : this.root.getRenderObjects()) {
+                renderObject.init();
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to load new hud root.");
+            e.printStackTrace();
+        }
+    }
 }

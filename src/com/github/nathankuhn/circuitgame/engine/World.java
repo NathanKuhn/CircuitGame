@@ -213,9 +213,6 @@ public class World {
         if (chunk == null) {
             return;
         }
-        if (blockID == 5) {
-            System.out.println(blockInChunk(x));
-        }
         chunk.setBlock(blockInChunk(x), blockInChunk(y), blockInChunk(z), blockID);
         chunk.update();
 
