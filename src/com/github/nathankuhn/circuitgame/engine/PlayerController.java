@@ -12,7 +12,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class PlayerController {
 
     public static final float MOVE_SPEED = 4.0f;
-    public static final float MOUSE_SENSITIVITY = 10.0f;
+    public static final float MOUSE_SENSITIVITY = 30.0f;
 
     private static float BREAK_COOL_DOWN = 0.5f;
     private static float PLACE_COOL_DOWN = 0.5f;

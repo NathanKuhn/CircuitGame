@@ -28,15 +28,18 @@ public class Main {
     }
 
     public void run() {
-        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
-        System.out.println("Press enter to print ups");
 
-        System.out.println("Initializing window... ");
+        System.out.println("Hello! Welcome to CircuitGame alpha v0.0.1");
+
+        //System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+        //System.out.println("Press enter to print ups");
+
+        //System.out.println("Initializing window... ");
         timer.update();
         window.init();
         //window.setFullscreen(true); // DON'T USE WHEN DEBUGGING ( ͡° ͜ʖ ͡°)
         timer.update();
-        System.out.println("Finished: " + (int)(timer.deltaTime() * 1000) + "ms elapsed");
+        //System.out.println("Finished: " + (int)(timer.deltaTime() * 1000) + "ms elapsed");
 
         BlockRegistry registry = new BlockRegistry();
         registry.addBlock(new Block("Stone", 1, new BlockTexture(0, 0, 0, 0, 0, 0)));
