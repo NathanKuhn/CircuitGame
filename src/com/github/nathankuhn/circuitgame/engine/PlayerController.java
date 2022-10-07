@@ -1,6 +1,6 @@
 package com.github.nathankuhn.circuitgame.engine;
 
-import com.github.nathankuhn.circuitgame.display.Window;
+import com.github.nathankuhn.circuitgame.display.DisplayManager;
 import com.github.nathankuhn.circuitgame.hud.*;
 import com.github.nathankuhn.circuitgame.rendering.BlockMesh;
 import com.github.nathankuhn.circuitgame.rendering.RayHit;
@@ -20,8 +20,6 @@ public class PlayerController {
     private Player player;
     private World world;
     private UserInput userInput;
-    private final Window window;
-
     private RenderObject blockHighlight;
 
     private Root playerHud;
@@ -40,11 +38,10 @@ public class PlayerController {
     private float placeCoolDown;
     private float textUpdateCoolDown;
 
-    public PlayerController(Window window, Player player, World world, UserInput userInput) {
+    public PlayerController(Player player, World world, UserInput userInput) {
         this.player = player;
         this.world = world;
         this.userInput = userInput;
-        this.window = window;
 
         breakCoolDown = 0.0f;
         placeCoolDown = 0.0f;
@@ -227,7 +224,7 @@ public class PlayerController {
     private void createHud(){
 
         Texture texture = Texture.LoadPNG("Crosshair.png");
-        new Image(playerHud, new Vector2f(0, 0), window.getDimensions(), texture);
+        new Image(playerHud, new Vector2f(0, 0), DisplayManager.WindowDimensions(), texture);
 
         if (hudFont != null) {
             fpsIndicator = new Text(playerHud.getUpperLeftAnchor(), new Vector2f(0.01f, -0.01f), hudFont, "FPS: ");

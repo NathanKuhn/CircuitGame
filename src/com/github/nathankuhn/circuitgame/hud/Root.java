@@ -1,6 +1,6 @@
 package com.github.nathankuhn.circuitgame.hud;
 
-import com.github.nathankuhn.circuitgame.display.Window;
+import com.github.nathankuhn.circuitgame.display.DisplayManager;
 import com.github.nathankuhn.circuitgame.rendering.RenderObject;
 import com.github.nathankuhn.circuitgame.utils.Vector2f;
 
@@ -63,9 +63,9 @@ public class Root extends HudElement{
         return lowerRightAnchor;
     }
 
-    public void updateSize(Window window) {
+    public void updateSize() {
         setDimensions( new Vector2f(
-                window.getAspectRatio(),
+                DisplayManager.WindowAspectRatio(),
                 1.0f
         ));
     }

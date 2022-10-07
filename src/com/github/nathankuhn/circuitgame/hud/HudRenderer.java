@@ -1,10 +1,9 @@
 package com.github.nathankuhn.circuitgame.hud;
 
-import com.github.nathankuhn.circuitgame.display.Window;
+import com.github.nathankuhn.circuitgame.display.DisplayManager;
 import com.github.nathankuhn.circuitgame.rendering.RenderObject;
 import com.github.nathankuhn.circuitgame.rendering.ShaderProgram;
 import com.github.nathankuhn.circuitgame.utils.Matrix4;
-import com.github.nathankuhn.circuitgame.utils.Vector3f;
 import com.github.nathankuhn.circuitgame.utils.Vector4f;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -19,12 +18,10 @@ public class HudRenderer {
     private static final String HUD_FRAGMENT_SHADER_PATH = "shaders/hudFragment.shader";
     private static final String HUD_VERTEX_SHADER_PATH = "shaders/hudVertex.shader";
 
-    private final Window window;
     private Root root;
     private final ShaderProgram shaderProgram;
 
-    public HudRenderer(Window window, Root root) {
-        this.window = window;
+    public HudRenderer(Root root) {
         this.root = root;
         shaderProgram = new ShaderProgram();
     }
@@ -38,11 +35,13 @@ public class HudRenderer {
         for (RenderObject renderObject : root.getRenderObjects()) {
             renderObject.init();
         }
+
     }
 
     public void render() {
+
         shaderProgram.bind();
-        shaderProgram.setUniform("projModelMatrix", Matrix4.Orthographic(window.getAspectRatio(), -100.0f, 100.0f));
+        shaderProgram.setUniform("projModelMatrix", Matrix4.Orthographic(DisplayManager.WindowAspectRatio(), -100.0f, 100.0f));
         shaderProgram.setUniform("color", new Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 
         glActiveTexture(GL_TEXTURE0);
@@ -78,9 +77,9 @@ public class HudRenderer {
     }
 
     public void update() throws Exception{
-        root.updateSize(window);
+        root.updateSize();
         for (HudElement hudElement : root.getAllChildren()) {
-            hudElement.update(window.getDimensions());
+            hudElement.update(DisplayManager.WindowDimensions());
             if (hudElement.getRenderObject() != null) {
                 hudElement.getRenderObject().init();
             }

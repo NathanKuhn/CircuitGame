@@ -1,28 +1,18 @@
 package com.github.nathankuhn.circuitgame;
 
 import com.github.nathankuhn.circuitgame.client.Client;
-import com.github.nathankuhn.circuitgame.display.Window;
+import com.github.nathankuhn.circuitgame.display.DisplayManager;
 import com.github.nathankuhn.circuitgame.engine.*;
-import com.github.nathankuhn.circuitgame.hud.*;
 import com.github.nathankuhn.circuitgame.rendering.*;
 import com.github.nathankuhn.circuitgame.utils.*;
-import org.lwjgl.*;
 
 import java.util.Random;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11C.glEnable;
-
 public class Main {
-
-    private final Window window;
     private final Timer timer;
     private boolean polygon;
 
     public Main() {
-        window = new Window(1000, 1000);
         timer = new Timer();
         polygon = true;
     }
@@ -36,7 +26,7 @@ public class Main {
 
         //System.out.println("Initializing window... ");
         timer.update();
-        window.init();
+        DisplayManager.Initialize();
         //window.setFullscreen(true); // DON'T USE WHEN DEBUGGING ( ͡° ͜ʖ ͡°)
         timer.update();
         //System.out.println("Finished: " + (int)(timer.deltaTime() * 1000) + "ms elapsed");
@@ -56,14 +46,14 @@ public class Main {
         TextureAtlas textureAtlas = new TextureAtlas(tex, 16);
 
         Random random = new Random();
-        World world = new World(registry, textureAtlas, 5, 3, 5, random.nextInt());
+        World world = new World(registry, textureAtlas, 10, 3, 10, random.nextInt());
         System.out.println("Generating world... ");
         timer.update();
         world.generateAll();
         timer.update();
         System.out.println("Finished: " + (int)(timer.deltaTime() * 1000) + "ms elapsed");
 
-        Client client = new Client(window, world);
+        Client client = new Client(world);
 
         client.init();
         client.run();

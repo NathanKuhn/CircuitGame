@@ -1,17 +1,15 @@
 package com.github.nathankuhn.circuitgame.client;
 
-import com.github.nathankuhn.circuitgame.display.Window;
+import com.github.nathankuhn.circuitgame.display.DisplayManager;
 import com.github.nathankuhn.circuitgame.engine.UserInput;
 import com.github.nathankuhn.circuitgame.engine.World;
 import com.github.nathankuhn.circuitgame.hud.HudRenderer;
 import com.github.nathankuhn.circuitgame.hud.Root;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glViewport;
 
 public class Client {
 
-    private Window window;
     private World world;
 
     private HudRenderer hudRenderer;
@@ -22,15 +20,14 @@ public class Client {
 
     private State state;
 
-    public Client(Window window, World world) {
+    public Client(World world) {
 
-        this.window = window;
         this.world = world;
 
-        hudRenderer = new HudRenderer(window, new Root());
-        userInput = new UserInput(window);
+        hudRenderer = new HudRenderer(new Root());
+        userInput = new UserInput();
 
-        game = new Game(window, userInput, world);
+        game = new Game(userInput, world);
 
     }
 
@@ -50,19 +47,9 @@ public class Client {
 
     public void run() {
 
-        while (!window.shouldClose()) {
+        while (!DisplayManager.ShouldClose()) {
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-            if (window.isResized()) {
-                glViewport(0, 0, window.getWidth(), window.getHeight());
-                window.setResized(false);
-                try {
-                    hudRenderer.update();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
 
             userInput.update();
 
@@ -74,13 +61,13 @@ public class Client {
             }
 
             hudRenderer.render();
-            window.update();
+            DisplayManager.Update();
 
         }
 
         game.cleanup();
         hudRenderer.cleanup();
-        window.close();
+        DisplayManager.Close();
 
     }
 
@@ -88,6 +75,12 @@ public class Client {
         state = State.IN_GAME;
         hudRenderer.setHudRoot(game.getGameHudRoot());
         game.focus();
+
+        try {
+            hudRenderer.update();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void startMenu() {

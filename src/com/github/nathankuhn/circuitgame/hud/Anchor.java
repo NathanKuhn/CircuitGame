@@ -1,6 +1,5 @@
 package com.github.nathankuhn.circuitgame.hud;
 
-import com.github.nathankuhn.circuitgame.display.Window;
 import com.github.nathankuhn.circuitgame.utils.Vector2f;
 import com.github.nathankuhn.circuitgame.utils.VectorMath;
 

@@ -1,9 +1,14 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
+import com.github.nathankuhn.circuitgame.display.DisplayManager;
 import com.github.nathankuhn.circuitgame.engine.World;
 import com.github.nathankuhn.circuitgame.utils.*;
 
 public class Camera {
+
+    private static final float NEAR_PLANE = 0.05f;
+    private static final float FAR_PLANE = 500.0f;
+    private static final float FOV = (float)Math.toRadians(90);
 
     private Vector3f position;
     private Vector3f rotation;
@@ -68,6 +73,7 @@ public class Camera {
         Matrix4 ret = new Matrix4();
         ret = Matrix4.Multiply(Matrix4.Translation(VectorMath.Scale(position, -1)), ret);
         ret = Matrix4.Multiply(Matrix4.RotationXYZ(VectorMath.Scale(rotation, -1)), ret);
+        ret = Matrix4.Multiply(Matrix4.Perspective(FOV, DisplayManager.WindowAspectRatio(), NEAR_PLANE, FAR_PLANE), ret);
         return ret;
     }
 

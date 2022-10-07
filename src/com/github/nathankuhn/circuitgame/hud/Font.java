@@ -1,6 +1,5 @@
 package com.github.nathankuhn.circuitgame.hud;
 
-import com.github.nathankuhn.circuitgame.display.Window;
 import com.github.nathankuhn.circuitgame.utils.Misc;
 import com.github.nathankuhn.circuitgame.utils.Texture;
 import com.github.nathankuhn.circuitgame.utils.Vector2f;
@@ -8,13 +7,8 @@ import com.github.nathankuhn.circuitgame.utils.Vector2i;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.Buffer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 public class Font {
 

@@ -1,7 +1,5 @@
 package com.github.nathankuhn.circuitgame.utils;
 
-import com.github.nathankuhn.circuitgame.display.Window;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;

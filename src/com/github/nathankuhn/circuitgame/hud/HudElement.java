@@ -1,6 +1,5 @@
 package com.github.nathankuhn.circuitgame.hud;
 
-import com.github.nathankuhn.circuitgame.display.Window;
 import com.github.nathankuhn.circuitgame.rendering.RenderObject;
 import com.github.nathankuhn.circuitgame.utils.*;
 

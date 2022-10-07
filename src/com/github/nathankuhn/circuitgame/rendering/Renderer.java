@@ -1,15 +1,10 @@
 package com.github.nathankuhn.circuitgame.rendering;
 
-import com.github.nathankuhn.circuitgame.display.Window;
+import com.github.nathankuhn.circuitgame.display.DisplayManager;
 import com.github.nathankuhn.circuitgame.engine.World;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11C.GL_BACK;
-import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11C.glCullFace;
-import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
@@ -17,16 +12,13 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
-
-    private Window window;
     private World world;
     private Camera camera;
     private ShaderProgram shaderProgram;
     private int textureAtlasID;
 
-    public Renderer(Window window, World world, Camera camera) {
+    public Renderer(World world, Camera camera) {
         this.world = world;
-        this.window = window;
         this.camera = camera;
         shaderProgram = new ShaderProgram();
     }
@@ -34,7 +26,6 @@ public class Renderer {
     public void init() throws Exception {
 
         shaderProgram.init();
-        shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("transformMatrix");
         shaderProgram.createUniform("viewMatrix");
         shaderProgram.createUniform("texture_sampler");
@@ -56,7 +47,6 @@ public class Renderer {
 
         shaderProgram.bind();
 
-        shaderProgram.setUniform("projectionMatrix", window.getProjectionMatrix());
         shaderProgram.setUniform("viewMatrix", camera.getViewMatrix());
         shaderProgram.setUniform("texture_sampler", 0);
 
@@ -104,7 +94,7 @@ public class Renderer {
         render();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, window.getWidth(), window.getHeight());
+        glViewport(0, 0, DisplayManager.WindowWidth(), DisplayManager.WindowHeight());
     }
 
     public void cleanup() {

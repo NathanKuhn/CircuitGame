@@ -1,6 +1,6 @@
 package com.github.nathankuhn.circuitgame.engine;
 
-import com.github.nathankuhn.circuitgame.display.Window;
+import com.github.nathankuhn.circuitgame.display.DisplayManager;
 import com.github.nathankuhn.circuitgame.utils.Vector2f;
 import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 import org.lwjgl.glfw.GLFWScrollCallbackI;
@@ -8,8 +8,6 @@ import org.lwjgl.glfw.GLFWScrollCallbackI;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class UserInput {
-
-    private final Window window;
     private final Vector2f currentPos;
     private final Vector2f displaceVec;
 
@@ -22,8 +20,7 @@ public class UserInput {
     private GLFWMouseButtonCallbackI mouseButtonCallback;
     private GLFWScrollCallbackI scrollCallback;
 
-    public UserInput(Window window) {
-        this.window = window;
+    public UserInput() {
 
         currentPos = new Vector2f(0, 0);
         displaceVec = new Vector2f(0, 0);
@@ -40,19 +37,19 @@ public class UserInput {
     }
 
     public void init() {
-        glfwSetCursorPosCallback(window.getHandle(), (windowHandle, xPos, yPos) -> {
+        glfwSetCursorPosCallback(DisplayManager.WindowHandle(), (windowHandle, xPos, yPos) -> {
             currentPos.x = (float) xPos;
             currentPos.y = (float) yPos;
         });
-        glfwSetCursorEnterCallback(window.getHandle(), (windowHandle, entered) -> {
+        glfwSetCursorEnterCallback(DisplayManager.WindowHandle(), (windowHandle, entered) -> {
             inWindow = entered;
         });
-        glfwSetMouseButtonCallback(window.getHandle(), (windowHandle, button, action, mode) -> {
+        glfwSetMouseButtonCallback(DisplayManager.WindowHandle(), (windowHandle, button, action, mode) -> {
             leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
             rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
             mouseButtonCallback.invoke(windowHandle, button, action, mode);
         });
-        glfwSetScrollCallback(window.getHandle(), (windowHandle, xOffset, yOffset) -> {
+        glfwSetScrollCallback(DisplayManager.WindowHandle(), (windowHandle, xOffset, yOffset) -> {
             scrollOffset += yOffset;
             scrollCallback.invoke(windowHandle, xOffset, yOffset);
         });
@@ -62,15 +59,15 @@ public class UserInput {
         displaceVec.x = 0;
         displaceVec.y = 0;
         if (locked) {
-            float deltaX = currentPos.x - window.getWidth() / 2.0f;
-            float deltaY = currentPos.y - window.getHeight() / 2.0f;
+            float deltaX = currentPos.x - DisplayManager.WindowWidth() / 2.0f;
+            float deltaY = currentPos.y - DisplayManager.WindowHeight() / 2.0f;
             if (deltaX != 0) {
                 displaceVec.y = deltaX;
             }
             if (deltaY != 0) {
                 displaceVec.x = deltaY;
             }
-            glfwSetCursorPos(window.getHandle(), window.getWidth() / 2.0, window.getHeight() / 2.0);
+            glfwSetCursorPos(DisplayManager.WindowHandle(), DisplayManager.WindowWidth() / 2.0, DisplayManager.WindowHeight() / 2.0);
         }
 
     }
@@ -84,13 +81,13 @@ public class UserInput {
     }
 
     public void lockCursor() {
-        glfwSetInputMode(window.getHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        setCursorPos(window.getWidth() / 2.0, window.getHeight() / 2.0);
+        glfwSetInputMode(DisplayManager.WindowHandle(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        setCursorPos(DisplayManager.WindowWidth() / 2.0, DisplayManager.WindowHeight() / 2.0);
         //glfwSetInputMode(window.getHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         locked = true;
     }
     public void unLockCursor() {
-        glfwSetInputMode(window.getHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        glfwSetInputMode(DisplayManager.WindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         locked = false;
     }
 
@@ -103,7 +100,7 @@ public class UserInput {
     }
 
     public void setCursorPos(double x, double y) {
-        glfwSetCursorPos(window.getHandle(), x, y);
+        glfwSetCursorPos(DisplayManager.WindowHandle(), x, y);
         currentPos.x = (float)x;
         currentPos.y = (float)y;
     }
@@ -133,6 +130,6 @@ public class UserInput {
     }
 
     public boolean isKeyPressed(int keycode) {
-        return window.isKeyPressed(keycode);
+        return DisplayManager.isKeyPressed(keycode);
     }
 }

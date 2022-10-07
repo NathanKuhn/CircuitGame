@@ -1,6 +1,6 @@
 package com.github.nathankuhn.circuitgame.client;
 
-import com.github.nathankuhn.circuitgame.display.Window;
+import com.github.nathankuhn.circuitgame.display.DisplayManager;
 import com.github.nathankuhn.circuitgame.engine.Player;
 import com.github.nathankuhn.circuitgame.engine.PlayerController;
 import com.github.nathankuhn.circuitgame.engine.UserInput;
@@ -20,7 +20,6 @@ import static org.lwjgl.opengl.GL11C.glEnable;
 
 public class Game {
 
-    private Window window;
     private UserInput userInput;
     private World world;
 
@@ -32,15 +31,14 @@ public class Game {
 
     private boolean wireframeMode;
 
-    public Game(Window window, UserInput userInput, World world) {
-        this.window = window;
+    public Game(UserInput userInput, World world) {
         this.userInput = userInput;
         this.world = world;
 
         Camera camera = new Camera(new Vector3f(), new Vector3f());
         Player player = new Player(world, camera);
-        playerController = new PlayerController(window, player, world, userInput);
-        renderer = new Renderer(window, world, player.getCamera());
+        playerController = new PlayerController(player, world, userInput);
+        renderer = new Renderer(world, player.getCamera());
         timer = new Timer();
 
         state = State.PLAY;
@@ -60,8 +58,7 @@ public class Game {
 
     public void focus() {
         glClearColor(0.7f, 0.9f, 1.0f, 1.0f);
-
-        glfwSetKeyCallback(window.getHandle(), (window, key, scancode, action, mods) -> {
+        glfwSetKeyCallback(DisplayManager.WindowHandle(), (window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 glfwSetWindowShouldClose(window, true);
             if (key == GLFW_KEY_M && action == GLFW_PRESS) {
@@ -71,8 +68,6 @@ public class Game {
             if (key == GLFW_KEY_TAB && action == GLFW_PRESS) {
                 playerController.toggleInventory();
             }
-            if (key == GLFW_KEY_F11 && action == GLFW_PRESS)
-                this.window.toggleFullscreen();
         });
 
         timer.reset();
