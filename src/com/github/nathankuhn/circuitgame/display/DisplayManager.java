@@ -18,9 +18,7 @@ public class DisplayManager {
 
     private static final int DEFAULT_WIDTH = 1366;
     private static final int DEFAULT_HEIGHT = 786;
-    private static long windowHandle;
-    private static int width;
-    private static int height;
+    private static final Window window = new Window(0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
     public static void Initialize() {
         // Set up an error callback. The default implementation
@@ -37,25 +35,23 @@ public class DisplayManager {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // the window will not be resizable
 
         // Create the window
-        windowHandle = glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Circuit Game", NULL, NULL);
-        if (windowHandle == NULL)
+        window.setHandle(glfwCreateWindow(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Circuit Game", NULL, NULL));
+        if (window.getHandle() == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
-        width = DEFAULT_WIDTH;
-        height = DEFAULT_HEIGHT;
 
-        glfwSetFramebufferSizeCallback(windowHandle, (window, width, height) -> { // TODO add lambda handler for this, until then resizing disabled
-            DisplayManager.width = width;
-            DisplayManager.height = height;
+        glfwSetFramebufferSizeCallback(window.getHandle(), (window, width, height) -> { // TODO add lambda handler for this, until then resizing disabled
+            DisplayManager.window.setWidth(width);
+            DisplayManager.window.setHeight(height);
         });
 
         // Make the OpenGL context current
-        glfwMakeContextCurrent(windowHandle);
+        glfwMakeContextCurrent(window.getHandle());
         // 1 is vsync on, 0 is vsync off
         glfwSwapInterval(0);
 
         // Make the window visible
-        glfwShowWindow(windowHandle);
+        glfwShowWindow(window.getHandle());
 
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
@@ -77,24 +73,24 @@ public class DisplayManager {
     }
 
     public static void Update() {
-        glfwSwapBuffers(windowHandle); // swap the color buffers
+        glfwSwapBuffers(window.getHandle()); // swap the color buffers
         glfwPollEvents(); // Key callbacks are called here
     }
 
     public static int WindowHeight() {
-        return height;
+        return window.getHeight();
     }
 
     public static int WindowWidth() {
-        return width;
+        return window.getWidth();
     }
 
     public static float WindowAspectRatio() {
-        return (float) width / (float) height;
+        return (float) window.getWidth() / (float) window.getHeight();
     }
 
     public static long WindowHandle() {
-        return windowHandle;
+        return window.getHandle();
     }
 
     public static void Fullscreen(boolean fullscreen) {
@@ -102,31 +98,31 @@ public class DisplayManager {
         if (fullscreen) {
             // get resolution of monitor
             GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-            width = videoMode.width();
-            height = videoMode.height();
+            window.setWidth(videoMode.width());
+            window.setHeight(videoMode.height());
 
-            glfwSetWindowMonitor(windowHandle, glfwGetPrimaryMonitor(), 0, 0, width, height, 0);
+            glfwSetWindowMonitor(window.getHandle(), glfwGetPrimaryMonitor(), 0, 0, window.getWidth(), window.getHeight(), 0);
             glfwSwapInterval(1);
         } else {
-            width = DEFAULT_WIDTH;
-            height = DEFAULT_HEIGHT;
-            glfwSetWindowMonitor(windowHandle, NULL, 0, 0, width, height, 0);
+            window.setWidth(DEFAULT_WIDTH);
+            window.setHeight(DEFAULT_HEIGHT);
+            glfwSetWindowMonitor(window.getHandle(), NULL, 0, 0, window.getWidth(), window.getHeight(), 0);
         }
 
     }
 
     public static boolean ShouldClose() {
-        return glfwWindowShouldClose(windowHandle);
+        return glfwWindowShouldClose(window.getHandle());
     }
 
     public static boolean isKeyPressed(int keyCode) {
-        return glfwGetKey(windowHandle, keyCode) == GLFW_PRESS;
+        return glfwGetKey(window.getHandle(), keyCode) == GLFW_PRESS;
     }
 
     public static void Close() {
         // Free the window callbacks and destroy the window
-        glfwFreeCallbacks(windowHandle);
-        glfwDestroyWindow(windowHandle);
+        glfwFreeCallbacks(window.getHandle());
+        glfwDestroyWindow(window.getHandle());
 
         // Terminate GLFW and free the error callback
         glfwTerminate();
@@ -134,7 +130,7 @@ public class DisplayManager {
     }
 
     public static Vector2i WindowDimensions() {
-        return new Vector2i(width, height);
+        return new Vector2i(window.getWidth(), window.getHeight());
     }
 
     private static void CenterWindow() {
@@ -144,13 +140,13 @@ public class DisplayManager {
             IntBuffer pHeight = stack.mallocInt(1); // int*
 
             // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(windowHandle, pWidth, pHeight);
+            glfwGetWindowSize(window.getHandle(), pWidth, pHeight);
 
             // Get the resolution of the primary monitor
             GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
             // Center the window
             glfwSetWindowPos(
-                    windowHandle,
+                    window.getHandle(),
                     (videoMode.width() - pWidth.get(0)) / 2,
                     (videoMode.height() - pHeight.get(0)) / 2
             );

@@ -3,7 +3,6 @@ package com.github.nathankuhn.circuitgame.client;
 import com.github.nathankuhn.circuitgame.display.DisplayManager;
 import com.github.nathankuhn.circuitgame.engine.Player;
 import com.github.nathankuhn.circuitgame.engine.PlayerController;
-import com.github.nathankuhn.circuitgame.engine.UserInput;
 import com.github.nathankuhn.circuitgame.engine.World;
 import com.github.nathankuhn.circuitgame.hud.Root;
 import com.github.nathankuhn.circuitgame.rendering.Camera;
@@ -19,8 +18,6 @@ import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11C.glEnable;
 
 public class Game {
-
-    private UserInput userInput;
     private World world;
 
     private PlayerController playerController;
@@ -31,13 +28,12 @@ public class Game {
 
     private boolean wireframeMode;
 
-    public Game(UserInput userInput, World world) {
-        this.userInput = userInput;
+    public Game(World world) {
         this.world = world;
 
         Camera camera = new Camera(new Vector3f(), new Vector3f());
         Player player = new Player(world, camera);
-        playerController = new PlayerController(player, world, userInput);
+        playerController = new PlayerController(player, world);
         renderer = new Renderer(world, player.getCamera());
         timer = new Timer();
 

@@ -13,7 +13,7 @@ public class Player {
     private static final float PLAYER_HEIGHT = 1.85f;
     private static final float EYE_HEIGHT = 1.75f;
     private static final float PLAYER_WIDTH = 0.5f;
-    private static final float PLAYER_GRAVITY = 18.0f;
+    private static final float PLAYER_GRAVITY = 24.0f;
     private static final float TERMINAL_VELOCITY = 30.0f;
     private static final float WALK_LERP_FACTOR = 20.0f;
 

@@ -1,6 +1,7 @@
 package com.github.nathankuhn.circuitgame.engine;
 
 import com.github.nathankuhn.circuitgame.display.DisplayManager;
+import com.github.nathankuhn.circuitgame.display.InputManager;
 import com.github.nathankuhn.circuitgame.hud.*;
 import com.github.nathankuhn.circuitgame.rendering.BlockMesh;
 import com.github.nathankuhn.circuitgame.rendering.RayHit;
@@ -14,12 +15,11 @@ public class PlayerController {
     public static final float MOVE_SPEED = 4.0f;
     public static final float MOUSE_SENSITIVITY = 30.0f;
 
-    private static float BREAK_COOL_DOWN = 0.5f;
-    private static float PLACE_COOL_DOWN = 0.5f;
+    private static final float BREAK_COOL_DOWN = 0.5f;
+    private static final float PLACE_COOL_DOWN = 0.5f;
 
     private Player player;
     private World world;
-    private UserInput userInput;
     private RenderObject blockHighlight;
 
     private Root playerHud;
@@ -38,10 +38,9 @@ public class PlayerController {
     private float placeCoolDown;
     private float textUpdateCoolDown;
 
-    public PlayerController(Player player, World world, UserInput userInput) {
+    public PlayerController(Player player, World world) {
         this.player = player;
         this.world = world;
-        this.userInput = userInput;
 
         breakCoolDown = 0.0f;
         placeCoolDown = 0.0f;
@@ -74,9 +73,9 @@ public class PlayerController {
     public void focus() {
 
         playerHud.setEnabled(true);
-        userInput.lockCursor();
+        InputManager.LockCursor();
 
-        userInput.setMouseButtonCallback((windowHandle, button, action, mode) -> {
+        InputManager.SetMouseButtonCallback((windowHandle, button, action, mode) -> {
             if (action == GLFW_PRESS) {
                 if (button == GLFW_MOUSE_BUTTON_1) {
                     onLeftClick();
@@ -87,7 +86,7 @@ public class PlayerController {
             }
         });
 
-        userInput.setScrollCallback((windowHandle, xOffset, yOffset) -> {
+        InputManager.SetScrollCallback((windowHandle, xOffset, yOffset) -> {
             onScrollIncrement((float)yOffset);
         });
 
@@ -121,23 +120,23 @@ public class PlayerController {
 
         Vector3f playerMovement = new Vector3f();
 
-        if (userInput.isKeyPressed(GLFW_KEY_W)) {
+        if (InputManager.IsKeyPressed(GLFW_KEY_W)) {
             playerMovement.z = -1.0f;
-        } else if (userInput.isKeyPressed(GLFW_KEY_S)) {
+        } else if (InputManager.IsKeyPressed(GLFW_KEY_S)) {
             playerMovement.z = 1.0f;
         }
-        if (userInput.isKeyPressed(GLFW_KEY_A)) {
+        if (InputManager.IsKeyPressed(GLFW_KEY_A)) {
             playerMovement.x = -1.0f;
-        } else if (userInput.isKeyPressed(GLFW_KEY_D)) {
+        } else if (InputManager.IsKeyPressed(GLFW_KEY_D)) {
             playerMovement.x = 1.0f;
         }
-        if (userInput.isKeyPressed(GLFW_KEY_SPACE)) {
-            player.jump(6.0f);
+        if (InputManager.IsKeyPressed(GLFW_KEY_SPACE)) {
+            player.jump(8.0f);
         }
-        if (userInput.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+        if (InputManager.IsKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
             playerMovement.scaleSet(2.0f);
         }
-        if (userInput.isKeyPressed(GLFW_KEY_R)) {
+        if (InputManager.IsKeyPressed(GLFW_KEY_R)) {
             player.getPosition().set(world.getSpawn());
         }
         playerMovement.scaleSet(MOVE_SPEED);
@@ -145,7 +144,7 @@ public class PlayerController {
 
         player.move(inputMovement);
 
-        Vector2f rotVec = userInput.getDisplaceVec();
+        Vector2f rotVec = InputManager.GetMouseDisplacement();
         rotVec.scaleSet(deltaTime);
         player.getCamera().rotate(-rotVec.x * MOUSE_SENSITIVITY, -rotVec.y * MOUSE_SENSITIVITY, 0.0f);
 
@@ -186,14 +185,14 @@ public class PlayerController {
 
     public void openInventory() {
         playerInventory.setEnabled(true);
-        userInput.unLockCursor();
+        InputManager.UnLockCursor();
         player.move(new Vector3f());
         inventoryOpen = true;
     }
 
     public void closeInventory() {
         playerInventory.setEnabled(false);
-        userInput.lockCursor();
+        InputManager.LockCursor();
         inventoryOpen = false;
     }
 

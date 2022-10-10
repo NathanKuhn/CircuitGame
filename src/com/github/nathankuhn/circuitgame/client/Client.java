@@ -1,7 +1,7 @@
 package com.github.nathankuhn.circuitgame.client;
 
 import com.github.nathankuhn.circuitgame.display.DisplayManager;
-import com.github.nathankuhn.circuitgame.engine.UserInput;
+import com.github.nathankuhn.circuitgame.display.InputManager;
 import com.github.nathankuhn.circuitgame.engine.World;
 import com.github.nathankuhn.circuitgame.hud.HudRenderer;
 import com.github.nathankuhn.circuitgame.hud.Root;
@@ -13,7 +13,6 @@ public class Client {
     private World world;
 
     private HudRenderer hudRenderer;
-    private UserInput userInput;
 
     private MainMenu mainMenu;
     private Game game;
@@ -25,9 +24,8 @@ public class Client {
         this.world = world;
 
         hudRenderer = new HudRenderer(new Root());
-        userInput = new UserInput();
 
-        game = new Game(userInput, world);
+        game = new Game(world);
 
     }
 
@@ -39,7 +37,7 @@ public class Client {
             e.printStackTrace();
         }
 
-        userInput.init();
+        InputManager.Initialize();
         game.init();
 
         startGame();
@@ -51,7 +49,7 @@ public class Client {
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-            userInput.update();
+            InputManager.Update();
 
             switch (state){
                 case IN_GAME:
